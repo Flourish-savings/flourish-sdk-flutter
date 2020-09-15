@@ -28,7 +28,7 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         appBar: null,
         body: Center(
-          child: flourish.webviewContainer,
+          child: flourish.webviewContainer(),
         ),
       ),
     );
