@@ -1,0 +1,39 @@
+name: PR Opened
+
+on: pull_request
+
+jobs:
+  pr:
+    name: PR Opened
+    timeout-minutes: 25
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "beta"
+      - name: Install Dependencies
+        run: flutter pub get
+      - name: Run Tests
+        run: flutter test
+      - name: Build example app
+        run: sudo $FLUTTER_HOME/bin/flutter build apk --release
+        working-directory: example
+      # - name: Upload Apk
+      #   uses: actions/upload-artifact@master
+      #   with:
+      #     name: apk-artifact
+      #     path: build/app/outputs/apk/release/app-release.apk
+      # - name: Slack Notification
+      #   uses: homoluctus/slatify@master
+      #   if: always()
+      #   with:
+      #     type: ${{ job.status }}
+      #     job_name: ":robot_face: *PR Opened*"
+      #     url: ${{ secrets.SLACK_BOT_WEBHOOK_URL}}
