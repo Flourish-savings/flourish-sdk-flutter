@@ -34,6 +34,10 @@ class Flourish {
     // this.webviewContainer.loadUrl();
   }
 
+  void on(String eventName, Function callback) {
+    this.webviewContainer.registerObserver(eventName, callback);
+  }
+
   String _getUrl() {
     switch (this.environment) {
       case Environment.production:

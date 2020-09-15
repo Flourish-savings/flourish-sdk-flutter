@@ -19,6 +19,10 @@ class WebviewContainer extends StatefulWidget {
     _wcs.loadUrl(url);
   }
 
+  void registerObserver(String eventName, Function callback) {
+    _wcs.registerObserver(eventName, callback);
+  }
+
   @override
   WebviewContainerState createState() => _wcs;
 }
@@ -71,7 +75,9 @@ class WebviewContainerState extends State<WebviewContainer> with Observable {
                 })
           ]),
           onWebViewCreated: (WebViewController controller) {
+            Event event = new Event(name: 'webview_created', data: null);
             _controller = controller;
+            this.notifyObservers(event);
             // _loadHtmlFromAssets('assets/sortorama/index.html', _controller);
           },
         ),

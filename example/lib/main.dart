@@ -1,4 +1,5 @@
 import 'package:flourish_flutter_sdk/environment_enum.dart';
+import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flutter/material.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 
@@ -18,6 +19,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     flourish.authenticateAndOpenDashboard('a', 'b');
+    flourish.on('webview_created', (Event e) => {print(e.name)});
   }
 
   @override

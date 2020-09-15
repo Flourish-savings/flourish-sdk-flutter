@@ -2,9 +2,9 @@ import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk/observer.dart';
 
 class Observable {
-  List<Observer> _observers;
+  final List<Observer> _observers = List<Observer>();
 
-  void on(String eventName, Function callback) {
+  void registerObserver(String eventName, Function callback) {
     this._observers.add(new Observer(eventName, callback));
   }
 
