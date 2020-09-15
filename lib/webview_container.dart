@@ -6,22 +6,28 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
 
 class WebviewContainer extends StatefulWidget {
-  const WebviewContainer({Key key, this.title, this.authenticationKey})
+  WebviewContainer({Key key, this.authenticationKey, this.url})
       : super(key: key);
 
-  final String title;
+  final WebviewContainerState _wcs = new WebviewContainerState();
+
+  // final String title;
+  final String url;
   final String authenticationKey;
 
+  void loadUrl(String url) {
+    _wcs.loadUrl(url);
+  }
+
   @override
-  _WebviewContainerState createState() => _WebviewContainerState();
+  WebviewContainerState createState() => _wcs;
 }
 
-class _WebviewContainerState extends State<WebviewContainer> with Observable {
-  String _url = "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
+class WebviewContainerState extends State<WebviewContainer> with Observable {
   WebViewController _controller;
 
-  void loadUrl() {
-    this._controller.loadUrl(this._url);
+  void loadUrl(String url) {
+    this._controller.loadUrl(url);
   }
 
   @override
@@ -39,6 +45,7 @@ class _WebviewContainerState extends State<WebviewContainer> with Observable {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: WebView(
+          initialUrl: widget.url,
           debuggingEnabled: true,
           onWebResourceError: (error) {
             print(error.description);

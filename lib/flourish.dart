@@ -1,12 +1,18 @@
 import 'package:flourish_flutter_sdk/environment_enum.dart';
 import 'package:flourish_flutter_sdk/webview_container.dart';
-import 'package:flutter/material.dart';
 
 class Flourish {
   Environment environment;
   String userId;
   String secretKey;
-  Widget webviewContainer = WebviewContainer();
+  WebviewContainer webviewContainer;
+  static final Flourish _instance = Flourish._privateConstructor();
+
+  Flourish._privateConstructor();
+
+  factory Flourish() {
+    return _instance;
+  }
 
   Flourish.initialize(Environment env) {
     this.environment = env;
@@ -19,10 +25,34 @@ class Flourish {
   String authenticateAndOpenDashboard(String userId, String secretKey) {
     String key = this.authenticate(userId, secretKey);
     this.openDashboard(key);
-    return 'key';
+    return key;
   }
 
   void openDashboard(String authenticationKey) {
+    this.webviewContainer = new WebviewContainer(
+        url: this._getUrl(), authenticationKey: authenticationKey);
     // this.webviewContainer.loadUrl();
+  }
+
+  String _getUrl() {
+    switch (this.environment) {
+      case Environment.production:
+        {
+          return "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
+        }
+      // case Environment.development:
+      //   {
+      //     return "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
+      //   }
+      // case Environment.staging:
+      //   {
+      //     return "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
+      //   }
+
+      default:
+        {
+          return "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
+        }
+    }
   }
 }
