@@ -5,17 +5,14 @@ class Flourish {
   Environment environment;
   String userId;
   String secretKey;
-  WebviewContainer webviewContainer;
+  WebviewContainer _webviewContainer;
   static final Flourish _instance = Flourish._privateConstructor();
 
   Flourish._privateConstructor();
 
-  factory Flourish() {
+  factory Flourish.initialize(Environment env) {
+    _instance.environment = env;
     return _instance;
-  }
-
-  Flourish.initialize(Environment env) {
-    this.environment = env;
   }
 
   String authenticate(String userId, String secretKey) {
@@ -29,13 +26,16 @@ class Flourish {
   }
 
   void openDashboard(String authenticationKey) {
-    this.webviewContainer = new WebviewContainer(
+    this._webviewContainer = new WebviewContainer(
         url: this._getUrl(), authenticationKey: authenticationKey);
-    // this.webviewContainer.loadUrl();
   }
 
   void on(String eventName, Function callback) {
-    this.webviewContainer.registerObserver(eventName, callback);
+    this._webviewContainer?.registerObserver(eventName, callback);
+  }
+
+  WebviewContainer webviewContainer() {
+    return this._webviewContainer;
   }
 
   String _getUrl() {
