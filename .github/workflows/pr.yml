@@ -17,23 +17,24 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v1
         with:
-          channel: "beta"
+          channel: "stable"
       - name: Install Dependencies
         run: flutter pub get
       - name: Run Tests
         run: flutter test
       - name: Build example app
-        run: sudo $FLUTTER_HOME/bin/flutter build apk --release
+        run: flutter pub get
+        run: flutter build apk
         working-directory: example
       # - name: Upload Apk
       #   uses: actions/upload-artifact@master
       #   with:
       #     name: apk-artifact
       #     path: build/app/outputs/apk/release/app-release.apk
-      # - name: Slack Notification
-      #   uses: homoluctus/slatify@master
-      #   if: always()
-      #   with:
-      #     type: ${{ job.status }}
-      #     job_name: ":robot_face: *PR Opened*"
-      #     url: ${{ secrets.SLACK_BOT_WEBHOOK_URL}}
+      - name: Slack Notification
+        uses: homoluctus/slatify@master
+        if: always()
+        with:
+          type: ${{ job.status }}
+          job_name: ":robot_face: *PR Opened*"
+          url: ${{ secrets.SLACK_BOT_WEBHOOK_URL}}
