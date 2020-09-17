@@ -13,6 +13,10 @@ void main() {
     flourish = null;
   });
 
+  test('certify that the webview is not initialized before auth', () async {
+    expect(flourish.webviewContainer(), isNull);
+  });
+
   test('authenticate the client', () async {
     expect(flourish.authenticate('id', 'random_string'), 'key');
   });
@@ -22,17 +26,13 @@ void main() {
     expect(flourish.webviewContainer(), isNotNull);
   });
 
-  test('certify that the webview is not initialized before auth', () async {
-    expect(flourish.webviewContainer(), isNull);
-  });
-
   test('assert that only one instance can be created', () async {
     Flourish instance2 = Flourish.initialize(Environment.development);
     expect(identical(instance2, flourish), true);
   });
-  test('assert that the instance is changing the environment attribute',
-      () async {
-    Flourish instance2 = Flourish.initialize(Environment.development);
-    expect(instance2.environment, Environment.development);
+
+  test('assert that the instance is assigning the correct env', () async {
+    expect(flourish.webviewContainer().url,
+        equals("https://flourish-engine.herokuapp.com/webviews/dashboard/50"));
   });
 }
