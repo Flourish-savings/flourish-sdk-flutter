@@ -22,8 +22,10 @@ jobs:
         run: flutter pub get
       - name: Run Tests
         run: flutter test
-      - name: Build example app
+      - name: Install Example App Dependencies
         run: flutter pub get
+        working-directory: example
+      - name: Build example app
         run: flutter build apk
         working-directory: example
       # - name: Upload Apk
