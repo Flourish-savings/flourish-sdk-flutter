@@ -43,5 +43,13 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<!-- Allow HTTP calls, remove it later -->
+	<key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+        <key>NSAllowsArbitraryLoadsInWebContent</key>
+        <true/>
+    </dict>
 </dict>
 </plist>
