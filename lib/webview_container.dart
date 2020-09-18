@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:flourish_flutter_sdk/event.dart';
-import 'package:flourish_flutter_sdk/observable.dart';
+import 'package:flourish_flutter_sdk/event_manager.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
 
 class WebviewContainer extends StatefulWidget {
-  WebviewContainer({Key key, this.authenticationKey, this.url})
+  WebviewContainer(
+      {Key key, this.authenticationKey, this.url, this.eventManager})
       : super(key: key);
 
   final WebviewContainerState _wcs = new WebviewContainerState();
@@ -14,20 +15,17 @@ class WebviewContainer extends StatefulWidget {
   // final String title;
   final String url;
   final String authenticationKey;
+  final EventManager eventManager;
 
   void loadUrl(String url) {
     _wcs.loadUrl(url);
-  }
-
-  void registerObserver(String eventName, Function callback) {
-    _wcs.registerObserver(eventName, callback);
   }
 
   @override
   WebviewContainerState createState() => _wcs;
 }
 
-class WebviewContainerState extends State<WebviewContainer> with Observable {
+class WebviewContainerState extends State<WebviewContainer> {
   WebViewController _controller;
 
   void loadUrl(String url) {
@@ -36,18 +34,10 @@ class WebviewContainerState extends State<WebviewContainer> with Observable {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Container(
       color: Theme.of(context).primaryColor,
       child: SafeArea(
         top: true,
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: WebView(
           initialUrl: widget.url,
           debuggingEnabled: true,
@@ -62,26 +52,24 @@ class WebviewContainerState extends State<WebviewContainer> with Observable {
           javascriptMode: JavascriptMode.unrestricted,
           javascriptChannels: Set.from([
             JavascriptChannel(
-                name: 'Print',
+                name: 'AppChannel',
                 onMessageReceived: (JavascriptMessage message) {
-                  //This is where you receive message from
-                  //javascript code and handle in Flutter/Dart
-                  //like here, the message is just being printed
-                  //in Run/LogCat window of android studio
-                  print(message.message);
                   Map<String, dynamic> json = jsonDecode(message.message);
                   Event event = Event.fromJson(json);
-                  this.notifyObservers(event);
+                  this._notify(event);
                 })
           ]),
           onWebViewCreated: (WebViewController controller) {
-            Event event = new Event(name: 'webview_created', data: null);
+            Event event = WebviewLoaded();
             _controller = controller;
-            this.notifyObservers(event);
-            // _loadHtmlFromAssets('assets/sortorama/index.html', _controller);
+            this._notify(event);
           },
         ),
       ),
     );
+  }
+
+  void _notify(Event event) {
+    widget.eventManager.notify(event);
   }
 }

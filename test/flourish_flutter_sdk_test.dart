@@ -6,7 +6,9 @@ void main() {
   Flourish flourish;
 
   setUp(() {
-    flourish = Flourish.initialize(Environment.development);
+    flourish = Flourish.initialize(
+      env: Environment.development,
+    );
   });
 
   tearDown(() {
@@ -14,25 +16,47 @@ void main() {
   });
 
   test('certify that the webview is not initialized before auth', () async {
-    expect(flourish.webviewContainer(), isNull);
+    expect(
+      flourish.webviewContainer(),
+      isNull,
+    );
   });
 
   test('authenticate the client', () async {
-    expect(flourish.authenticate('id', 'random_string'), 'key');
+    expect(
+      flourish.authenticate(
+        userId: 'id',
+        secretKey: 'random_string',
+      ),
+      'key',
+    );
   });
 
   test('authenticate the client and open the dasboard', () async {
-    flourish.authenticateAndOpenDashboard('id', 'random_string');
+    flourish.authenticateAndOpenDashboard(
+      userId: 'id',
+      secretKey: 'random_string',
+    );
     expect(flourish.webviewContainer(), isNotNull);
   });
 
   test('assert that only one instance can be created', () async {
-    Flourish instance2 = Flourish.initialize(Environment.development);
-    expect(identical(instance2, flourish), true);
+    Flourish instance2 = Flourish.initialize(
+      env: Environment.development,
+    );
+    expect(
+      identical(
+        instance2,
+        flourish,
+      ),
+      true,
+    );
   });
 
   test('assert that the instance is assigning the correct env', () async {
-    expect(flourish.webviewContainer().url,
-        equals("https://flourish-engine.herokuapp.com/webviews/dashboard/50"));
+    expect(
+      flourish.webviewContainer().url,
+      equals("https://flourish-engine.herokuapp.com/webviews/dashboard/50"),
+    );
   });
 }

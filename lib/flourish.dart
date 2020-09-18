@@ -1,37 +1,59 @@
 import 'package:flourish_flutter_sdk/environment_enum.dart';
+import 'package:flourish_flutter_sdk/event_manager.dart';
 import 'package:flourish_flutter_sdk/webview_container.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 class Flourish {
+  EventManager eventManager = new EventManager();
   Environment environment;
+  String apiKey;
   String userId;
   String secretKey;
   WebviewContainer _webviewContainer;
   static final Flourish _instance = Flourish._privateConstructor();
 
+  static const MethodChannel _channel =
+      const MethodChannel('flourish_flutter_sdk');
+
   Flourish._privateConstructor();
 
-  factory Flourish.initialize(Environment env) {
+  factory Flourish.initialize({
+    @required String apiKey,
+    Environment env = Environment.production,
+  }) {
+    _instance.apiKey = apiKey;
     _instance.environment = env;
     return _instance;
   }
 
-  String authenticate(String userId, String secretKey) {
+  String authenticate({
+    @required String userId,
+    @required String secretKey,
+  }) {
     return 'key';
   }
 
-  String authenticateAndOpenDashboard(String userId, String secretKey) {
-    String key = this.authenticate(userId, secretKey);
-    this.openDashboard(key);
+  String authenticateAndOpenDashboard({
+    @required String userId,
+    @required String secretKey,
+  }) {
+    String key = this.authenticate(userId: userId, secretKey: secretKey);
+    this.openDashboard(authenticationKey: key);
     return key;
   }
 
-  void openDashboard(String authenticationKey) {
+  void openDashboard({
+    @required String authenticationKey,
+  }) {
     this._webviewContainer = new WebviewContainer(
-        url: this._getUrl(), authenticationKey: authenticationKey);
+        url: this._getUrl(),
+        authenticationKey: authenticationKey,
+        eventManager: eventManager);
   }
 
   void on(String eventName, Function callback) {
-    this._webviewContainer?.registerObserver(eventName, callback);
+    eventManager.on(eventName, callback);
   }
 
   WebviewContainer webviewContainer() {
@@ -42,7 +64,7 @@ class Flourish {
     switch (this.environment) {
       case Environment.production:
         {
-          return "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
+          return "http://localhost:8080/";
         }
       // case Environment.development:
       //   {
@@ -55,8 +77,13 @@ class Flourish {
 
       default:
         {
-          return "https://flourish-engine.herokuapp.com/webviews/dashboard/50";
+          return "http://localhost:8080/";
         }
     }
+  }
+
+  static Future<String> get platformVersion async {
+    final String version = await _channel.invokeMethod('getPlatformVersion');
+    return version;
   }
 }

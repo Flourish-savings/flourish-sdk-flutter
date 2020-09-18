@@ -13,13 +13,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Flourish flourish = Flourish.initialize(Environment.development);
+  Flourish flourish = Flourish.initialize(
+    apiKey: '',
+    env: Environment.development,
+  );
 
   @override
   void initState() {
     super.initState();
-    flourish.authenticateAndOpenDashboard('a', 'b');
-    flourish.on('webview_created', (Event e) => {print(e.name)});
+    flourish.authenticateAndOpenDashboard(userId: 'a', secretKey: 'b');
+    flourish.on('webview_loaded', (Event e) => {print(e.type)});
+    flourish.on('points_earned', (Event e) => {print(e.type)});
   }
 
   @override
