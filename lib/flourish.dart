@@ -1,4 +1,5 @@
 import 'package:flourish_flutter_sdk/environment_enum.dart';
+import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk/event_manager.dart';
 import 'package:flourish_flutter_sdk/webview_container.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +28,10 @@ class Flourish {
     return _instance;
   }
 
+  factory Flourish() {
+    return _instance;
+  }
+
   String authenticate({
     @required String userId,
     @required String secretKey,
@@ -52,8 +57,8 @@ class Flourish {
         eventManager: eventManager);
   }
 
-  void on(String eventName, Function callback) {
-    eventManager.on(eventName, callback);
+  Stream<Event> get onEvent {
+    return eventManager.onEvent;
   }
 
   WebviewContainer webviewContainer() {

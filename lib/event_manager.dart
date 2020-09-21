@@ -1,17 +1,22 @@
+import 'dart:async';
+
 import 'package:flourish_flutter_sdk/event.dart';
-import 'package:flourish_flutter_sdk/event_handler.dart';
 
 class EventManager {
-  final String all = '*';
-  List<EventHandler> eventHandlers = List<EventHandler>();
-  void on(String eventName, Function callback) {
-    eventHandlers.add(EventHandler(eventName, callback));
+  Stream<Event> _stream;
+  final StreamController<Event> _eventStreamController =
+      StreamController<Event>();
+
+  Stream<Event> get onEvent {
+    if (_stream == null) {
+      _stream = _eventStreamController.stream.asBroadcastStream();
+    }
+    return _stream;
   }
 
   void notify(Event event) {
-    eventHandlers.forEach((e) => {
-          if (event.type == e.eventName || event.type == all)
-            {e.callback(event)}
-        });
+    if (_eventStreamController != null && !_eventStreamController.isClosed) {
+      _eventStreamController.add(event);
+    }
   }
 }
