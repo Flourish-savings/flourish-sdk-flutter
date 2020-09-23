@@ -35,6 +35,6 @@ class PointsEarnedEvent extends Event {
   }
 }
 
-class WebviewLoaded extends Event {
-  WebviewLoaded() : super(type: 'webview_loaded');
+class WebviewLoadedEvent extends Event {
+  WebviewLoadedEvent() : super(type: 'webview_loaded');
 }

@@ -25,7 +25,7 @@ void main() {
 
   test('authenticate the client', () async {
     expect(
-      flourish.authenticate(
+      await flourish.authenticate(
         userId: 'id',
         secretKey: 'random_string',
       ),
@@ -34,7 +34,7 @@ void main() {
   });
 
   test('authenticate the client and open the dasboard', () async {
-    flourish.authenticateAndOpenDashboard(
+    await flourish.authenticateAndOpenDashboard(
       userId: 'id',
       secretKey: 'random_string',
     );

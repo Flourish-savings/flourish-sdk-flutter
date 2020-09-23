@@ -60,7 +60,7 @@ class WebviewContainerState extends State<WebviewContainer> {
                 })
           ]),
           onWebViewCreated: (WebViewController controller) {
-            Event event = WebviewLoaded();
+            Event event = WebviewLoadedEvent();
             _controller = controller;
             this._notify(event);
           },

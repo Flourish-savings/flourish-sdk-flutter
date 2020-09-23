@@ -1,49 +1,53 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flourish_flutter_sdk/environment_enum.dart';
 import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk/event_manager.dart';
+import 'package:flourish_flutter_sdk/firestore_manager.dart';
 import 'package:flourish_flutter_sdk/webview_container.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class Flourish {
   EventManager eventManager = new EventManager();
+  FirestoreManager firestoreManager;
   Environment environment;
   String apiKey;
   String userId;
   String secretKey;
   WebviewContainer _webviewContainer;
-  static final Flourish _instance = Flourish._privateConstructor();
+
+  Map<String, StreamSubscription> _callbacks = {
+    'points_earned': null,
+    'webview_loaded': null,
+  };
 
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
 
-  Flourish._privateConstructor();
+  Flourish._(this.apiKey, this.environment);
 
   factory Flourish.initialize({
     @required String apiKey,
     Environment env = Environment.production,
   }) {
-    _instance.apiKey = apiKey;
-    _instance.environment = env;
-    return _instance;
+    return Flourish._(apiKey, env);
   }
 
-  factory Flourish() {
-    return _instance;
-  }
-
-  String authenticate({
+  Future<String> authenticate({
     @required String userId,
     @required String secretKey,
-  }) {
+  }) async {
+    firestoreManager = await FirestoreManager.from(userId);
     return 'key';
   }
 
-  String authenticateAndOpenDashboard({
+  Future<String> authenticateAndOpenDashboard({
     @required String userId,
     @required String secretKey,
-  }) {
-    String key = this.authenticate(userId: userId, secretKey: secretKey);
+  }) async {
+    String key = await this.authenticate(userId: userId, secretKey: secretKey);
     this.openDashboard(authenticationKey: key);
     return key;
   }
@@ -55,6 +59,55 @@ class Flourish {
         url: this._getUrl(),
         authenticationKey: authenticationKey,
         eventManager: eventManager);
+  }
+
+  void on(String eventName, Function callback) {
+    switch (eventName) {
+      case 'points_earned':
+        _callbacks[eventName] = this.onPointsEarned(callback);
+        break;
+      case 'webview_loaded':
+        _callbacks[eventName] = this.onWebviewLoaded(callback);
+        break;
+      case 'notifications':
+        _callbacks[eventName] = this.listenFirestore(callback);
+        break;
+      default:
+        throw Exception('Event not found');
+    }
+  }
+
+  void off(String eventName) {
+    _getSubscription(eventName)?.cancel();
+  }
+
+  StreamSubscription<Event> _getSubscription(String eventName) {
+    if (_callbacks.containsKey(eventName)) {
+      return _callbacks[eventName];
+    }
+    return null;
+  }
+
+  StreamSubscription<Event> onPointsEarned(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is PointsEarnedEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> onWebviewLoaded(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is WebviewLoadedEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<DocumentSnapshot> listenFirestore(Function callback) {
+    return this.firestoreManager.onNotification.listen((doc) {
+      callback(doc);
+    });
   }
 
   Stream<Event> get onEvent {

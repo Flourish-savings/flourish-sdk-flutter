@@ -1,6 +1,6 @@
-import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   final String title;
@@ -12,16 +12,10 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
-  Flourish flourish = Flourish();
 
   @override
   void initState() {
     super.initState();
-    flourish.onEvent.listen((Event e) {
-      if (e is PointsEarnedEvent) {
-        print('points-earned: $e');
-      }
-    });
   }
 
   void _onItemTapped(int index) {
@@ -91,7 +85,10 @@ class _HomeState extends State<Home> {
           Center(
             child: Text('Pago Servicios'),
           ),
-          flourish.webviewContainer()
+          Provider.of<Flourish>(
+            context,
+            listen: false,
+          ).webviewContainer(),
         ],
       ),
       drawer: Drawer(
