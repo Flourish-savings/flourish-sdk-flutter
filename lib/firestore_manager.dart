@@ -9,18 +9,11 @@ class FirestoreManager {
   final FirebaseApp firebaseApp;
 
   FirestoreManager([this.userId, this.firebaseApp]) {
-    _firestore = FirebaseFirestore.instance;
+    _firestore = FirebaseFirestore.instanceFor(app: firebaseApp);
   }
 
   static Future<FirestoreManager> from([String userId]) async {
     final firebaseApp = await Firebase.initializeApp();
-    // await Firebase.initializeApp(
-    //     name: 'SecondaryApp',
-    //     options: const FirebaseOptions(
-    //         appId: 'my_appId',
-    //         apiKey: 'my_apiKey',
-    //         messagingSenderId: 'my_messagingSenderId',
-    //         projectId: 'my_projectId'));
     return FirestoreManager(userId, firebaseApp);
   }
 

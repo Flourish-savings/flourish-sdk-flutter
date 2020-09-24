@@ -21,7 +21,9 @@ void main() async {
     print('webview_loaded: $e');
   });
   flourish.on('notifications', (doc) {
-    print(doc.data()['hasNotificationAvailable']);
+    if (doc != null) {
+      print(doc.data()['hasNotificationAvailable']);
+    }
   });
   runApp(
     MultiProvider(
