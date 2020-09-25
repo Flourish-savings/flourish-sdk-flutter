@@ -1,18 +1,18 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:dio/dio.dart';
 import 'package:flourish_flutter_sdk/environment_enum.dart';
 import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk/event_manager.dart';
-import 'package:flourish_flutter_sdk/firestore_manager.dart';
 import 'package:flourish_flutter_sdk/webview_container.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class Flourish {
   EventManager eventManager = new EventManager();
-  FirestoreManager firestoreManager;
   Environment environment;
+  String _url;
+  Dio _api;
   String apiKey;
   String userId;
   String secretKey;
@@ -26,7 +26,10 @@ class Flourish {
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
 
-  Flourish._(this.apiKey, this.environment);
+  Flourish._(this.apiKey, this.environment) {
+    _url = this._getUrl(this.environment);
+    _api = Dio(BaseOptions(baseUrl: this._url));
+  }
 
   factory Flourish.initialize({
     @required String apiKey,
@@ -39,7 +42,6 @@ class Flourish {
     @required String userId,
     @required String secretKey,
   }) async {
-    firestoreManager = await FirestoreManager.from(userId);
     return 'key';
   }
 
@@ -56,9 +58,14 @@ class Flourish {
     @required String authenticationKey,
   }) {
     this._webviewContainer = new WebviewContainer(
-        url: this._getUrl(),
+        url: this._url,
         authenticationKey: authenticationKey,
         eventManager: eventManager);
+  }
+
+  Future<bool> checkActivityAvailable() async {
+    Response res = await _api.request('/api/v1/activity.json');
+    return res.data['hasActivityAvailable'];
   }
 
   void on(String eventName, Function callback) {
@@ -70,7 +77,6 @@ class Flourish {
         _callbacks[eventName] = this.onWebviewLoaded(callback);
         break;
       case 'notifications':
-        _callbacks[eventName] = this.listenFirestore(callback);
         break;
       default:
         throw Exception('Event not found');
@@ -104,12 +110,6 @@ class Flourish {
     });
   }
 
-  StreamSubscription<DocumentSnapshot> listenFirestore(Function callback) {
-    return this.firestoreManager.onNotification.listen((doc) {
-      callback(doc);
-    });
-  }
-
   Stream<Event> get onEvent {
     return eventManager.onEvent;
   }
@@ -118,11 +118,11 @@ class Flourish {
     return this._webviewContainer;
   }
 
-  String _getUrl() {
-    switch (this.environment) {
+  String _getUrl(Environment env) {
+    switch (env) {
       case Environment.production:
         {
-          return "http://localhost:8080/";
+          return "http://bancosol-mvp.s3-website-us-east-1.amazonaws.com/";
         }
       // case Environment.development:
       //   {
@@ -135,7 +135,7 @@ class Flourish {
 
       default:
         {
-          return "http://localhost:8080/";
+          return "http://bancosol-mvp.s3-website-us-east-1.amazonaws.com/";
         }
     }
   }
