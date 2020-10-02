@@ -10,7 +10,7 @@ class WebviewContainer extends StatefulWidget {
   WebviewContainer({
     Key key,
     this.environment,
-    this.apiKey,
+    this.partnerId,
     this.secret,
     this.userId,
     this.sessionId,
@@ -20,7 +20,7 @@ class WebviewContainer extends StatefulWidget {
   final WebviewContainerState _wcs = new WebviewContainerState();
 
   final Environment environment;
-  final String apiKey;
+  final String partnerId;
   final String secret;
   final String userId;
   final String sessionId;
@@ -39,7 +39,7 @@ class WebviewContainerState extends State<WebviewContainer> {
 
   void loadUrl(String url) {
     this._controller.loadUrl(url, headers: {
-      "x-flourish-api-key": widget.apiKey,
+      "x-flourish-partner-key": widget.partnerId,
       "x-flourish-external-user-id": widget.userId,
       "x-flourish-external-session-id": widget.sessionId,
       "Authorization":

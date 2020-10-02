@@ -13,7 +13,7 @@ class Flourish {
   Environment environment;
   String _url;
   Dio _api;
-  String apiKey;
+  String partnerId;
   String secret;
   String userId;
   String sessionId;
@@ -27,17 +27,17 @@ class Flourish {
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
 
-  Flourish._(this.apiKey, this.environment) {
+  Flourish._(this.partnerId, this.environment) {
     _url = this._getUrl(this.environment);
     _api = Dio(BaseOptions(baseUrl: this._url));
   }
 
   factory Flourish.initialize({
-    @required String apiKey,
+    @required String partnerId,
     @required String secret,
     Environment env = Environment.production,
   }) {
-    return Flourish._(apiKey, env);
+    return Flourish._(partnerId, env);
   }
 
   Future<String> authenticate({
@@ -107,15 +107,15 @@ class Flourish {
     return eventManager.onEvent;
   }
 
-  WebviewContainer dashboard() {
-    this._openDashboard();
+  WebviewContainer home() {
+    this._openHome();
     return this._webviewContainer;
   }
 
-  void _openDashboard() {
+  void _openHome() {
     this._webviewContainer = new WebviewContainer(
         environment: this.environment,
-        apiKey: this.apiKey,
+        partnerId: this.partnerId,
         secret: this.secret,
         userId: this.userId,
         sessionId: this.sessionId,

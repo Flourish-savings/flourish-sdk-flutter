@@ -1,5 +1,4 @@
 import 'package:flourish_flutter_sdk/environment_enum.dart';
-import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk_example/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
@@ -9,17 +8,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   Flourish flourish = Flourish.initialize(
-    apiKey: '34b53d94-5d35-4b50-99ab-9a7c650b5111',
+    partnerId: '34b53d94-5d35-4b50-99ab-9a7c650b5111',
     secret: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCY',
     env: Environment.production,
   );
 
-  flourish.on('points_earned', (PointsEarnedEvent e) {
-    print('points_earned: $e');
-  });
-  flourish.on('webview_loaded', (WebviewLoadedEvent e) {
-    print('webview_loaded: $e');
-  });
   flourish.on('notifications', (doc) {
     if (doc != null) {
       print(doc.data()['hasNotificationAvailable']);
@@ -29,7 +22,7 @@ void main() async {
   /// Sometime later when the user perform the login
   await flourish.authenticate(
     userId: 'u123',
-    sessionId: 'b4f6345ab3',
+    sessionId: 'b4f6345ab3', // TODO: Review if we gonna use it!!
   );
 
   runApp(

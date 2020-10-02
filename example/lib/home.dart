@@ -114,7 +114,7 @@ class _HomeState extends State<Home> {
           Provider.of<Flourish>(
             context,
             listen: false,
-          ).dashboard(),
+          ).home(),
         ],
       ),
       drawer: Drawer(
