@@ -14,8 +14,9 @@ class Flourish {
   String _url;
   Dio _api;
   String apiKey;
+  String secret;
   String userId;
-  String secretKey;
+  String sessionId;
   WebviewContainer _webviewContainer;
 
   Map<String, StreamSubscription> _callbacks = {
@@ -33,6 +34,7 @@ class Flourish {
 
   factory Flourish.initialize({
     @required String apiKey,
+    @required String secret,
     Environment env = Environment.production,
   }) {
     return Flourish._(apiKey, env);
@@ -40,27 +42,18 @@ class Flourish {
 
   Future<String> authenticate({
     @required String userId,
-    @required String secretKey,
+    @required String sessionId,
   }) async {
+    // TODO: Call Flourish backend to authenticate
+    // We should inform the apiKey, userId and sessionId (if we decide to use it)
+    // Nice to have: We could encrypt or generate a signature using the secret value
+    // If the backend return ok. We are authenticated and the backend should return a JWT token
+    // to our API
+
+    // and finally we should start the polling process checking for notifications
+    // e.g. GET /api/v1/notifications
+    // and if there are notification we notify via de notify method
     return 'key';
-  }
-
-  Future<String> authenticateAndOpenDashboard({
-    @required String userId,
-    @required String secretKey,
-  }) async {
-    String key = await this.authenticate(userId: userId, secretKey: secretKey);
-    this.openDashboard(authenticationKey: key);
-    return key;
-  }
-
-  void openDashboard({
-    @required String authenticationKey,
-  }) {
-    this._webviewContainer = new WebviewContainer(
-        url: this._url,
-        authenticationKey: authenticationKey,
-        eventManager: eventManager);
   }
 
   Future<bool> checkActivityAvailable() async {
@@ -114,30 +107,19 @@ class Flourish {
     return eventManager.onEvent;
   }
 
-  WebviewContainer webviewContainer() {
+  WebviewContainer dashboard() {
+    this._openDashboard();
     return this._webviewContainer;
   }
 
-  String _getUrl(Environment env) {
-    switch (env) {
-      case Environment.production:
-        {
-          return "http://bancosol-mvp.s3-website-us-east-1.amazonaws.com/";
-        }
-      // case Environment.development:
-      //   {
-      //     return "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
-      //   }
-      // case Environment.staging:
-      //   {
-      //     return "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
-      //   }
-
-      default:
-        {
-          return "http://bancosol-mvp.s3-website-us-east-1.amazonaws.com/";
-        }
-    }
+  void _openDashboard() {
+    this._webviewContainer = new WebviewContainer(
+        environment: this.environment,
+        apiKey: this.apiKey,
+        secret: this.secret,
+        userId: this.userId,
+        sessionId: this.sessionId,
+        eventManager: this.eventManager);
   }
 
   static Future<String> get platformVersion async {

@@ -9,11 +9,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   Flourish flourish = Flourish.initialize(
-    apiKey: '',
+    apiKey: '34b53d94-5d35-4b50-99ab-9a7c650b5111',
+    secret: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCY',
     env: Environment.production,
   );
-  await flourish.authenticateAndOpenDashboard(
-      userId: 'z4vWWiOXrmMvl70URIPR', secretKey: 'b');
+
   flourish.on('points_earned', (PointsEarnedEvent e) {
     print('points_earned: $e');
   });
@@ -25,6 +25,13 @@ void main() async {
       print(doc.data()['hasNotificationAvailable']);
     }
   });
+
+  /// Sometime later when the user perform the login
+  await flourish.authenticate(
+    userId: 'u123',
+    sessionId: 'b4f6345ab3',
+  );
+
   runApp(
     MultiProvider(
       providers: [

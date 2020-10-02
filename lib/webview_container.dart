@@ -1,20 +1,29 @@
 import 'dart:convert';
 
+import 'package:flourish_flutter_sdk/environment_enum.dart';
 import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk/event_manager.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
 
 class WebviewContainer extends StatefulWidget {
-  WebviewContainer(
-      {Key key, this.authenticationKey, this.url, this.eventManager})
-      : super(key: key);
+  WebviewContainer({
+    Key key,
+    this.environment,
+    this.apiKey,
+    this.secret,
+    this.userId,
+    this.sessionId,
+    this.eventManager,
+  }) : super(key: key);
 
   final WebviewContainerState _wcs = new WebviewContainerState();
 
-  // final String title;
-  final String url;
-  final String authenticationKey;
+  final Environment environment;
+  final String apiKey;
+  final String secret;
+  final String userId;
+  final String sessionId;
   final EventManager eventManager;
 
   void loadUrl(String url) {
@@ -29,7 +38,13 @@ class WebviewContainerState extends State<WebviewContainer> {
   WebViewController _controller;
 
   void loadUrl(String url) {
-    this._controller.loadUrl(url);
+    this._controller.loadUrl(url, headers: {
+      "x-flourish-api-key": widget.apiKey,
+      "x-flourish-external-user-id": widget.userId,
+      "x-flourish-external-session-id": widget.sessionId,
+      "Authorization":
+          'Basic AXVubzpwQDU1dzByYM==', // this is our JTW (Flourish) that we got from the authentication process
+    });
   }
 
   @override
@@ -39,7 +54,7 @@ class WebviewContainerState extends State<WebviewContainer> {
       child: SafeArea(
         top: true,
         child: WebView(
-          initialUrl: widget.url,
+          initialUrl: _getUrl(widget.environment),
           debuggingEnabled: true,
           onWebResourceError: (error) {
             print(error.description);
@@ -67,6 +82,29 @@ class WebviewContainerState extends State<WebviewContainer> {
         ),
       ),
     );
+  }
+
+  String _getUrl(Environment env) {
+    switch (env) {
+      case Environment.production:
+        {
+          // return http://api.flourish.com/v1/dashboard
+          return "http://bancosol-mvp.s3-website-us-east-1.amazonaws.com/";
+        }
+      // case Environment.development:
+      //   {
+      //     return "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
+      //   }
+      // case Environment.staging:
+      //   {
+      //     return "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
+      //   }
+
+      default:
+        {
+          return "http://bancosol-mvp.s3-website-us-east-1.amazonaws.com/";
+        }
+    }
   }
 
   void _notify(Event event) {
