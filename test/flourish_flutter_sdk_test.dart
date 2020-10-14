@@ -1,3 +1,4 @@
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   // Flourish flourish;
@@ -13,12 +14,12 @@ void main() {
   //   flourish = null;
   // });
 
-  // test('certify that the webview is not initialized before auth', () async {
-  //   expect(
-  //     flourish.webviewContainer(),
-  //     isNull,
-  //   );
-  // });
+  test('certify that the webview is not initialized before auth', () async {
+    // expect(
+    //   flourish.webviewContainer(),
+    //   isNull,
+    // );
+  });
 
   // test('authenticate the client', () async {
   //   expect(
