@@ -1,11 +1,12 @@
 import 'package:flourish_flutter_sdk/environment_enum.dart';
-import 'package:flourish_flutter_sdk_example/home.dart';
+import 'package:flourish_flutter_sdk_example/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  bool hasNotification = false;
 
   Flourish flourish = Flourish.initialize(
     partnerId: '34b53d94-5d35-4b50-99ab-9a7c650b5111',
@@ -14,21 +15,18 @@ void main() async {
   );
 
   flourish.on('notifications', (doc) {
-    if (doc != null) {
-      print(doc.data()['hasNotificationAvailable']);
-    }
+    hasNotification = true;
   });
-
-  /// Sometime later when the user perform the login
-  await flourish.authenticate(
-    userId: 'u123',
-    sessionId: 'b4f6345ab3', // TODO: Review if we gonna use it!!
-  );
 
   runApp(
     MultiProvider(
       providers: [
-        Provider<Flourish>.value(value: flourish),
+        Provider<Flourish>.value(
+          value: flourish,
+        ),
+        Provider<bool>.value(
+          value: hasNotification,
+        )
       ],
       child: MyApp(),
     ),
@@ -67,9 +65,7 @@ class _MyAppState extends State<MyApp> {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Home(
-        title: 'Activities',
-      ),
+      home: Login(),
     );
   }
 }

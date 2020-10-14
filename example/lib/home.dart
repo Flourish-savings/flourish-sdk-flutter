@@ -16,32 +16,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    Provider.of<Flourish>(
-      context,
-      listen: false,
-    ).checkActivityAvailable().then((bool availableActivity) {
-      if (availableActivity) {
-        Widget okButton = FlatButton(
-          child: Text("OK"),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        );
-        AlertDialog alert = AlertDialog(
-          title: Text("Hola!"),
-          content: Text("Actividad disponible en la seccion de recompensas"),
-          actions: [
-            okButton,
-          ],
-        );
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return alert;
-          },
-        );
-      }
-    });
   }
 
   void _onItemTapped(int index) {

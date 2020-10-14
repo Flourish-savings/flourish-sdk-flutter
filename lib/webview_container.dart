@@ -10,20 +10,16 @@ class WebviewContainer extends StatefulWidget {
   WebviewContainer({
     Key key,
     this.environment,
-    this.partnerId,
-    this.secret,
+    this.apiToken,
     this.userId,
-    this.sessionId,
     this.eventManager,
   }) : super(key: key);
 
   final WebviewContainerState _wcs = new WebviewContainerState();
 
   final Environment environment;
-  final String partnerId;
-  final String secret;
+  final String apiToken;
   final String userId;
-  final String sessionId;
   final EventManager eventManager;
 
   void loadUrl(String url) {
@@ -38,13 +34,14 @@ class WebviewContainerState extends State<WebviewContainer> {
   WebViewController _controller;
 
   void loadUrl(String url) {
-    this._controller.loadUrl(url, headers: {
-      "x-flourish-partner-key": widget.partnerId,
-      "x-flourish-external-user-id": widget.userId,
-      "x-flourish-external-session-id": widget.sessionId,
-      "Authorization":
-          'Basic AXVubzpwQDU1dzByYM==', // this is our JTW (Flourish) that we got from the authentication process
-    });
+    this._controller.loadUrl(url);
+    // this._controller.loadUrl(url, headers: {
+    //   "x-flourish-partner-key": widget.partnerId,
+    //   "x-flourish-external-user-id": widget.userId,
+    //   "x-flourish-external-session-id": widget.sessionId,
+    //   "Authorization":
+    //       'Basic AXVubzpwQDU1dzByYM==', // this is our JTW (Flourish) that we got from the authentication process
+    // });
   }
 
   @override
@@ -54,7 +51,7 @@ class WebviewContainerState extends State<WebviewContainer> {
       child: SafeArea(
         top: true,
         child: WebView(
-          initialUrl: _getUrl(widget.environment),
+          initialUrl: "${_getUrl(widget.environment)}?token=${widget.apiToken}&code=${widget.userId}",
           debuggingEnabled: true,
           onWebResourceError: (error) {
             print(error.description);
