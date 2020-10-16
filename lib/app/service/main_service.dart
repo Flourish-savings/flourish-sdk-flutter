@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 class MainService {
   Dio _api = Dio(
-    BaseOptions(baseUrl: "https://flourish-bknd.herokuapp.com/api/v1/"),
+    BaseOptions(baseUrl: "https://staging-api-flourish.herokuapp.com/api/v1/"),
   );
 
   Future<String> authenticate(int clientId, String clientSecret) async {
