@@ -137,7 +137,7 @@ class _LoginState extends State<Login> {
             listen: false,
           )
               .authenticate(
-            userId: 'u123',
+            userId: '123',
             sessionId: 'b4f6345ab3', // TODO: Review if we gonna use it!!
           )
               .then((value) {

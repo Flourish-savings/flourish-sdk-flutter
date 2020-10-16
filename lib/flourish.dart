@@ -47,6 +47,7 @@ class Flourish {
       1,
       "95380d599062bce7879ea32e89dbc1d3",
     );
+    this.userId = userId;
     print(_token);
     // TODO: Call Flourish backend to authenticate
     // We should inform the apiKey, userId and sessionId (if we decide to use it)
