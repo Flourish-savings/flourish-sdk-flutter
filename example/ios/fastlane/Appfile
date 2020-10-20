@@ -1,0 +1,9 @@
+app_identifier("com.flourishsavings.bancosol.poc") # The bundle identifier of your app
+apple_id("flourishsavings@icloud.com") # Your Apple email address
+package_name("com.flourishsavings.bancosol.poc")
+
+itc_team_id("119328090") # App Store Connect Team ID
+team_id("7QZM22RD38") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
