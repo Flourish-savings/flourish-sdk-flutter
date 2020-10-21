@@ -11,7 +11,7 @@ void main() async {
   Flourish flourish = Flourish.initialize(
     partnerId: '34b53d94-5d35-4b50-99ab-9a7c650b5111',
     secret: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCY',
-    env: Environment.production,
+    env: Environment.staging,
   );
 
   flourish.on('notifications', (doc) {

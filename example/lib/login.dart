@@ -135,12 +135,7 @@ class _LoginState extends State<Login> {
           Provider.of<Flourish>(
             context,
             listen: false,
-          )
-              .authenticate(
-            userId: '123',
-            sessionId: 'b4f6345ab3', // TODO: Review if we gonna use it!!
-          )
-              .then((value) {
+          ).authenticate(userId: '1234').then((value) {
             Navigator.push(
               context,
               MaterialPageRoute(
