@@ -15,12 +15,12 @@ This plugin can be run in two different environments:
 
 ## How to install
 
-To install please add the plugin as a dependency in your file pubsec.yaml as follows:
+To install the last officially released version please add the plugin as a dependency in your file pubsec.yaml as follows:
 ```
  flourish_flutter_sdk:
     git:
       url: git://github.com/Flourish-savings/flourish_flutter_sdk.git
-      ref: v0.0.2
+      ref: ^1.0.0
 ```
 The current stable version of the plugin is v0.0.2, at the moment you will need to update the plugin according to the most updated release version. You can see the releases in this page https://github.com/Flourish-savings/flourish_flutter_sdk/releases. This will change in the future because this plugin is going to be published in https://pub.dev/
 
