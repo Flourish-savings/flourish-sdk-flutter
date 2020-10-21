@@ -20,9 +20,9 @@ To install the last officially released version please add the plugin as a depen
  flourish_flutter_sdk:
     git:
       url: git://github.com/Flourish-savings/flourish_flutter_sdk.git
-      ref: ^1.0.0
+      ref: 1.0.0
 ```
-The current stable version of the plugin is v0.0.2, at the moment you will need to update the plugin according to the most updated release version. You can see the releases in this page https://github.com/Flourish-savings/flourish_flutter_sdk/releases. This will change in the future because this plugin is going to be published in https://pub.dev/
+The current stable version of the plugin is 1.0.0, at the moment you will need to update the plugin according to the most updated release version. You can see the releases in this page https://github.com/Flourish-savings/flourish_flutter_sdk/releases. 
 
 ## Initializing the  SDK
 
