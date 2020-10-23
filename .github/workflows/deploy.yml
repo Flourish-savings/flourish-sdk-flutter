@@ -21,15 +21,15 @@ jobs:
         flutter pub get
         cd ./ios && pod install
     - name: Setup SSH Keys and known_hosts for fastlane match
-        run: |
-          SSH_PATH="$HOME/.ssh"
-          mkdir -p "$SSH_PATH"
-          touch "$SSH_PATH/known_hosts"    chmod 700 "$SSH_PATH"
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          chmod 600 "$SSH_PATH/known_hosts"
-          chmod 600 "$SSH_PATH/id_rsa"
+      run: |
+        SSH_PATH="$HOME/.ssh"
+        mkdir -p "$SSH_PATH"
+        touch "$SSH_PATH/known_hosts"    chmod 700 "$SSH_PATH"
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+        chmod 600 "$SSH_PATH/known_hosts"
+        chmod 600 "$SSH_PATH/id_rsa"
     - name: Deploy to TestFlight
-          working-directory: example
+        working-directory: example
       run: |
         cd ./ios && bundle exec fastlane beta
       env:
