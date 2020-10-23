@@ -9,8 +9,6 @@ app_identifier(["com.flourishsavings.bancosol.poc"])
 team_id('7QZM22RD38')
 team_name('Flourish Savings, Inc')
 
-git_private_key(ENV["ACTIONS_DEPLOY_KEY"])
-
 # For all available options run `fastlane match --help`
 # Remove the # in the beginning of the line to enable the other options
 
