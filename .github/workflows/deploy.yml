@@ -32,13 +32,12 @@ jobs:
           chmod 600 "$SSH_PATH/known_hosts"
           chmod 600 "$SSH_PATH/id_rsa"
       - name: Deploy to TestFlight
-        uses: maierj/fastlane-action@v1.4.0
-        env:
-          PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+        uses: maierj/fastlane-action@v1.4.0          
         with:
           lane: 'beta'
           subdirectory: 'example/ios'
         env:
+          PRIVATE_KEY: ${{ secrets.SSH_KEY }}
           TEAM_ID: ${{ secrets.TEAM_ID }}
           ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
           FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
