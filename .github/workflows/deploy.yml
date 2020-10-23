@@ -32,9 +32,11 @@ jobs:
           chmod 600 "$SSH_PATH/known_hosts"
           chmod 600 "$SSH_PATH/id_rsa"
       - name: Deploy to TestFlight
-        working-directory: example
-        run: |
-          cd ./ios && bundle exec fastlane beta
+        uses: maierj/fastlane-action@v1.4.0
+        with:
+          lane: 'beta'
+          subdirectory: 'ios'
+          working-directory: example
         env:
           TEAM_ID: ${{ secrets.TEAM_ID }}
           ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
