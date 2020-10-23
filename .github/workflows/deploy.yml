@@ -29,7 +29,7 @@ jobs:
         chmod 600 "$SSH_PATH/known_hosts"
         chmod 600 "$SSH_PATH/id_rsa"
     - name: Deploy to TestFlight
-        working-directory: example
+      working-directory: example
       run: |
         cd ./ios && bundle exec fastlane beta
       env:
