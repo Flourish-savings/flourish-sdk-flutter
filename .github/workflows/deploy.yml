@@ -12,10 +12,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup flutter
       uses: subosito/flutter-action@v1
-      working-directory: example
       with:
         flutter-version: "1.17.0"
-        channel: "stable"- name: Install tools
+        channel: "stable"
+    - name: Install tools
+      working-directory: example
       run: |
         flutter pub get
         cd ./ios && pod install
