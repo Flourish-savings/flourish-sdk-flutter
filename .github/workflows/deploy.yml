@@ -33,6 +33,8 @@ jobs:
           chmod 600 "$SSH_PATH/id_rsa"
       - name: Deploy to TestFlight
         uses: maierj/fastlane-action@v1.4.0
+        env:
+          PRIVATE_KEY: ${{ secrets.SSH_KEY }}
         with:
           lane: 'beta'
           subdirectory: 'example/ios'
