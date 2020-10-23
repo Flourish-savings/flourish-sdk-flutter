@@ -33,10 +33,9 @@ jobs:
           chmod 600 "$SSH_PATH/id_rsa"
       - name: Deploy to TestFlight
         uses: maierj/fastlane-action@v1.4.0
-        working-directory: example
         with:
           lane: 'beta'
-          subdirectory: 'ios'
+          subdirectory: 'example/ios'
         env:
           TEAM_ID: ${{ secrets.TEAM_ID }}
           ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
