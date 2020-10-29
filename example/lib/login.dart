@@ -135,13 +135,15 @@ class _LoginState extends State<Login> {
           Provider.of<Flourish>(
             context,
             listen: false,
-          ).authenticate(userId: '1234').then((value) {
+          ).authenticate(userId: '123').then((value) {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => Home(title: "Activities"),
               ),
             );
+          }).catchError((er) {
+            print(er);
           });
         },
         padding: EdgeInsets.all(15.0),

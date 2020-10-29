@@ -44,7 +44,7 @@ class Flourish {
     @required String sessionId,
   }) async {
     _token = await _service.authenticate(
-      1,
+      "b5098ffb-2a4b-41cf-b78e-ef521a3e89ae",
       "95380d599062bce7879ea32e89dbc1d3",
     );
     this.userId = userId;
