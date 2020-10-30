@@ -12,6 +12,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _rememberMe = false;
+  final myController = TextEditingController();
 
   Widget _buildEmailTF() {
     return Column(
@@ -42,6 +43,7 @@ class _LoginState extends State<Login> {
               hintText: 'Enter your Email',
               hintStyle: kHintTextStyle,
             ),
+            controller: myController,
           ),
         ),
       ],
@@ -132,10 +134,11 @@ class _LoginState extends State<Login> {
         elevation: 5.0,
         onPressed: () {
           print('Login Button Pressed');
+          print(myController.text);
           Provider.of<Flourish>(
             context,
             listen: false,
-          ).authenticate(userId: '123').then((value) {
+          ).authenticate(userId: myController.text).then((value) {
             Navigator.push(
               context,
               MaterialPageRoute(
