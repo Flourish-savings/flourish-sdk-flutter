@@ -14,8 +14,7 @@ class Flourish {
   Environment environment;
   String partnerId;
   String secret;
-  String userId;
-  String sessionId;
+  String customerCode;
   WebviewContainer _webviewContainer;
   Timer _notificationsPoll;
   String _token;
@@ -39,18 +38,16 @@ class Flourish {
     return Flourish._(partnerId, env);
   }
 
-  Future<String> authenticate({
-    @required String userId,
-    @required String sessionId,
-  }) async {
+  Future<String> authenticate({@required String customerCode}) async {
+    this.customerCode = customerCode;
     _token = await _service.authenticate(
       "b5098ffb-2a4b-41cf-b78e-ef521a3e89ae",
       "95380d599062bce7879ea32e89dbc1d3",
     );
-    this.userId = userId;
+
     print(_token);
     // TODO: Call Flourish backend to authenticate
-    // We should inform the apiKey, userId and sessionId (if we decide to use it)
+    // We should inform the apiKey, customerCode and sessionId (if we decide to use it)
     // Nice to have: We could encrypt or generate a signature using the secret value
     // If the backend return ok. We are authenticated and the backend should return a JWT token
     // to our API
@@ -60,6 +57,19 @@ class Flourish {
     // e.g. GET /api/v1/notifications
     // and if there are notification we notify via de notify method
     return _token;
+  }
+
+  Future<bool> signIn() async {
+    try {
+      await _service.signIn(customerCode);
+      return true;
+    } on DioError catch (e) {
+      print(e.message);
+      eventManager.notify(
+        ErrorEvent('FAILED_TO_SIGN_IN', e.message),
+      );
+      return false;
+    }
   }
 
   void checkActivityAvailable() async {
@@ -151,10 +161,11 @@ class Flourish {
   }
 
   void _openHome() {
+    this.signIn();
     this._webviewContainer = new WebviewContainer(
       environment: this.environment,
       apiToken: _token,
-      userId: userId,
+      customerCode: customerCode,
       eventManager: this.eventManager,
     );
   }

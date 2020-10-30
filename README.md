@@ -42,11 +42,11 @@ You should also allow the plugin to communicate the notifications that we need t
   });
 ```
 
-##  Authentification with the userId
-`userId` is the element that identifies the final user of the bank, the person who is the client of the bank. Regarding what this element is called in your system you need to pass this information to the plugin via the authenticate method.  
+##  Authentification with the customerCode
+`customerCode` is the element that identifies the final user of the bank, the person who is the client of the bank. Regarding what this element is called in your system you need to pass this information to the plugin via the authenticate method.  
 
 ```
-  flourish.authenticate(userId: '123').then((value) {
+  flourish.authenticate(customerCode: '123').then((value) {
     // apply other logic here
   });
 ```
@@ -66,7 +66,7 @@ After a successful rendering, you should see something like this.
 
 ## Demo of the app 
 
-Under this demo, in the `example` folder, you can see an implementation of this pluging running in a real application for Android and iOS, You can see how this is implemented, the parnerId, secret and userId are fake.
+Under this demo, in the `example` folder, you can see an implementation of this pluging running in a real application for Android and iOS, You can see how this is implemented, the parnerId, secret and customerCode are fake.
 
 
 

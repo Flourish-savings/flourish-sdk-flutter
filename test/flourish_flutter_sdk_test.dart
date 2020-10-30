@@ -24,7 +24,7 @@ void main() {
   // test('authenticate the client', () async {
   //   expect(
   //     await flourish.authenticate(
-  //       userId: 'id',
+  //       customerCode: 'id',
   //       secretKey: 'random_string',
   //     ),
   //     'key',
@@ -33,7 +33,7 @@ void main() {
 
   // test('authenticate the client and open the dasboard', () async {
   //   await flourish.authenticateAndOpenDashboard(
-  //     userId: 'id',
+  //     customerCode: 'id',
   //     secretKey: 'random_string',
   //   );
   //   expect(flourish.webviewContainer(), isNotNull);

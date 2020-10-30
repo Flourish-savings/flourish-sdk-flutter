@@ -138,7 +138,7 @@ class _LoginState extends State<Login> {
           Provider.of<Flourish>(
             context,
             listen: false,
-          ).authenticate(userId: myController.text).then((value) {
+          ).authenticate(customerCode: myController.text).then((value) {
             Navigator.push(
               context,
               MaterialPageRoute(

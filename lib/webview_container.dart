@@ -11,7 +11,7 @@ class WebviewContainer extends StatefulWidget {
     Key key,
     this.environment,
     this.apiToken,
-    this.userId,
+    this.customerCode,
     this.eventManager,
   }) : super(key: key);
 
@@ -19,7 +19,7 @@ class WebviewContainer extends StatefulWidget {
 
   final Environment environment;
   final String apiToken;
-  final String userId;
+  final String customerCode;
   final EventManager eventManager;
 
   void loadUrl(String url) {
@@ -37,7 +37,7 @@ class WebviewContainerState extends State<WebviewContainer> {
     this._controller.loadUrl(url);
     // this._controller.loadUrl(url, headers: {
     //   "x-flourish-partner-key": widget.partnerId,
-    //   "x-flourish-external-user-id": widget.userId,
+    //   "x-flourish-external-user-id": widget.customerCode,
     //   "x-flourish-external-session-id": widget.sessionId,
     //   "Authorization":
     //       'Basic AXVubzpwQDU1dzByYM==', // this is our JTW (Flourish) that we got from the authentication process
@@ -51,7 +51,7 @@ class WebviewContainerState extends State<WebviewContainer> {
       child: SafeArea(
         top: true,
         child: WebView(
-          initialUrl: "${_getUrl(widget.environment)}?token=${widget.apiToken}&code=${widget.userId}",
+          initialUrl: "${_getUrl(widget.environment)}?token=${widget.apiToken}&code=${widget.customerCode}",
           debuggingEnabled: true,
           onWebResourceError: (error) {
             print(error.description);
