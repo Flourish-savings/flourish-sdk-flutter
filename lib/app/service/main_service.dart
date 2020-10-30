@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 class MainService {
   Dio _api = Dio(
-    BaseOptions(baseUrl: "https://staging-api-flourish.herokuapp.com/api/v1"),
+    BaseOptions(baseUrl: "http://54.162.136.179:3000/api/v1"),
   );
 
   String _token;
@@ -19,7 +19,6 @@ class MainService {
       _token = res.data['access_token'];
       return _token;
     } on DioError catch (e) {
-      print(e);
       throw e;
     }
   }
@@ -33,7 +32,7 @@ class MainService {
         },
         options: Options(
           headers: {
-            "Authorization": _token, // set content-length
+            "Authorization": "Bearer $_token", // set content-length
           },
         ),
       );
