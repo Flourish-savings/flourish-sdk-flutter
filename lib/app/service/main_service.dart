@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 class MainService {
   Dio _api = Dio(
-    BaseOptions(baseUrl: "http://54.162.136.179:3000/api/v1"),
+    BaseOptions(baseUrl: "https://staging.flourishsavings.com/api/v1"),
   );
 
   String _token;
