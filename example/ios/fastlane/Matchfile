@@ -1,4 +1,4 @@
-git_url("git@github.com:Flourish-savings/flourish_match.git")
+git_url("https://github.com/Flourish-savings/flourish_match.git")
 
 storage_mode("git")
 
