@@ -45,14 +45,16 @@ class Flourish {
       "95380d599062bce7879ea32e89dbc1d3",
     );
 
+    await signIn();
+    checkActivityAvailable();
+    startPollingNotifications();
+
     print(_token);
     // TODO: Call Flourish backend to authenticate
     // We should inform the apiKey, customerCode and sessionId (if we decide to use it)
     // Nice to have: We could encrypt or generate a signature using the secret value
     // If the backend return ok. We are authenticated and the backend should return a JWT token
     // to our API
-    checkActivityAvailable();
-    startPollingNotifications();
     // and finally we should start the polling process checking for notifications
     // e.g. GET /api/v1/notifications
     // and if there are notification we notify via de notify method
@@ -75,7 +77,7 @@ class Flourish {
   void checkActivityAvailable() async {
     bool res = false;
     try {
-      res = await _service.checkForNotifications();
+      res = await _service.checkForNotifications(customerCode);
     } on DioError catch (e) {
       print(e.message);
       eventManager.notify(
@@ -83,11 +85,7 @@ class Flourish {
       );
     }
 
-    if (res) {
-      eventManager.notify(NotificationAvailable());
-    }
-    // Response res = await _api.request('/api/v1/activity.json');
-    // return res.data['hasActivityAvailable'];
+    eventManager.notify(NotificationAvailable(hasNotificationAvailable: res));
   }
 
   void startPollingNotifications() async {
@@ -110,6 +108,12 @@ class Flourish {
         break;
       case 'notifications':
         _callbacks[eventName] = this.onNotification(callback);
+        break;
+      case 'go_to_savings':
+        _callbacks[eventName] = this.onGoToSavings(callback);
+        break;
+      case 'go_to_winners':
+        _callbacks[eventName] = this.onGoToWinners(callback);
         break;
       default:
         throw Exception('Event not found');
@@ -151,6 +155,22 @@ class Flourish {
     });
   }
 
+  StreamSubscription<Event> onGoToSavings(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is GoToSavingsEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> onGoToWinners(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is GoToWinners) {
+        callback(e);
+      }
+    });
+  }
+
   Stream<Event> get onEvent {
     return eventManager.onEvent;
   }
@@ -161,11 +181,10 @@ class Flourish {
   }
 
   void _openHome() {
-    this.signIn();
     this._webviewContainer = new WebviewContainer(
       environment: this.environment,
-      apiToken: _token,
-      customerCode: customerCode,
+      apiToken: this._token,
+      customerCode: this.customerCode,
       eventManager: this.eventManager,
     );
   }

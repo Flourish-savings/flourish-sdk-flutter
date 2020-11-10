@@ -43,9 +43,19 @@ class MainService {
     }
   }
 
-  Future<bool> checkForNotifications() async {
+  Future<bool> checkForNotifications(String customerCode) async {
     try {
-      Response res = await _api.get("/notifications");
+      Response res = await _api.get(
+        "/notifications",
+        queryParameters: {
+          "customer_code": customerCode,
+        },
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $_token", // set content-length
+          },
+        ),
+      );
       return res.data['notifications'];
     } on DioError catch (e) {
       throw e;

@@ -1,4 +1,5 @@
 import 'package:flourish_flutter_sdk/environment_enum.dart';
+import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk_example/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
@@ -14,8 +15,19 @@ void main() async {
     env: Environment.staging,
   );
 
-  flourish.on('notifications', (doc) {
-    hasNotification = true;
+  flourish.on('notifications', (NotificationAvailable response) {
+    print("hasNotificationAvailable: ${response.hasNotificationAvailable}");
+    hasNotification = response.hasNotificationAvailable;
+  });
+
+  flourish.on('go_to_savings', (Event response) {
+    // go to savings page
+    print("Go to savings");
+  });
+
+  flourish.on('go_to_winners', (Event response) {
+    // go to savings page
+    print("Go to winners");
   });
 
   runApp(

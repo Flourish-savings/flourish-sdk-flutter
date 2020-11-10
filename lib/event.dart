@@ -4,12 +4,18 @@ class Event {
   Event({@required this.type});
   final String type;
   static const String pointsEarned = 'points_earned';
+  static const String goToSavings = 'go_to_savings';
+  static const String goToWinners = 'go_to_winners';
 
   factory Event.fromJson(Map<String, dynamic> json) {
     final type = json['type'];
     switch (type) {
       case pointsEarned:
         return PointsEarnedEvent.from(json);
+      case goToSavings:
+        return GoToSavingsEvent();
+      case goToWinners:
+        return GoToWinners();
       default:
         throw Exception('Unsupported event type');
     }
@@ -39,8 +45,20 @@ class WebviewLoadedEvent extends Event {
   WebviewLoadedEvent() : super(type: 'webview_loaded');
 }
 
+class GoToSavingsEvent extends Event {
+  GoToSavingsEvent() : super(type: 'go_to_savings');
+}
+
+class GoToWinners extends Event {
+  GoToWinners() : super(type: 'go_to_winners');
+}
+
 class NotificationAvailable extends Event {
-  NotificationAvailable() : super(type: 'notification');
+  NotificationAvailable({
+    this.hasNotificationAvailable,
+  }) : super(type: 'notification');
+
+  final bool hasNotificationAvailable;
 }
 
 class ErrorEvent extends Event {

@@ -51,7 +51,8 @@ class WebviewContainerState extends State<WebviewContainer> {
       child: SafeArea(
         top: true,
         child: WebView(
-          initialUrl: "${_getUrl(widget.environment)}?token=${widget.apiToken}&code=${widget.customerCode}",
+          initialUrl:
+              "${_getUrl(widget.environment)}?token=${widget.apiToken}&code=${widget.customerCode}",
           debuggingEnabled: true,
           onWebResourceError: (error) {
             print(error.description);
