@@ -11,7 +11,6 @@ class WebviewContainer extends StatefulWidget {
     Key key,
     this.environment,
     this.apiToken,
-    this.customerCode,
     this.eventManager,
   }) : super(key: key);
 
@@ -19,7 +18,6 @@ class WebviewContainer extends StatefulWidget {
 
   final Environment environment;
   final String apiToken;
-  final String customerCode;
   final EventManager eventManager;
 
   void loadUrl(String url) {
@@ -52,7 +50,7 @@ class WebviewContainerState extends State<WebviewContainer> {
         top: true,
         child: WebView(
           initialUrl:
-              "${_getUrl(widget.environment)}?token=${widget.apiToken}&code=${widget.customerCode}",
+              "${_getUrl(widget.environment)}?token=${widget.apiToken}",
           debuggingEnabled: true,
           onWebResourceError: (error) {
             print(error.description);
