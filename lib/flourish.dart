@@ -14,7 +14,6 @@ class Flourish {
   Environment environment;
   String partnerId;
   String secret;
-  String customerCode;
   WebviewContainer _webviewContainer;
   Timer _notificationsPoll;
   String _token;
@@ -28,8 +27,9 @@ class Flourish {
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
 
-  Flourish._(String partnerId, Environment env) {
+  Flourish._(String partnerId, String secret, Environment env) {
     this.partnerId = partnerId;
+    this.secret = secret;
     this.environment = env;
     this._service = MainService(env);
   }
@@ -39,12 +39,12 @@ class Flourish {
     @required String secret,
     Environment env = Environment.production,
   }) {
-    return Flourish._(partnerId, env);
+    return Flourish._(partnerId, secret, env);
   }
 
   Future<String> authenticate({@required String customerCode}) async {
-    this.customerCode = customerCode;
-    _token = await _service.authenticate(partnerId, secret, customerCode);
+    _token =
+        await _service.authenticate(this.partnerId, this.secret, customerCode);
 
     await signIn();
     checkActivityAvailable();
@@ -67,7 +67,6 @@ class Flourish {
       await _service.signIn();
       return true;
     } on DioError catch (e) {
-      print(e.message);
       eventManager.notify(
         ErrorEvent('FAILED_TO_SIGN_IN', e.message),
       );
@@ -80,7 +79,6 @@ class Flourish {
     try {
       res = await _service.checkForNotifications();
     } on DioError catch (e) {
-      print(e.message);
       eventManager.notify(
         ErrorEvent('FAILED_TO_RETRIEVE_NOTIFICATION', e.message),
       );
@@ -185,7 +183,6 @@ class Flourish {
     this._webviewContainer = new WebviewContainer(
       environment: this.environment,
       apiToken: this._token,
-      customerCode: this.customerCode,
       eventManager: this.eventManager,
     );
   }
