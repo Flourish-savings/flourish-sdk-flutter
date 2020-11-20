@@ -10,8 +10,8 @@ void main() async {
   bool hasNotification = false;
 
   Flourish flourish = Flourish.initialize(
-    partnerId: '34b53d94-5d35-4b50-99ab-9a7c650b5111',
-    secret: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCY',
+    partnerId: "b5098ffb-2a4b-41cf-b78e-ef521a3e89ae",
+    secret: "95380d599062bce7879ea32e89dbc1d3",
     env: Environment.staging,
   );
 

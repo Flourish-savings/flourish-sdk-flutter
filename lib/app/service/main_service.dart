@@ -1,19 +1,27 @@
 import 'package:dio/dio.dart';
+import 'package:flourish_flutter_sdk/environment_enum.dart';
 
 class MainService {
-  Dio _api = Dio(
-    BaseOptions(baseUrl: "https://staging.flourishsavings.com/api/v1"),
-  );
+  MainService(Environment env) {
+    this._api = Dio(
+      BaseOptions(
+        baseUrl: selectEnvironmentUrl(env),
+      ),
+    );
+  }
 
+  Dio _api;
   String _token;
 
-  Future<String> authenticate(String partnerId, String partnerSecret) async {
+  Future<String> authenticate(
+      String partnerId, String partnerSecret, String customerCode) async {
     try {
       Response res = await _api.post(
         '/access_token',
         data: {
           "partner_uuid": partnerId,
           "partner_secret": partnerSecret,
+          "customer_code": customerCode
         },
       );
       _token = res.data['access_token'];
@@ -23,13 +31,10 @@ class MainService {
     }
   }
 
-  Future<bool> signIn(String customerCode) async {
+  Future<bool> signIn() async {
     try {
       await _api.post(
         '/sign_in',
-        data: {
-          "customer_code": customerCode,
-        },
         options: Options(
           headers: {
             "Authorization": "Bearer $_token", // set content-length
@@ -43,13 +48,10 @@ class MainService {
     }
   }
 
-  Future<bool> checkForNotifications(String customerCode) async {
+  Future<bool> checkForNotifications() async {
     try {
       Response res = await _api.get(
         "/notifications",
-        queryParameters: {
-          "customer_code": customerCode,
-        },
         options: Options(
           headers: {
             "Authorization": "Bearer $_token", // set content-length
@@ -59,6 +61,16 @@ class MainService {
       return res.data['notifications'];
     } on DioError catch (e) {
       throw e;
+    }
+  }
+
+  String selectEnvironmentUrl(Environment env) {
+    switch (env) {
+      case Environment.production:
+        return "https://api.flourishsavings.com/api/v1";
+      case Environment.development:
+      case Environment.staging:
+        return "https://staging.flourishsavings.com/api/v1";
     }
   }
 }

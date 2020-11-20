@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 
 class Flourish {
   EventManager eventManager = new EventManager();
-  MainService _service = MainService();
+  MainService _service;
   Environment environment;
   String partnerId;
   String secret;
@@ -28,7 +28,11 @@ class Flourish {
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
 
-  Flourish._(this.partnerId, this.environment);
+  Flourish._(String partnerId, Environment env) {
+    this.partnerId = partnerId;
+    this.environment = env;
+    this._service = MainService(env);
+  }
 
   factory Flourish.initialize({
     @required String partnerId,
@@ -40,10 +44,7 @@ class Flourish {
 
   Future<String> authenticate({@required String customerCode}) async {
     this.customerCode = customerCode;
-    _token = await _service.authenticate(
-      "b5098ffb-2a4b-41cf-b78e-ef521a3e89ae",
-      "95380d599062bce7879ea32e89dbc1d3",
-    );
+    _token = await _service.authenticate(partnerId, secret, customerCode);
 
     await signIn();
     checkActivityAvailable();
@@ -63,7 +64,7 @@ class Flourish {
 
   Future<bool> signIn() async {
     try {
-      await _service.signIn(customerCode);
+      await _service.signIn();
       return true;
     } on DioError catch (e) {
       print(e.message);
@@ -77,7 +78,7 @@ class Flourish {
   void checkActivityAvailable() async {
     bool res = false;
     try {
-      res = await _service.checkForNotifications(customerCode);
+      res = await _service.checkForNotifications();
     } on DioError catch (e) {
       print(e.message);
       eventManager.notify(
