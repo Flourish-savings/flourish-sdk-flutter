@@ -25,7 +25,12 @@ jobs:
       - name: Run Tests
         run: flutter test
       - name: Build example app
-        run: flutter build apk
+        env:
+          PARTNER_ID: ${{ secrets.APP_PARTNER_ID }}
+          PARTNER_SECRET:  ${{ secrets.APP_PARTNER_SECRET }}
+        run: echo "PARTNER_ID=$PARTNER_ID" >> .env \ 
+             echo "PARTNER_SECRET=$PARTNER_SECRET" >> .env \
+             flutter build apk
         working-directory: example
       # - name: Upload Apk
       #   uses: actions/upload-artifact@master
