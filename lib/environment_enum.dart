@@ -1,1 +1,1 @@
-enum Environment { development, staging, production }
+enum Environment { development, staging, production, preproduction }

@@ -68,8 +68,12 @@ class MainService {
     switch (env) {
       case Environment.production:
         return "https://api.flourishsavings.com/api/v1";
+      case Environment.preproduction:
+        return "https://preproduction.flourishsavings.com/api/v1";
       case Environment.development:
       case Environment.staging:
+        return "https://staging.flourishsavings.com/api/v1";
+      default:
         return "https://staging.flourishsavings.com/api/v1";
     }
   }

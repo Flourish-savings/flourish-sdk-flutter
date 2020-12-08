@@ -49,8 +49,7 @@ class WebviewContainerState extends State<WebviewContainer> {
       child: SafeArea(
         top: true,
         child: WebView(
-          initialUrl:
-              "${_getUrl(widget.environment)}?token=${widget.apiToken}",
+          initialUrl: "${_getUrl(widget.environment)}?token=${widget.apiToken}",
           debuggingEnabled: true,
           onWebResourceError: (error) {
             print(error.description);
@@ -84,21 +83,23 @@ class WebviewContainerState extends State<WebviewContainer> {
     switch (env) {
       case Environment.production:
         {
-          // return http://api.flourish.com/v1/dashboard
-          return "http://bancosol-mvp.s3-website-us-east-1.amazonaws.com/";
+          return "https://dkcpfxodv482r.cloudfront.net/";
         }
-      // case Environment.development:
-      //   {
-      //     return "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
-      //   }
-      // case Environment.staging:
-      //   {
-      //     return "https://flourish-engine.herokuapp.com/webviews/dashboard/230";
-      //   }
-
+      case Environment.preproduction:
+        {
+          return "https://d1yku7yute1fiy.cloudfront.net/";
+        }
+      case Environment.staging:
+        {
+          return "https://d2hkfqbf7qz8b6.cloudfront.net/";
+        }
+      case Environment.development:
+        {
+          return "https://d2hkfqbf7qz8b6.cloudfront.net/";
+        }
       default:
         {
-          return "http://bancosol-mvp.s3-website-us-east-1.amazonaws.com/";
+          return "https://d2hkfqbf7qz8b6.cloudfront.net/";
         }
     }
   }
