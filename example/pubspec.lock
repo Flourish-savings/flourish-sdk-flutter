@@ -67,15 +67,24 @@ packages:
   flourish_flutter_sdk:
     dependency: "direct main"
     description:
-      path: ".."
-      relative: true
-    source: path
+      path: "."
+      ref: "3.0.0"
+      resolved-ref: cd5bfdb4f490eb09d46aad867d089bfe51d8d38c
+      url: "git://github.com/Flourish-savings/flourish_flutter_sdk.git"
+    source: git
     version: "0.0.1"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dotenv:
+    dependency: "direct main"
+    description:
+      name: flutter_dotenv
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter

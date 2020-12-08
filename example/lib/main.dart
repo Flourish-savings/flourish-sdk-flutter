@@ -4,14 +4,15 @@ import 'package:flourish_flutter_sdk_example/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+  await DotEnv().load('.env');
   WidgetsFlutterBinding.ensureInitialized();
   bool hasNotification = false;
-
   Flourish flourish = Flourish.initialize(
-    partnerId: "b5098ffb-2a4b-41cf-b78e-ef521a3e89ae",
-    secret: "95380d599062bce7879ea32e89dbc1d3",
+    partnerId: DotEnv().env['PARTNER_ID'],
+    secret: DotEnv().env['PARTNER_SECRET'],
     env: Environment.staging,
   );
 
