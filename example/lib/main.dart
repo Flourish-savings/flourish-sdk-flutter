@@ -13,7 +13,7 @@ void main() async {
   Flourish flourish = Flourish.initialize(
     partnerId: DotEnv().env['PARTNER_ID'],
     secret: DotEnv().env['PARTNER_SECRET'],
-    env: Environment.staging,
+    env: Environment.preproduction,
   );
 
   flourish.on('notifications', (NotificationAvailable response) {

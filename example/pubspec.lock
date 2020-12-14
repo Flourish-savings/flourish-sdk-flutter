@@ -68,8 +68,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "3.0.0"
-      resolved-ref: cd5bfdb4f490eb09d46aad867d089bfe51d8d38c
+      ref: "3.0.1"
+      resolved-ref: "78a23f9a3098af0611b01b3fa2cf502023d4415a"
       url: "git://github.com/Flourish-savings/flourish_flutter_sdk.git"
     source: git
     version: "0.0.1"

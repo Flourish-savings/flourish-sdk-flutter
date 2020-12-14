@@ -9,3 +9,4 @@ build/
 *.zip
 *.ipa
 .env
+example/*.env
