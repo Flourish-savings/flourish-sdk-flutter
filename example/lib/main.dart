@@ -7,12 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  await DotEnv().load('.env');
+  await dotenv.load(fileName: '.env');
   WidgetsFlutterBinding.ensureInitialized();
   bool hasNotification = false;
   Flourish flourish = Flourish.initialize(
-    partnerId: DotEnv().env['PARTNER_ID'],
-    secret: DotEnv().env['PARTNER_SECRET'],
+    partnerId: dotenv.env['PARTNER_ID'],
+    secret: dotenv.env['PARTNER_SECRET'],
     env: Environment.preproduction,
   );
 

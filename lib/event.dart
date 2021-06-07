@@ -1,7 +1,5 @@
-import 'package:flutter/foundation.dart';
-
 class Event {
-  Event({@required this.type});
+  Event({required this.type});
   final String type;
   static const String pointsEarned = 'points_earned';
   static const String goToSavings = 'go_to_savings';
@@ -23,11 +21,9 @@ class Event {
 }
 
 class PointsEarnedEvent extends Event {
-  PointsEarnedEvent({
-    this.amount,
-    this.newBalance,
-    this.when,
-  }) : super(type: 'points_earned');
+  PointsEarnedEvent(
+      {required this.amount, required this.newBalance, required this.when})
+      : super(type: 'points_earned');
 
   final double amount;
   final double newBalance;
@@ -55,7 +51,7 @@ class GoToWinners extends Event {
 
 class NotificationAvailable extends Event {
   NotificationAvailable({
-    this.hasNotificationAvailable,
+    this.hasNotificationAvailable = false,
   }) : super(type: 'notification');
 
   final bool hasNotificationAvailable;

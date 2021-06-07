@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 
 class WebviewContainer extends StatefulWidget {
   WebviewContainer({
-    Key key,
-    this.environment,
-    this.apiToken,
-    this.eventManager,
+    Key? key,
+    required this.environment,
+    required this.apiToken,
+    required this.eventManager,
   }) : super(key: key);
 
   final WebviewContainerState _wcs = new WebviewContainerState();
@@ -29,7 +29,7 @@ class WebviewContainer extends StatefulWidget {
 }
 
 class WebviewContainerState extends State<WebviewContainer> {
-  WebViewController _controller;
+  late WebViewController _controller;
 
   void loadUrl(String url) {
     this._controller.loadUrl(url);

@@ -2,6 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flourish_flutter_sdk/environment_enum.dart';
 
 class MainService {
+  Dio? _api;
+  String? _token;
+
   MainService(Environment env) {
     this._api = Dio(
       BaseOptions(
@@ -10,13 +13,10 @@ class MainService {
     );
   }
 
-  Dio _api;
-  String _token;
-
   Future<String> authenticate(
       String partnerId, String partnerSecret, String customerCode) async {
     try {
-      Response res = await _api.post(
+      Response res = await _api!.post(
         '/access_token',
         data: {
           "partner_uuid": partnerId,
@@ -25,7 +25,7 @@ class MainService {
         },
       );
       _token = res.data['access_token'];
-      return _token;
+      return _token!;
     } on DioError catch (e) {
       throw e;
     }
@@ -33,7 +33,7 @@ class MainService {
 
   Future<bool> signIn() async {
     try {
-      await _api.post(
+      await _api!.post(
         '/sign_in',
         options: Options(
           headers: {
@@ -50,7 +50,7 @@ class MainService {
 
   Future<bool> checkForNotifications() async {
     try {
-      Response res = await _api.get(
+      Response res = await _api!.get(
         "/notifications",
         options: Options(
           headers: {

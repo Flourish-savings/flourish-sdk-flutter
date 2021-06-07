@@ -6,19 +6,18 @@ import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk/event_manager.dart';
 import 'package:flourish_flutter_sdk/webview_container.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 class Flourish {
   EventManager eventManager = new EventManager();
-  MainService _service;
-  Environment environment;
-  String partnerId;
-  String secret;
-  WebviewContainer _webviewContainer;
-  Timer _notificationsPoll;
-  String _token;
+  late MainService _service;
+  late Environment environment;
+  late String partnerId;
+  late String secret;
+  late WebviewContainer _webviewContainer;
+  late Timer _notificationsPoll;
+  late String _token;
 
-  Map<String, StreamSubscription> _callbacks = {
+  Map<String, StreamSubscription<Event>?> _callbacks = {
     'points_earned': null,
     'webview_loaded': null,
     'notifications': null
@@ -35,14 +34,14 @@ class Flourish {
   }
 
   factory Flourish.initialize({
-    @required String partnerId,
-    @required String secret,
+    required String partnerId,
+    required String secret,
     Environment env = Environment.production,
   }) {
     return Flourish._(partnerId, secret, env);
   }
 
-  Future<String> authenticate({@required String customerCode}) async {
+  Future<String> authenticate({required String customerCode}) async {
     _token =
         await _service.authenticate(this.partnerId, this.secret, customerCode);
 
@@ -123,7 +122,7 @@ class Flourish {
     _getSubscription(eventName)?.cancel();
   }
 
-  StreamSubscription<Event> _getSubscription(String eventName) {
+  StreamSubscription<Event>? _getSubscription(String eventName) {
     if (_callbacks.containsKey(eventName)) {
       return _callbacks[eventName];
     }

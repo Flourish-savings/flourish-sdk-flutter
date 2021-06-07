@@ -39,19 +39,19 @@ class _HomeState extends State<Home> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            title: Text('Inicio'),
+            label: 'Inicio',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.business),
-            title: Text('Transferencias'),
+            label: 'Transferencias',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
-            title: Text('Pago Servicios'),
+            label: 'Pago Servicios',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.videogame_asset),
-            title: Text('Rewards'),
+            label: 'Rewards',
           ),
         ],
         currentIndex: _selectedIndex,
