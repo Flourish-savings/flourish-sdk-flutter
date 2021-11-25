@@ -6,7 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="8b740fad-6211-4976-b349-ccc30dee6d2e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flourish_flutter_sdk.iml" beforeDir="false" afterPath="$PROJECT_DIR$/flourish_flutter_sdk.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/event.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/event.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/flourish.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/flourish.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/webview_container.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/webview_container.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,5 +56,16 @@
     <layout>
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
     </layout>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

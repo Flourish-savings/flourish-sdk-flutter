@@ -13,7 +13,7 @@ void main() async {
   Flourish flourish = Flourish.initialize(
     partnerId: dotenv.env['PARTNER_ID'],
     secret: dotenv.env['PARTNER_SECRET'],
-    env: Environment.preproduction,
+    env: Environment.staging,
   );
 
   flourish.on('notifications', (NotificationAvailable response) {
@@ -29,6 +29,11 @@ void main() async {
   flourish.on('go_to_winners', (Event response) {
     // go to savings page
     print("Go to winners");
+  });
+
+  flourish.on('share', (ShareEvent response) {
+    // go to savings page
+    print("Native Share");
   });
 
   runApp(

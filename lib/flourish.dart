@@ -20,7 +20,8 @@ class Flourish {
   Map<String, StreamSubscription<Event>?> _callbacks = {
     'points_earned': null,
     'webview_loaded': null,
-    'notifications': null
+    'notifications': null,
+    'share': null
   };
 
   static const MethodChannel _channel =
@@ -113,6 +114,9 @@ class Flourish {
       case 'go_to_winners':
         _callbacks[eventName] = this.onGoToWinners(callback);
         break;
+      case 'share':
+        _callbacks[eventName] = this.shareEvent(callback);
+        break;
       default:
         throw Exception('Event not found');
     }
@@ -164,6 +168,14 @@ class Flourish {
   StreamSubscription<Event> onGoToWinners(Function callback) {
     return this.onEvent.listen((Event e) {
       if (e is GoToWinners) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> shareEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is ShareEvent) {
         callback(e);
       }
     });

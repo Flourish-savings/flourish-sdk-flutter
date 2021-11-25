@@ -4,6 +4,7 @@ class Event {
   static const String pointsEarned = 'points_earned';
   static const String goToSavings = 'go_to_savings';
   static const String goToWinners = 'go_to_winners';
+  static const String share = 'share';
 
   factory Event.fromJson(Map<String, dynamic> json) {
     final type = json['type'];
@@ -14,6 +15,8 @@ class Event {
         return GoToSavingsEvent();
       case goToWinners:
         return GoToWinners();
+      case share:
+        return ShareEvent.from(json);
       default:
         throw Exception('Unsupported event type');
     }
@@ -61,4 +64,19 @@ class ErrorEvent extends Event {
   final String code;
   final String message;
   ErrorEvent(this.code, this.message) : super(type: 'error');
+}
+
+class ShareEvent extends Event {
+  ShareEvent(
+      {required this.title, required this.description})
+      : super(type: 'share');
+
+  final String title;
+  final String description;
+
+  factory ShareEvent.from(Map<String, dynamic> json) {
+    return ShareEvent(
+        title: json['title'],
+        description: json['description']);
+  }
 }
