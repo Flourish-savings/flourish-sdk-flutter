@@ -10,3 +10,5 @@ build/
 *.ipa
 .env
 example/*.env
+
+.idea/
