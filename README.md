@@ -22,10 +22,10 @@ To install the last officially released version please add the plugin as a depen
  flourish_flutter_sdk:
     git:
       url: git://github.com/Flourish-savings/flourish_flutter_sdk.git
-      ref: 3.0.1
+      ref: 4.0.1
 ```
 
-The current stable version of the plugin is 1.0.0, at the moment you will need to update the plugin according to the most updated release version. You can see the releases in this page https://github.com/Flourish-savings/flourish_flutter_sdk/releases.
+The current stable version of the plugin is 4.0.1, at the moment you will need to update the plugin according to the most updated release version. You can see the releases in this page https://github.com/Flourish-savings/flourish_flutter_sdk/releases.
 
 ## Initializing the SDK
 
@@ -44,6 +44,13 @@ You should also allow the plugin to communicate the notifications that we need t
     // apply other logic here
     // print("hasNotificationAvailable: ${response.hasNotificationAvailable}");
     // hasNotification = response.hasNotificationAvailable;
+  });
+
+  flourish.on('share', (ShareEvent response) {
+    // Add Native share functionlity of flutte
+    // Response will have a title and description property
+    
+    print("Native Share");
   });
 ```
 
