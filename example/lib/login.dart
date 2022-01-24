@@ -11,7 +11,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  bool _rememberMe = false;
+  bool? _rememberMe = false;
   final myController = TextEditingController();
 
   Widget _buildEmailTF() {
@@ -189,7 +189,7 @@ class _LoginState extends State<Login> {
 
   Widget _buildSocialBtn(Function onTap, AssetImage logo) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap as void Function()?,
       child: Container(
         height: 60.0,
         width: 60.0,

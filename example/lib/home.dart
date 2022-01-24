@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
-  final String title;
-  Home({Key key, this.title}) : super(key: key);
+  final String? title;
+  Home({Key? key, this.title}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -60,7 +60,7 @@ class _HomeState extends State<Home> {
       ),
       appBar: _showAppBar()
           ? AppBar(
-              title: Text(this.widget.title),
+              title: Text(this.widget.title!),
               centerTitle: true, // this is all you need
               actions: <Widget>[
                 IconButton(

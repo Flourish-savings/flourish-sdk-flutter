@@ -11,8 +11,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   bool hasNotification = false;
   Flourish flourish = Flourish.initialize(
-    partnerId: dotenv.env['PARTNER_ID'],
-    secret: dotenv.env['PARTNER_SECRET'],
+    partnerId: dotenv.env['PARTNER_ID']!,
+    secret: dotenv.env['PARTNER_SECRET']!,
     env: Environment.staging,
   );
 
