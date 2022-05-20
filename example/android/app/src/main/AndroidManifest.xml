@@ -11,6 +11,7 @@
         android:icon="@drawable/icon"
         android:usesCleartextTraffic="true">
         <activity
+            android:exported="true"
             android:name=".MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
