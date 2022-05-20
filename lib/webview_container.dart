@@ -91,13 +91,11 @@ class WebviewContainerState extends State<WebviewContainer> {
         }
       case Environment.staging:
         {
-          // return "https://d2hkfqbf7qz8b6.cloudfront.net/";
-          return "https://flourish-app-stg.flourishfi.com/";
+          return "https://d2hkfqbf7qz8b6.cloudfront.net/";
         }
       case Environment.development:
         {
-          // return "https://d2hkfqbf7qz8b6.cloudfront.net/";
-          return "http://192.168.10.2:8080/";
+          return "https://d2hkfqbf7qz8b6.cloudfront.net/";
         }
       default:
         {
