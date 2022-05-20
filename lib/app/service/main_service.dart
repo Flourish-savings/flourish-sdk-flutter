@@ -71,6 +71,7 @@ class MainService {
       case Environment.preproduction:
         return "https://preproduction.flourishsavings.com/api/v1";
       case Environment.development:
+        return "http://192.168.10.2:3000/api/v1";
       case Environment.staging:
         return "https://staging.flourishsavings.com/api/v1";
       default:
