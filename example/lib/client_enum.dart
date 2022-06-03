@@ -1,5 +1,5 @@
 enum ClientEnum {
-  bancosol, tricolor, hermoney, baneco, flourish
+  bancosol, bancosol_capybara, tricolor, hermoney, baneco, flourish
 }
 
 extension ToString on ClientEnum {
