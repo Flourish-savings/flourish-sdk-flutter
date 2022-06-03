@@ -1,14 +1,15 @@
 import 'package:dio/dio.dart';
+import 'package:flourish_flutter_sdk/endpoint.dart';
 import 'package:flourish_flutter_sdk/environment_enum.dart';
 
 class MainService {
   Dio? _api;
   String? _token;
 
-  MainService(Environment env) {
+  MainService(Environment env, Endpoint? endpoint) {
     this._api = Dio(
       BaseOptions(
-        baseUrl: selectEnvironmentUrl(env),
+        baseUrl: endpoint?.getBackend() ?? selectEnvironmentUrl(env),
       ),
     );
   }

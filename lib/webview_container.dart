@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flourish_flutter_sdk/endpoint.dart';
 import 'package:flourish_flutter_sdk/environment_enum.dart';
 import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk/event_manager.dart';
@@ -12,6 +13,7 @@ class WebviewContainer extends StatefulWidget {
     required this.environment,
     required this.apiToken,
     required this.eventManager,
+    this.endpoint,
   }) : super(key: key);
 
   final WebviewContainerState _wcs = new WebviewContainerState();
@@ -19,6 +21,7 @@ class WebviewContainer extends StatefulWidget {
   final Environment environment;
   final String apiToken;
   final EventManager eventManager;
+  final Endpoint? endpoint;
 
   void loadUrl(String url) {
     _wcs.loadUrl(url);
@@ -44,12 +47,14 @@ class WebviewContainerState extends State<WebviewContainer> {
 
   @override
   Widget build(BuildContext context) {
+    String url = widget.endpoint?.getFrontend() ?? _getUrl(widget.environment);
+    String fullUrl = "$url?token=${widget.apiToken}";
     return Container(
       color: Theme.of(context).primaryColor,
       child: SafeArea(
         top: true,
         child: WebView(
-          initialUrl: "${_getUrl(widget.environment)}?token=${widget.apiToken}",
+          initialUrl: fullUrl,
           debuggingEnabled: true,
           onWebResourceError: (error) {
             print(error.description);
@@ -95,7 +100,7 @@ class WebviewContainerState extends State<WebviewContainer> {
         }
       case Environment.development:
         {
-          return "https://d2hkfqbf7qz8b6.cloudfront.net/";
+          return "http://localhost:8080/";
         }
       default:
         {

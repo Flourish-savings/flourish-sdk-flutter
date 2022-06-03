@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flourish_flutter_sdk/app/service/main_service.dart';
+import 'package:flourish_flutter_sdk/endpoint.dart';
 import 'package:flourish_flutter_sdk/environment_enum.dart';
 import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk/event_manager.dart';
@@ -16,6 +17,7 @@ class Flourish {
   late WebviewContainer _webviewContainer;
   late Timer _notificationsPoll;
   late String _token;
+  late Endpoint? _endpoint;
 
   Map<String, StreamSubscription<Event>?> _callbacks = {
     'points_earned': null,
@@ -27,19 +29,26 @@ class Flourish {
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
 
-  Flourish._(String partnerId, String secret, Environment env) {
+  Flourish._(
+    String partnerId,
+    String secret,
+    Environment env,
+    Endpoint? endpoint,
+  ) {
     this.partnerId = partnerId;
     this.secret = secret;
     this.environment = env;
-    this._service = MainService(env);
+    this._endpoint = endpoint;
+    this._service = MainService(env, endpoint);
   }
 
   factory Flourish.initialize({
     required String partnerId,
     required String secret,
     Environment env = Environment.production,
+    Endpoint? endpoint,
   }) {
-    return Flourish._(partnerId, secret, env);
+    return Flourish._(partnerId, secret, env, endpoint);
   }
 
   Future<String> authenticate({required String customerCode}) async {
@@ -195,6 +204,7 @@ class Flourish {
       environment: this.environment,
       apiToken: this._token,
       eventManager: this.eventManager,
+      endpoint: this._endpoint,
     );
   }
 

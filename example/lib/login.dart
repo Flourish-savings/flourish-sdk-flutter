@@ -1,8 +1,16 @@
+import 'package:flourish_flutter_sdk/endpoint.dart';
+import 'package:flourish_flutter_sdk/environment_enum.dart';
+import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
+import 'package:flourish_flutter_sdk_example/client_enum.dart';
+import 'package:flourish_flutter_sdk_example/credential_factory.dart';
+import 'package:flourish_flutter_sdk_example/endpoint.dart';
 import 'package:flourish_flutter_sdk_example/home.dart';
+import 'package:flourish_flutter_sdk_example/language.dart';
 import 'package:flourish_flutter_sdk_example/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
@@ -11,15 +19,17 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  bool? _rememberMe = false;
-  final myController = TextEditingController();
+  final _customerCodeController = TextEditingController();
+  ClientEnum _clientValue = ClientEnum.bancosol;
+  Environment _envValue = Environment.staging;
+  Language _langValue = Language.spanish;
 
-  Widget _buildEmailTF() {
+  Widget _buildCustomerCodeTF() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Email',
+          'Customer Code',
           style: kLabelStyle,
         ),
         SizedBox(height: 10.0),
@@ -28,7 +38,7 @@ class _LoginState extends State<Login> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextField(
-            keyboardType: TextInputType.emailAddress,
+            keyboardType: TextInputType.text,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',
@@ -37,25 +47,25 @@ class _LoginState extends State<Login> {
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
-                Icons.email,
+                Icons.supervised_user_circle,
                 color: Colors.white,
               ),
-              hintText: 'Enter your Email',
+              hintText: 'Enter your Customer code',
               hintStyle: kHintTextStyle,
             ),
-            controller: myController,
+            controller: _customerCodeController,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildPasswordTF() {
+  Widget _buildClientDropdown() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Password',
+          'Client',
           style: kLabelStyle,
         ),
         SizedBox(height: 10.0),
@@ -63,66 +73,146 @@ class _LoginState extends State<Login> {
           alignment: Alignment.centerLeft,
           decoration: kBoxDecorationStyle,
           height: 60.0,
-          child: TextField(
-            obscureText: true,
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'OpenSans',
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              canvasColor: Color(0xFFf47621),
             ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
-              prefixIcon: Icon(
-                Icons.lock,
-                color: Colors.white,
-              ),
-              hintText: 'Enter your Password',
-              hintStyle: kHintTextStyle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildForgotPasswordBtn() {
-    return Container(
-      alignment: Alignment.centerRight,
-      child: FlatButton(
-        onPressed: () => print('Forgot Password Button Pressed'),
-        padding: EdgeInsets.only(right: 0.0),
-        child: Text(
-          'Forgot Password?',
-          style: kLabelStyle,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRememberMeCheckbox() {
-    return Container(
-      height: 20.0,
-      child: Row(
-        children: <Widget>[
-          Theme(
-            data: ThemeData(unselectedWidgetColor: Colors.white),
-            child: Checkbox(
-              value: _rememberMe,
-              checkColor: Colors.green,
-              activeColor: Colors.white,
+            child: DropdownButtonFormField<ClientEnum>(
+              value: _clientValue,
+              items: ClientEnum.values.map((e) {
+                return DropdownMenuItem<ClientEnum>(
+                  child: Text(e.name),
+                  value: e,
+                );
+              }).toList(),
+              isExpanded: true,
               onChanged: (value) {
                 setState(() {
-                  _rememberMe = value;
+                  _clientValue = value!;
                 });
               },
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14.0),
+                prefixIcon: Icon(
+                  Icons.verified_user,
+                  color: Colors.white,
+                ),
+                hintText: 'Select the Client',
+                hintStyle: kHintTextStyle,
+              ),
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenSans',
+              ),
             ),
           ),
-          Text(
-            'Remember me',
-            style: kLabelStyle,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEnvDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Environment',
+          style: kLabelStyle,
+        ),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: kBoxDecorationStyle,
+          height: 60.0,
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              canvasColor: Color(0xFFf47621),
+            ),
+            child: DropdownButtonFormField<Environment>(
+              value: _envValue,
+              items: Environment.values.map((e) {
+                return DropdownMenuItem<Environment>(
+                  child: Text(e.name),
+                  value: e,
+                );
+              }).toList(),
+              isExpanded: true,
+              onChanged: (value) {
+                setState(() {
+                  _envValue = value!;
+                });
+              },
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14.0),
+                prefixIcon: Icon(
+                  Icons.verified_user,
+                  color: Colors.white,
+                ),
+                hintText: 'Select the Environment',
+                hintStyle: kHintTextStyle,
+              ),
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenSans',
+              ),
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLanguageDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Language',
+          style: kLabelStyle,
+        ),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: kBoxDecorationStyle,
+          height: 60.0,
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              canvasColor: Color(0xFFf47621),
+            ),
+            child: DropdownButtonFormField<Language>(
+              value: _langValue,
+              items: Language.values.map((e) {
+                return DropdownMenuItem<Language>(
+                  child: Text(e.name.toUpperCase()),
+                  value: e,
+                );
+              }).toList(),
+              isExpanded: true,
+              onChanged: (value) {
+                setState(() {
+                  _langValue = value!;
+                });
+              },
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14.0),
+                prefixIcon: Icon(
+                  Icons.verified_user,
+                  color: Colors.white,
+                ),
+                hintText: 'Select the language',
+                hintStyle: kHintTextStyle,
+              ),
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenSans',
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -132,17 +222,78 @@ class _LoginState extends State<Login> {
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
-        onPressed: () {
+        onPressed: () async {
           print('Login Button Pressed');
-          print(myController.text);
-          Provider.of<Flourish>(
-            context,
-            listen: false,
-          ).authenticate(customerCode: myController.text).then((value) {
+          print(_customerCodeController.text);
+
+          if (_customerCodeController.text.trim().isEmpty) {
+            _sendToast("Customer code is required");
+            return;
+          }
+
+          Credential credential = await CredentialFactory(
+                  clientEnum: _clientValue, environment: _envValue)
+              .credential();
+
+          if (credential.empty()) {
+            _sendToast("No credentials for ${_clientValue.name.toUpperCase()} on ${_envValue.name.toUpperCase()}.\n\nTry to call the development team to add this configurations");
+            return;
+          }
+
+          WidgetsFlutterBinding.ensureInitialized();
+          bool hasNotification = false;
+
+          Endpoint endpoint = EndpointFactory(
+            clientEnum: credential.clientEnum,
+            environment: credential.environment,
+            language: _langValue,
+          ).build();
+
+          Flourish flourish = Flourish.initialize(
+            partnerId: credential.parterId,
+            secret: credential.secretId,
+            env: credential.environment,
+            endpoint: endpoint,
+          );
+
+          flourish.on('notifications', (NotificationAvailable response) {
+            print(
+                "hasNotificationAvailable: ${response.hasNotificationAvailable}");
+            hasNotification = response.hasNotificationAvailable;
+          });
+
+          flourish.on('go_to_savings', (Event response) {
+            // go to savings page
+            print("Go to savings");
+          });
+
+          flourish.on('go_to_winners', (Event response) {
+            // go to savings page
+            print("Go to winners");
+          });
+
+          flourish.on('share', (ShareEvent response) {
+            // go to savings page
+            print("Native Share");
+          });
+
+          flourish
+              .authenticate(customerCode: _customerCodeController.text)
+              .then((value) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => Home(title: "Activities"),
+                builder: (context) => MultiProvider(
+                  providers: [
+                    Provider<Flourish>.value(
+                      value: flourish,
+                    ),
+                    Provider<bool>.value(
+                      value: hasNotification,
+                    )
+                  ],
+                  child: Home(title: "Activities"),
+                ),
               ),
             );
           }).catchError((er) {
@@ -168,97 +319,15 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _buildSignInWithText() {
-    return Column(
-      children: <Widget>[
-        Text(
-          '- OR -',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        SizedBox(height: 20.0),
-        Text(
-          'Sign in with',
-          style: kLabelStyle,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSocialBtn(Function onTap, AssetImage logo) {
-    return GestureDetector(
-      onTap: onTap as void Function()?,
-      child: Container(
-        height: 60.0,
-        width: 60.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, 2),
-              blurRadius: 6.0,
-            ),
-          ],
-          image: DecorationImage(
-            image: logo,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSocialBtnRow() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 30.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          _buildSocialBtn(
-            () => print('Login with Facebook'),
-            AssetImage(
-              'assets/logos/facebook.jpg',
-            ),
-          ),
-          _buildSocialBtn(
-            () => print('Login with Google'),
-            AssetImage(
-              'assets/logos/google.jpg',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSignupBtn() {
-    return GestureDetector(
-      onTap: () => print('Sign Up Button Pressed'),
-      child: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-              text: 'Don\'t have an Account? ',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            TextSpan(
-              text: 'Sign Up',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
+  void _sendToast(message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
     );
   }
 
@@ -309,17 +378,14 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(height: 30.0),
-                      _buildEmailTF(),
-                      SizedBox(
-                        height: 30.0,
-                      ),
-                      _buildPasswordTF(),
-                      _buildForgotPasswordBtn(),
-                      _buildRememberMeCheckbox(),
+                      _buildCustomerCodeTF(),
+                      SizedBox(height: 30.0),
+                      _buildClientDropdown(),
+                      SizedBox(height: 30.0),
+                      _buildEnvDropdown(),
+                      SizedBox(height: 30.0),
+                      _buildLanguageDropdown(),
                       _buildLoginBtn(),
-                      // _buildSignInWithText(),
-                      // _buildSocialBtnRow(),
-                      // _buildSignupBtn(),
                     ],
                   ),
                 ),

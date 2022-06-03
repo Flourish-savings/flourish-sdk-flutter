@@ -1,54 +1,8 @@
-import 'package:flourish_flutter_sdk/environment_enum.dart';
-import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk_example/login.dart';
 import 'package:flutter/material.dart';
-import 'package:flourish_flutter_sdk/flourish.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  await dotenv.load(fileName: '.env');
-  WidgetsFlutterBinding.ensureInitialized();
-  bool hasNotification = false;
-  Flourish flourish = Flourish.initialize(
-    partnerId: dotenv.env['PARTNER_ID']!,
-    secret: dotenv.env['PARTNER_SECRET']!,
-    env: Environment.staging,
-  );
-
-  flourish.on('notifications', (NotificationAvailable response) {
-    print("hasNotificationAvailable: ${response.hasNotificationAvailable}");
-    hasNotification = response.hasNotificationAvailable;
-  });
-
-  flourish.on('go_to_savings', (Event response) {
-    // go to savings page
-    print("Go to savings");
-  });
-
-  flourish.on('go_to_winners', (Event response) {
-    // go to savings page
-    print("Go to winners");
-  });
-
-  flourish.on('share', (ShareEvent response) {
-    // go to savings page
-    print("Native Share");
-  });
-
-  runApp(
-    MultiProvider(
-      providers: [
-        Provider<Flourish>.value(
-          value: flourish,
-        ),
-        Provider<bool>.value(
-          value: hasNotification,
-        )
-      ],
-      child: MyApp(),
-    ),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
