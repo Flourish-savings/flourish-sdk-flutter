@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   final String? title;
+
   Home({Key? key, this.title}) : super(key: key);
 
   @override
@@ -222,14 +223,18 @@ class _HomeState extends State<Home> {
                                   child: ButtonTheme(
                                     minWidth: 200,
                                     padding: const EdgeInsets.all(5),
-                                    child: RaisedButton(
-                                      textColor: Colors.white,
-                                      color: Color(0xffFDBA11),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        elevation: 5,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        backgroundColor: Color(0xffFDBA11),
+                                        textStyle: const TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                      elevation: 5,
-                                      highlightElevation: 10,
                                       child: Text(
                                         'SAVE',
                                         style: TextStyle(fontSize: 20),
