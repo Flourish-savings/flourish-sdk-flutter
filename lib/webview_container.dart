@@ -13,7 +13,7 @@ class WebviewContainer extends StatefulWidget {
     required this.environment,
     required this.apiToken,
     required this.eventManager,
-    this.endpoint,
+    required this.endpoint,
   }) : super(key: key);
 
   final WebviewContainerState _wcs = new WebviewContainerState();
@@ -21,7 +21,7 @@ class WebviewContainer extends StatefulWidget {
   final Environment environment;
   final String apiToken;
   final EventManager eventManager;
-  final Endpoint? endpoint;
+  final Endpoint endpoint;
 
   void loadUrl(String url) {
     _wcs.loadUrl(url);
@@ -47,7 +47,7 @@ class WebviewContainerState extends State<WebviewContainer> {
 
   @override
   Widget build(BuildContext context) {
-    String url = widget.endpoint?.getFrontend() ?? _getUrl(widget.environment);
+    String url = widget.endpoint.getFrontend();
     String fullUrl = "$url?token=${widget.apiToken}";
     return Container(
       color: Theme.of(context).primaryColor,
@@ -82,31 +82,6 @@ class WebviewContainerState extends State<WebviewContainer> {
         ),
       ),
     );
-  }
-
-  String _getUrl(Environment env) {
-    switch (env) {
-      case Environment.production:
-        {
-          return "https://dkcpfxodv482r.cloudfront.net/";
-        }
-      case Environment.preproduction:
-        {
-          return "https://d1yku7yute1fiy.cloudfront.net/";
-        }
-      case Environment.staging:
-        {
-          return "https://d2hkfqbf7qz8b6.cloudfront.net/";
-        }
-      case Environment.development:
-        {
-          return "http://localhost:8080/";
-        }
-      default:
-        {
-          return "https://d2hkfqbf7qz8b6.cloudfront.net/";
-        }
-    }
   }
 
   void _notify(Event event) {
