@@ -7,6 +7,7 @@ import 'package:flourish_flutter_sdk/event.dart';
 import 'package:flourish_flutter_sdk/event_manager.dart';
 import 'package:flourish_flutter_sdk/language.dart';
 import 'package:flourish_flutter_sdk/webview_container.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 class Flourish {
@@ -60,7 +61,7 @@ class Flourish {
     checkActivityAvailable();
     startPollingNotifications();
 
-    print(_token);
+    debugPrint("TOKEN: $_token");
     // TODO: Call Flourish backend to authenticate
     // We should inform the apiKey, customerCode and sessionId (if we decide to use it)
     // Nice to have: We could encrypt or generate a signature using the secret value
