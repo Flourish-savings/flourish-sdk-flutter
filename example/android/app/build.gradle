@@ -41,7 +41,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.flourishsavings.bancosol.poc"
+        applicationId "com.flourishfi.sdk.example"
         minSdkVersion 19
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
@@ -65,7 +65,7 @@ android {
     lint {
         disable 'InvalidPackage'
     }
-    namespace 'com.flourishsavings.bancosol.poc'
+    namespace 'com.flourishfi.sdk.example'
 }
 
 flutter {

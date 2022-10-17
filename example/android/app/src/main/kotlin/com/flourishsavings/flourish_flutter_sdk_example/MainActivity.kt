@@ -1,4 +1,4 @@
-package com.flourishsavings.bancosol.poc
+package com.flourishfi.sdk.example
 
 import io.flutter.embedding.android.FlutterActivity
 

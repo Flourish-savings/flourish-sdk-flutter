@@ -4,7 +4,7 @@ storage_mode("git")
 
 type("development") # The default type, can be: appstore, adhoc, enterprise or development
 
-app_identifier(["com.flourishsavings.bancosol.poc"])
+app_identifier(["com.flourishfi.sdk.example"])
 
 team_id('7QZM22RD38')
 team_name('Flourish Savings, Inc')

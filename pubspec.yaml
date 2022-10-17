@@ -31,7 +31,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.flourishsavings.flourish_flutter_sdk
+        package: com.flourishfi.flourish_flutter_sdk
         pluginClass: FlourishFlutterSdkPlugin
       ios:
         pluginClass: FlourishFlutterSdkPlugin

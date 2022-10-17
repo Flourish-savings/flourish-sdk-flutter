@@ -1,4 +1,4 @@
-group 'com.flourishsavings.flourish_flutter_sdk'
+group 'com.flourishfi.flourish_flutter_sdk'
 version '1.0-SNAPSHOT'
 
 buildscript {

@@ -1,4 +1,4 @@
-package com.flourishsavings.flourish_flutter_sdk
+package com.flourishfi.flourish_flutter_sdk
 
 import androidx.annotation.NonNull;
 
