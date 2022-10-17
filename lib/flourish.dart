@@ -61,7 +61,7 @@ class Flourish {
     checkActivityAvailable();
     startPollingNotifications();
 
-    debugPrint("TOKEN: $_token");
+    // debugPrint("TOKEN: $_token");
     // TODO: Call Flourish backend to authenticate
     // We should inform the apiKey, customerCode and sessionId (if we decide to use it)
     // Nice to have: We could encrypt or generate a signature using the secret value
