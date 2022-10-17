@@ -6,12 +6,9 @@ class MainService {
   Dio? _api;
   String? _token;
 
-  MainService(Environment env, Endpoint? endpoint) {
-    this._api = Dio(
-      BaseOptions(
-        baseUrl: endpoint?.getBackend() ?? selectEnvironmentUrl(env),
-      ),
-    );
+  MainService(Environment env, Endpoint endpoint) {
+    var baseOptions = BaseOptions(baseUrl: endpoint.getBackend());
+    this._api = Dio(baseOptions);
   }
 
   Future<String> authenticate(
@@ -62,20 +59,6 @@ class MainService {
       return res.data['notifications'];
     } on DioError catch (e) {
       throw e;
-    }
-  }
-
-  String selectEnvironmentUrl(Environment env) {
-    switch (env) {
-      case Environment.production:
-        return "https://api.flourishsavings.com/api/v1";
-      case Environment.preproduction:
-        return "https://preproduction.flourishsavings.com/api/v1";
-      case Environment.development:
-      case Environment.staging:
-        return "https://staging.flourishsavings.com/api/v1";
-      default:
-        return "https://staging.flourishsavings.com/api/v1";
     }
   }
 }
