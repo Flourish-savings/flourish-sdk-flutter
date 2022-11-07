@@ -1,32 +1,32 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
-import 'package:flourish_flutter_sdk/app/service/main_service.dart';
-import 'package:flourish_flutter_sdk/endpoint.dart';
-import 'package:flourish_flutter_sdk/environment_enum.dart';
-import 'package:flourish_flutter_sdk/event.dart';
-import 'package:flourish_flutter_sdk/event_manager.dart';
-import 'package:flourish_flutter_sdk/language.dart';
-import 'package:flourish_flutter_sdk/webview_container.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flourish_flutter_sdk/config/endpoint.dart';
+import 'package:flourish_flutter_sdk/config/environment_enum.dart';
+import 'package:flourish_flutter_sdk/events/event.dart';
+import 'package:flourish_flutter_sdk/events/event_manager.dart';
+import 'package:flourish_flutter_sdk/events/types/generic_event.dart';
+import 'package:flourish_flutter_sdk/events/types/retry_login_event.dart';
+import 'package:flourish_flutter_sdk/config/language.dart';
+import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
+import 'package:flourish_flutter_sdk/network/api_service.dart';
+import 'package:flourish_flutter_sdk/web_view/webview_container.dart';
 import 'package:flutter/services.dart';
+
+import 'events/types/auto_payment_event.dart';
+import 'events/types/back_event.dart';
+import 'events/types/payment_event.dart';
+import 'events/types/trivia_finished_event.dart';
+
 
 class Flourish {
   EventManager eventManager = new EventManager();
-  late MainService _service;
+  late ApiService _service;
   late Environment environment;
   late String partnerId;
   late String secret;
   late WebviewContainer _webviewContainer;
-  late Timer _notificationsPoll;
   late String _token;
   late Endpoint _endpoint;
-
-  Map<String, StreamSubscription<Event>?> _callbacks = {
-    'points_earned': null,
-    'webview_loaded': null,
-    'notifications': null,
-    'share': null
-  };
 
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
@@ -41,7 +41,7 @@ class Flourish {
     this.secret = secret;
     this.environment = env;
     this._endpoint = Endpoint(environment, language);
-    this._service = MainService(env, this._endpoint);
+    this._service = ApiService(env, this._endpoint);
   }
 
   factory Flourish.initialize({
@@ -56,20 +56,7 @@ class Flourish {
   Future<String> authenticate({required String customerCode}) async {
     _token =
         await _service.authenticate(this.partnerId, this.secret, customerCode);
-
     await signIn();
-    checkActivityAvailable();
-    startPollingNotifications();
-
-    // debugPrint("TOKEN: $_token");
-    // TODO: Call Flourish backend to authenticate
-    // We should inform the apiKey, customerCode and sessionId (if we decide to use it)
-    // Nice to have: We could encrypt or generate a signature using the secret value
-    // If the backend return ok. We are authenticated and the backend should return a JWT token
-    // to our API
-    // and finally we should start the polling process checking for notifications
-    // e.g. GET /api/v1/notifications
-    // and if there are notification we notify via de notify method
     return _token;
   }
 
@@ -85,108 +72,63 @@ class Flourish {
     }
   }
 
-  void checkActivityAvailable() async {
-    bool res = false;
-    try {
-      res = await _service.checkForNotifications();
-    } on DioError catch (e) {
-      eventManager.notify(
-        ErrorEvent('FAILED_TO_RETRIEVE_NOTIFICATION', e.message),
-      );
-    }
-
-    eventManager.notify(NotificationAvailable(hasNotificationAvailable: res));
-  }
-
-  void startPollingNotifications() async {
-    _notificationsPoll = Timer.periodic(Duration(minutes: 3), (timer) async {
-      checkActivityAvailable();
+  StreamSubscription<Event> onAllEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+        callback(e);
     });
   }
 
-  void stopPolling() {
-    _notificationsPoll.cancel();
-  }
-
-  void on(String eventName, Function callback) {
-    switch (eventName) {
-      case 'points_earned':
-        _callbacks[eventName] = this.onPointsEarned(callback);
-        break;
-      case 'webview_loaded':
-        _callbacks[eventName] = this.onWebviewLoaded(callback);
-        break;
-      case 'notifications':
-        _callbacks[eventName] = this.onNotification(callback);
-        break;
-      case 'go_to_savings':
-        _callbacks[eventName] = this.onGoToSavings(callback);
-        break;
-      case 'go_to_winners':
-        _callbacks[eventName] = this.onGoToWinners(callback);
-        break;
-      case 'share':
-        _callbacks[eventName] = this.shareEvent(callback);
-        break;
-      default:
-        throw Exception('Event not found');
-    }
-  }
-
-  void off(String eventName) {
-    _getSubscription(eventName)?.cancel();
-  }
-
-  StreamSubscription<Event>? _getSubscription(String eventName) {
-    if (_callbacks.containsKey(eventName)) {
-      return _callbacks[eventName];
-    }
-    return null;
-  }
-
-  StreamSubscription<Event> onPointsEarned(Function callback) {
+  StreamSubscription<Event> onGenericEvent(Function callback) {
     return this.onEvent.listen((Event e) {
-      if (e is PointsEarnedEvent) {
+      if (e is GenericEvent) {
         callback(e);
       }
     });
   }
 
-  StreamSubscription<Event> onWebviewLoaded(Function callback) {
+  StreamSubscription<Event> onWebViewLoadedEvent(Function callback) {
     return this.onEvent.listen((Event e) {
-      if (e is WebviewLoadedEvent) {
+      if (e is WebViewLoadedEvent) {
         callback(e);
       }
     });
   }
 
-  StreamSubscription<Event> onNotification(Function callback) {
+  StreamSubscription<Event> onRetryLoginEvent(Function callback) {
     return this.onEvent.listen((Event e) {
-      if (e is NotificationAvailable) {
+      if (e is RetryLoginEvent) {
         callback(e);
       }
     });
   }
 
-  StreamSubscription<Event> onGoToSavings(Function callback) {
+  StreamSubscription<Event> onAutoPaymentEvent(Function callback) {
     return this.onEvent.listen((Event e) {
-      if (e is GoToSavingsEvent) {
+      if (e is AutoPaymentEvent) {
         callback(e);
       }
     });
   }
 
-  StreamSubscription<Event> onGoToWinners(Function callback) {
+  StreamSubscription<Event> onPaymentEvent(Function callback) {
     return this.onEvent.listen((Event e) {
-      if (e is GoToWinners) {
+      if (e is PaymentEvent) {
         callback(e);
       }
     });
   }
 
-  StreamSubscription<Event> shareEvent(Function callback) {
+  StreamSubscription<Event> onTriviaFinishedEvent(Function callback) {
     return this.onEvent.listen((Event e) {
-      if (e is ShareEvent) {
+      if (e is TriviaFinishedEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> onBackEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is BackEvent) {
         callback(e);
       }
     });

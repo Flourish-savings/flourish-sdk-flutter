@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flourish_flutter_sdk/event.dart';
+import 'package:flourish_flutter_sdk/events/event.dart';
 
 class EventManager {
   final StreamController<Event> _eventStreamController =

@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
-import 'package:flourish_flutter_sdk/endpoint.dart';
-import 'package:flourish_flutter_sdk/environment_enum.dart';
+import 'package:flourish_flutter_sdk/config/endpoint.dart';
+import 'package:flourish_flutter_sdk/config/environment_enum.dart';
 
-class MainService {
+class ApiService {
   Dio? _api;
   String? _token;
 
-  MainService(Environment env, Endpoint endpoint) {
+  ApiService(Environment env, Endpoint endpoint) {
     var baseOptions = BaseOptions(baseUrl: endpoint.getBackend());
     this._api = Dio(baseOptions);
   }
@@ -41,22 +41,6 @@ class MainService {
       );
       print("logged in");
       return true;
-    } on DioError catch (e) {
-      throw e;
-    }
-  }
-
-  Future<bool> checkForNotifications() async {
-    try {
-      Response res = await _api!.get(
-        "/notifications",
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $_token", // set content-length
-          },
-        ),
-      );
-      return res.data['notifications'];
     } on DioError catch (e) {
       throw e;
     }
