@@ -1,7 +1,16 @@
-import 'package:flourish_flutter_sdk/environment_enum.dart';
-import 'package:flourish_flutter_sdk/event.dart';
+import 'dart:convert';
+
+import 'package:flourish_flutter_sdk/config/environment_enum.dart';
+import 'package:flourish_flutter_sdk/events/event.dart';
+import 'package:flourish_flutter_sdk/events/types/auto_payment_event.dart';
+import 'package:flourish_flutter_sdk/events/types/back_event.dart';
+import 'package:flourish_flutter_sdk/events/types/generic_event.dart';
+import 'package:flourish_flutter_sdk/events/types/payment_event.dart';
+import 'package:flourish_flutter_sdk/events/types/retry_login_event.dart';
+import 'package:flourish_flutter_sdk/events/types/trivia_finished_event.dart';
+import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
-import 'package:flourish_flutter_sdk/language.dart';
+import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk_example/credential_factory.dart';
 import 'package:flourish_flutter_sdk_example/home.dart';
 import 'package:flourish_flutter_sdk_example/utilities/constants.dart';
@@ -101,25 +110,41 @@ class _LoginState extends State<Login> {
             language: Language.english,
           );
 
-          flourish.on('notifications', (NotificationAvailable response) {
-            print(
-                "hasNotificationAvailable: ${response.hasNotificationAvailable}");
-            hasNotification = response.hasNotificationAvailable;
+
+          flourish.onAllEvent((Event response) {
+            print("Event name: ${response.name}");
           });
 
-          flourish.on('go_to_savings', (Event response) {
-            // go to savings page
-            print("Go to savings");
+          flourish.onGenericEvent((GenericEvent response) {
+            print("Event name: ${response.name}");
+            print("Event data: ${jsonEncode(response.data.toJson())}");
           });
 
-          flourish.on('go_to_winners', (Event response) {
-            // go to savings page
-            print("Go to winners");
+          flourish.onWebViewLoadedEvent((WebViewLoadedEvent response) {
+            print("Event name: ${response.name}");
           });
 
-          flourish.on('share', (ShareEvent response) {
-            // go to savings page
-            print("Native Share");
+          flourish.onRetryLoginEvent((RetryLoginEvent response) {
+            print("Event name: ${response.name}");
+            print("Event data: ${jsonEncode(response.data.toJson())}");
+          });
+
+          flourish.onAutoPaymentEvent((AutoPaymentEvent response) {
+            print("Event name: ${response.name}");
+          });
+
+          flourish.onPaymentEvent((PaymentEvent response) {
+            print("Event name: ${response.name}");
+          });
+
+          flourish.onTriviaFinishedEvent((TriviaFinishedEvent response) {
+            print("Event name: ${response.name}");
+            print("Event data: ${jsonEncode(response.data.toJson())}");
+          });
+
+          flourish.onBackEvent((BackEvent response) {
+            print("Event name: ${response.name}");
+            print("Event data: ${jsonEncode(response.data.toJson())}");
           });
 
           flourish

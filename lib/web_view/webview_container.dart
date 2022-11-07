@@ -1,11 +1,13 @@
 import 'dart:convert';
 
-import 'package:flourish_flutter_sdk/endpoint.dart';
-import 'package:flourish_flutter_sdk/environment_enum.dart';
-import 'package:flourish_flutter_sdk/event.dart';
-import 'package:flourish_flutter_sdk/event_manager.dart';
+import 'package:flourish_flutter_sdk/config/endpoint.dart';
+import 'package:flourish_flutter_sdk/config/environment_enum.dart';
+import 'package:flourish_flutter_sdk/events/event.dart';
+import 'package:flourish_flutter_sdk/events/event_manager.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
+
+import '../events/types/web_view_loaded_event.dart';
 
 class WebviewContainer extends StatefulWidget {
   WebviewContainer({
@@ -36,20 +38,13 @@ class WebviewContainerState extends State<WebviewContainer> {
 
   void loadUrl(String url) {
     this._controller.loadUrl(url);
-    // this._controller.loadUrl(url, headers: {
-    //   "x-flourish-partner-key": widget.partnerId,
-    //   "x-flourish-external-user-id": widget.customerCode,
-    //   "x-flourish-external-session-id": widget.sessionId,
-    //   "Authorization":
-    //       'Basic AXVubzpwQDU1dzByYM==', // this is our JTW (Flourish) that we got from the authentication process
-    // });
   }
 
   @override
   Widget build(BuildContext context) {
     String url = widget.endpoint.getFrontend();
     String fullUrl = "$url?token=${widget.apiToken}";
-    // debugPrint("Full URL $fullUrl");
+    debugPrint("Full URL $fullUrl");
     return Container(
       color: Theme.of(context).primaryColor,
       child: SafeArea(
@@ -76,7 +71,7 @@ class WebviewContainerState extends State<WebviewContainer> {
                 })
           ]),
           onWebViewCreated: (WebViewController controller) {
-            Event event = WebviewLoadedEvent();
+            Event event = WebViewLoadedEvent();
             _controller = controller;
             this._notify(event);
           },
