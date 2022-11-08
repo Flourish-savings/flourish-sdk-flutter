@@ -15,8 +15,7 @@ Table of contents
       * [Requirements](#requirements)
       * [Configuration](#configuration)
    * [Getting Started](#getting-started)
-  * [Features](#features)
-   * [Releases](#releases)
+   * [Events](#events)
    * [Examples](#examples)
 <!--te-->
 <br>
@@ -59,56 +58,24 @@ This plugin can be run in two different environments:
 <br>
 <br>
 
-## Initializing the SDK
+### Initializing the SDK
 ___
 
 In the main file of your application, you need to call the method initilize providing the partnerId and the secret.
 
-You should also allow the plugin to communicate the notifications that we need to send.
-
 ```
   Flourish flourish = Flourish.initialize(
-    partnerId: '34b53d94-5d35-4b50-99ab-9a7c650b5111',
-    secret: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCY',
+    partnerId: <HERE YOU'll USE YOUR PARTNER ID>,
+    secret: <HERE YOU'll USE YOUR SECRET>,
     env: Environment.staging,
     language: Language.english,
   );
 
-  flourish.on('notifications', (NotificationAvailable response) {
-    // apply other logic here
-    // print("hasNotificationAvailable: ${response.hasNotificationAvailable}");
-    // hasNotification = response.hasNotificationAvailable;
-  });
-
-  flourish.on('share', (ShareEvent response) {
-    // Add Native share functionlity of flutte
-    // Response will have a title and description property
-
-    print("Native Share");
-  });
 ```
+### Authentication with the customerCode
+___
 
-You can also register to other events like:
-
-```
-  // Event sent when the Plugin needs the App to go to the Savings/Home page
-  flourish.on('go_to_savings', (Event response) {
-    // apply other logic here
-    // go to savings page
-    // print("Go to savings");
-  });
-
-  // Event sent when the Plugin needs the App to go to the Winners page
-  flourish.on('go_to_winners', (Event response) {
-    // apply other logic here
-    // go to savings page
-    // print("Go to winners");
-  });
-```
-
-## Authentication with the customerCode
-
-`customerCode` is the element that identifies the final user of the bank, the person who is the client of the bank. Regarding what this element is called in your system you need to pass this information to the plugin via the authenticate method.
+`customerCode` is the element that identifies the final user, the person who is the client. Regarding what this element is called in your system you need to pass this information to the plugin via the authenticate method.
 
 ```
   flourish.authenticate(customerCode: '123').then((value) {
@@ -116,7 +83,7 @@ You can also register to other events like:
   });
 ```
 
-## Displaying the webview
+### Displaying the webview
 
 All the functionality of Flourish is displayed via a webview, you can initialize this webview using this:
 
@@ -133,15 +100,54 @@ After a successful rendering, you should see something like this.
 <br>
 <br>
 
-### Examples
+## EVENTS
+___
+
+You can also register for some events to know when something happens within our platform.
+
+You can listen to a specific already mapped event, an unmapped event, or all events if you prefer.
+
+### Listen our mapped events
+
+We have some events already mapped that you can listen to separately
+
+For example, if you need know when ou Trivia feature finished, you can listen to the "TriviaFinishedEvent"
+
+```
+flourish.onTriviaFinishedEvent((TriviaFinishedEvent response) {
+  print("Event name: ${response.name}");
+  print("Event data: ${jsonEncode(response.data.toJson())}");
+});
+```
+you can find our all mapped events here:
+https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/lib/events/types
+
+### Listen our unmapped events
+Even if our platform starts sending new unmapped events, it will not be necessary to update the SDK version to consume them.
+
+Just start listening to the generic events
+
+```
+flourish.onGenericEvent((GenericEvent response) {
+  print("Event name: ${response.name}");
+  print("Event data: ${jsonEncode(response.data.toJson())}");
+});
+```
+
+### Listen all events
+But if you want to listen all the events, we also have that for you.
+
+```
+flourish.onAllEvent((Event response) {
+  print("Event name: ${response.name}");
+});
+```
+
+## Examples
 Inside this repository, you have an example app to show how to integrate with us:
 
-https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/<br>
+https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/
 <br>
-<br>
-
-### example
-___
 
 This will simulate your Flutter App calling our application inside a Flutter web-view component
 <br>
