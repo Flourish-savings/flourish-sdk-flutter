@@ -11,15 +11,19 @@ class TriviaFinishedEvent extends Event {
 
   factory TriviaFinishedEvent.from(Map<String, dynamic> json) {
 
-    var prizes = Prizes(
-        quantity: json['data']['prizes']['quantity'],
-        category: json['data']['prizes']['category']
-    );
+    List<Prizes> prizeList = [];
+
+    if(json['data']['prizes'].length > 0){
+      prizeList = List<Prizes>.from(
+          json['data']['prizes']
+              .map((prize) => Prizes.fromJson(prize))
+      );
+    }
 
     var data = Data(
         hits: json['data']['hits'],
         questions: json['data']['questions'],
-        prizes: prizes
+        prizes: prizeList
     );
 
     return TriviaFinishedEvent(
@@ -36,23 +40,29 @@ class TriviaFinishedEvent extends Event {
 }
 
 class Data {
-  double hits;
-  double questions;
-  Prizes prizes;
+  int hits;
+  int questions;
+  List<Prizes> prizes;
 
   Data({required this.hits, required this.questions, required this.prizes});
 
   Map toJson() {
-    Map? prizes = this.prizes.toJson();
     return {'hits': hits, 'questions': questions, 'prizes': prizes};
   }
 }
 
 class Prizes {
-  double quantity;
+  int quantity;
   String category;
 
   Prizes({required this.quantity, required this.category});
+
+  factory Prizes.fromJson(Map<String, dynamic> json) {
+    return new Prizes(
+      quantity: json['quantity'],
+      category: json['category'],
+    );
+  }
 
   Map toJson() => {
     'quantity': quantity,
