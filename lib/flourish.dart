@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
@@ -24,6 +25,7 @@ class Flourish {
   late Environment environment;
   late String partnerId;
   late String secret;
+  late String customerCode;
   late WebviewContainer _webviewContainer;
   late String _token;
   late Endpoint _endpoint;
@@ -53,7 +55,13 @@ class Flourish {
     return Flourish._(partnerId, secret, env, language);
   }
 
+  Future<String> refreshToken() async {
+    _token = await this.authenticate(customerCode: customerCode);
+    return _token;
+  }
+
   Future<String> authenticate({required String customerCode}) async {
+    this.customerCode = customerCode;
     _token =
         await _service.authenticate(this.partnerId, this.secret, customerCode);
     await signIn();
@@ -89,14 +97,6 @@ class Flourish {
   StreamSubscription<Event> onWebViewLoadedEvent(Function callback) {
     return this.onEvent.listen((Event e) {
       if (e is WebViewLoadedEvent) {
-        callback(e);
-      }
-    });
-  }
-
-  StreamSubscription<Event> onRetryLoginEvent(Function callback) {
-    return this.onEvent.listen((Event e) {
-      if (e is RetryLoginEvent) {
         callback(e);
       }
     });
@@ -149,7 +149,12 @@ class Flourish {
       apiToken: this._token,
       eventManager: this.eventManager,
       endpoint: this._endpoint,
+      flourish: this
     );
+  }
+
+  WebviewContainer getWebViewContainer() {
+    return _webviewContainer;
   }
 
   static Future<String> get platformVersion async {
