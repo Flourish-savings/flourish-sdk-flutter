@@ -1,6 +1,15 @@
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flourish_flutter_sdk/events/event.dart';
+import 'package:flourish_flutter_sdk/events/types/auto_payment_event.dart';
+import 'package:flourish_flutter_sdk/events/types/back_event.dart';
+import 'package:flourish_flutter_sdk/events/types/generic_event.dart';
+import 'package:flourish_flutter_sdk/events/types/payment_event.dart';
+import 'package:flourish_flutter_sdk/events/types/retry_login_event.dart';
+import 'package:flourish_flutter_sdk/events/types/trivia_finished_event.dart';
+import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
+import 'dart:convert';
 
 class Home extends StatefulWidget {
   final String? title;
@@ -31,6 +40,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    buildPerformFlourishEvents();
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         unselectedItemColor: Colors.black38,
@@ -373,5 +383,43 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  void buildPerformFlourishEvents() {
+    Flourish flourish =  Provider.of<Flourish>(
+      context,
+      listen: false,
+    );
+
+    flourish.onAllEvent((Event response) {
+    print("Event name: ${response.name}");
+    });
+
+    flourish.onGenericEvent((GenericEvent response) {
+      print("Event name: ${response.name}");
+      print("Event data: ${jsonEncode(response.data.toJson())}");
+    });
+
+    flourish.onWebViewLoadedEvent((WebViewLoadedEvent response) {
+      print("Event name: ${response.name}");
+    });
+
+    flourish.onAutoPaymentEvent((AutoPaymentEvent response) {
+      print("Event name: ${response.name}");
+    });
+
+    flourish.onPaymentEvent((PaymentEvent response) {
+      print("Event name: ${response.name}");
+    });
+
+    flourish.onTriviaFinishedEvent((TriviaFinishedEvent response) {
+      print("Event name: ${response.name}");
+      print("Event data: ${jsonEncode(response.data.toJson())}");
+    });
+
+    flourish.onBackEvent((BackEvent response) {
+      print("Event name: ${response.name}");
+      print("Event data: ${jsonEncode(response.data.toJson())}");
+    });
   }
 }
