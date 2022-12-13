@@ -1,8 +1,7 @@
 name: flourish_flutter_sdk
-description: A new flutter plugin project.
-version: 0.0.1
-author:
-homepage:
+description: Flourish SDK for partners integrate.
+version: 1.0.0
+homepage: https://github.com/Flourish-savings/flourish-sdk-flutter
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
