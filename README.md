@@ -1,4 +1,4 @@
-[<img width="363" height="90" src="images/flourishfi_logo_white.png"/>](https://flourishfi.com)
+[<img width="363" height="90" src="https://github.com/Flourish-savings/flourish-sdk-flutter/blob/main/images/flourishfi_logo_white.png"/>](https://flourishfi.com)
 <br>
 <br>
 # Flourish SDK Flutter
@@ -11,36 +11,10 @@ Table of contents
 =================
 
 <!--ts-->
-   * [Installation](#installation)
-      * [Requirements](#requirements)
-      * [Configuration](#configuration)
    * [Getting Started](#getting-started)
    * [Events](#events)
    * [Examples](#examples)
 <!--te-->
-<br>
-<br>
-
-## Installation
-
-### Requirements
-___
-* Flutter
-* Dart
-<br>
-<br>
-
-### Configuration
-___
-
-Add the plugin as a dependency in your file pubsec.yaml as follows:
-
-```
- flourish_flutter_sdk:
-    git:
-      url: git@github.com:Flourish-savings/flourish-sdk-flutter.git
-      ref: 1.0.0
-```
 <br>
 <br>
 
