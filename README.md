@@ -1,4 +1,4 @@
-[<img width="363" height="90" src="https://github.com/Flourish-savings/flourish-sdk-flutter/blob/main/images/flourishfi_logo_white.png"/>](https://flourishfi.com)
+[<img width="363" height="90" src="https://github.com/Flourish-savings/flourish-sdk-flutter/blob/main/images/flourishfi_logo_white.png?raw=true"/>](https://flourishfi.com)
 <br>
 <br>
 # Flourish SDK Flutter
