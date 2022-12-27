@@ -1,6 +1,6 @@
 name: flourish_flutter_sdk
 description: Flourish SDK for partners integrate.
-version: 1.0.3
+version: 1.0.4
 homepage: https://github.com/Flourish-savings/flourish-sdk-flutter
 
 environment:

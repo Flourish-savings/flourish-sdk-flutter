@@ -3,7 +3,7 @@ All notable changes to this plugin will be documented in this file.
 
 ## [1.0.4] - 27/12/2022
 ### Updated
-- Formatting Changelog
+- Updating README.MD
 
 ## [1.0.3] - 27/12/2022
 ### Updated
