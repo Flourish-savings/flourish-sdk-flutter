@@ -1,7 +1,13 @@
 # Changelog
 All notable changes to this plugin will be documented in this file.
 
-## [Unreleased]
+## [1.0.3] - 27/12/2022
+### Updated
+ - Formatting Changelog
+
+## [1.0.2] - 26/12/2022
+### Updated
+ - Removing loading_indicator library
 
 ## [1.0.1] - 13/12/2022
 ### Updated
