@@ -1,4 +1,4 @@
-[<img width="363" height="90" src="https://github.com/Flourish-savings/flourish-sdk-flutter/blob/main/images/flourishfi_logo_white.png?raw=true"/>](https://flourishfi.com)
+[<img width="400" src="https://github.com/Flourish-savings/flourish-sdk-flutter/blob/main/images/logo_flourish.png.png?raw=true"/>](https://flourishfi.com)
 <br>
 <br>
 # Flourish SDK Flutter
@@ -16,26 +16,25 @@ Table of contents
    * [Examples](#examples)
 <!--te-->
 <br>
-<br>
 
 ## Getting Started
 ___
-To use this plugin, you will need these elements:
 
-- partnerId: a unique identifier that will be provided by Flourish
-- secret: a string that represents a key, also provided by Flourish
+### Adding Flourish to your project
 
-This plugin can be run in two different environments:
+In your project's `pubspec.yaml` file, add the last version of Flourish Flutter SDK to your dependencies.
+```
+# pubspec.yaml
 
-- staging: In this environment, you can test the functionality without impacting any real data
-- production: this environment is for running the app with the real data
-<br>
-<br>
+dependencies:
+  flourish_flutter_sdk: ^<latest version>
+```
+
 
 ### Initializing the SDK
 ___
 
-In the main file of your application, you need to call the method initilize providing the partnerId and the secret.
+In the main file of your application, you need to call the method initialize providing the partnerId and the secret.
 
 ```
   Flourish flourish = Flourish.initialize(
@@ -67,10 +66,10 @@ All the functionality of Flourish is displayed via a webview, you can initialize
 
 After a successful rendering, you should see something like this.
 
-<img width="363" src="images/flourish_home.png"/>
+<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_home.png"/>
 <br>
 <br>
-<img width="363" src="images/flourish_wheel.png"/>
+<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_wheel.png"/>
 <br>
 <br>
 
@@ -126,10 +125,10 @@ https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/
 This will simulate your Flutter App calling our application inside a Flutter web-view component
 <br>
 <br>
-<img width="363" src="images/example_login.png"/>
+<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/example_login.png"/>
 <br>
 <br>
-<img width="363" src="images/example_home.png"/>
+<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/example_home.png"/>
 <br>
 <br>
-<img width="363" src="images/flourish_home.png"/>
+<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_home.png"/>
