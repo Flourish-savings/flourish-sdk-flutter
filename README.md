@@ -1,4 +1,4 @@
-[<img width="363" height="90" src="https://github.com/Flourish-savings/flourish-sdk-flutter/blob/main/images/flourishfi_logo_white.png?raw=true"/>](https://flourishfi.com)
+[<img width="400" src="https://github.com/Flourish-savings/flourish-sdk-flutter/blob/main/images/logo_flourish.png?raw=true"/>](https://flourishfi.com)
 <br>
 <br>
 # Flourish SDK Flutter
@@ -18,10 +18,20 @@ Table of contents
    * [Examples](#examples)
 <!--te-->
 <br>
-<br>
 
 ## Getting Started
 ___
+
+### Adding Flourish to your project
+
+In your project's `pubspec.yaml` file, add the last version of Flourish Flutter SDK to your dependencies.
+```yaml
+# pubspec.yaml
+
+dependencies:
+  flourish_flutter_sdk: ^<latest version>
+```
+
 To use this plugin, you will need these elements:
 
 - partnerId: a unique identifier that will be provided by Flourish
@@ -37,8 +47,8 @@ This plugin can be run in two different environments:
 
 ### About the SDK
 
-The integration with us works as follows, the client authenticates himself in our backend 
-and we return an access token that allows him to load our webview, given that, 
+The integration with us works as follows, the client authenticates himself in our backend
+and we return an access token that allows him to load our webview, given that,
 the sdk serves to encapsulate and help in loading this webview.
 
 ### Using the SDK
@@ -55,7 +65,7 @@ First foremost, it is necessary to initialize the SDK providing the variables: `
     );
 ```
 
-Then, with the SDK instance initialized, it is time to perform the authentication in our backend, 
+Then, with the SDK instance initialized, it is time to perform the authentication in our backend,
 being only necessary to pass your `costumer_code`
 
 ```dart
@@ -66,10 +76,10 @@ being only necessary to pass your `costumer_code`
     });
 ```
 
-Finally we must call the `home()` method, but remember 
-that all our functionalities are displayed through a webview and, 
-bearing in mind that authentication is an asynchronous request, 
-it's only possible to call the `home()` method when getting a response from the request, 
+Finally we must call the `home()` method, but remember
+that all our functionalities are displayed through a webview and,
+bearing in mind that authentication is an asynchronous request,
+it's only possible to call the `home()` method when getting a response from the request,
 in other words within the `then()` method.
 
 ```dart
@@ -151,7 +161,7 @@ After a successful rendering, you should see something like this.
 <br>
 
 ---
-There is a more elaborate example inside the sdk repository, 
+There is a more elaborate example inside the sdk repository,
 you can access it by [clicking here](https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/example).
 
 ---
@@ -209,10 +219,10 @@ https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/
 This will simulate your Flutter App calling our application inside a Flutter web-view component
 <br>
 <br>
-<img width="363" src="images/example_login.png"/>
+<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/example_login.png"/>
 <br>
 <br>
-<img width="363" src="images/example_home.png"/>
+<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/example_home.png"/>
 <br>
 <br>
-<img width="363" src="images/flourish_home.png"/>
+<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_home.png"/>
