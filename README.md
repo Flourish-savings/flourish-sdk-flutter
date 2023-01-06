@@ -155,10 +155,10 @@ class _ExamplePageState extends State<ExamplePage> {
 
 After a successful rendering, you should see something like this.
 
-<img width="363" src="images/flourish_home.png"/>
+<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_home.png"/>
 <br>
 <br>
-<img width="363" src="images/flourish_wheel.png"/>
+<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_wheel.png"/>
 <br>
 <br>
 
