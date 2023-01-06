@@ -82,7 +82,7 @@ Finally we must call the `home()` method, but remember
 that all our functionalities are displayed through a webview and,
 bearing in mind that authentication is an asynchronous request,
 it's only possible to call the `home()` method when getting a response from the request,
-in other words within the `then()` method.
+in other words if you are developing with `Future` strategy for example you will put it inside the `then()` method.
 
 ```dart
   flourish.home();
