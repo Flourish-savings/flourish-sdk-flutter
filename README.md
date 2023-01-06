@@ -32,7 +32,9 @@ dependencies:
   flourish_flutter_sdk: ^<latest version>
 ```
 
-To use this plugin, you will need these elements:
+### SDK internal requirements
+
+To use this SDK, you will need these elements:
 
 - partnerId: a unique identifier that will be provided by Flourish
 - secret: a string that represents a key, also provided by Flourish
