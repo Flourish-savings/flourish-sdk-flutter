@@ -117,7 +117,7 @@ class _ExamplePageState extends State<ExamplePage> {
       language: Language.english,
     );
 
-    flourish.authenticate(customerCode: <HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE>).then((accessToken) {
+    flourish.authenticate(customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE').then((accessToken) {
       setState(() {
         flourishHome = flourish.home();
       });
