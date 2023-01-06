@@ -162,7 +162,7 @@ After a successful rendering, you should see something like this.
 <br>
 <br>
 
----
+
 There is a more elaborate example inside the sdk repository,
 you can access it by [clicking here](https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/example).
 
