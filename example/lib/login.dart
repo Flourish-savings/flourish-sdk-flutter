@@ -16,6 +16,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _customerCodeController = TextEditingController();
+  final _categoryController = TextEditingController();
   Environment _envValue = Environment.staging;
   Language _langValue = Language.spanish;
 
@@ -51,6 +52,30 @@ class _LoginState extends State<Login> {
             controller: _customerCodeController,
           ),
         ),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: kBoxDecorationStyle,
+          margin: const EdgeInsets.only(top: 10.0),
+          height: 60.0,
+          child: TextField(
+            keyboardType: TextInputType.text,
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'OpenSans',
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                Icons.supervised_user_circle,
+                color: Colors.white,
+              ),
+              hintText: 'Enter your Category',
+              hintStyle: kHintTextStyle,
+            ),
+            controller: _categoryController,
+          ),
+        ),
       ],
     );
   }
@@ -75,6 +100,7 @@ class _LoginState extends State<Login> {
         onPressed: () async {
           print('Login Button Pressed');
           print(_customerCodeController.text);
+          print(_categoryController.text);
 
           if (_customerCodeController.text.trim().isEmpty) {
             _sendToast("Customer code is required");
@@ -101,7 +127,7 @@ class _LoginState extends State<Login> {
           );
 
           flourish
-              .authenticate(customerCode: _customerCodeController.text)
+              .authenticate(customerCode: _customerCodeController.text, category: _categoryController.text)
               .then((value) {
             Navigator.push(
               context,

@@ -12,15 +12,21 @@ class ApiService {
   }
 
   Future<String> authenticate(
-      String partnerId, String partnerSecret, String customerCode) async {
+      String partnerId, String partnerSecret, String customerCode, String category) async {
     try {
+      final Map<String, String> requestData = {
+        "partner_uuid": partnerId,
+        "partner_secret": partnerSecret,
+        "customer_code": customerCode
+      };
+
+      if (category.isNotEmpty) {
+        requestData["category"] = category;
+      }
+
       Response res = await _api!.post(
         '/access_token',
-        data: {
-          "partner_uuid": partnerId,
-          "partner_secret": partnerSecret,
-          "customer_code": customerCode
-        },
+        data: requestData,
       );
       _token = res.data['access_token'];
       return _token!;

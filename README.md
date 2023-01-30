@@ -67,11 +67,13 @@ First foremost, it is necessary to initialize the SDK providing the variables: `
     );
 ```
 
-Then, with the SDK instance initialized, it is time to perform the authentication in our backend,
-being only necessary to pass your `costumer_code`
+Then, with the SDK instance initialized, it is time to perform the authentication in our backend, 
+to do this, it's required that you pass a `customer_code`, and you can also pass a `category` this one isn't required.
 
 ```dart
-    flourish.authenticate(customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE').then((accessToken) {
+    flourish.authenticate(customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE'
+                          category: 'HERE_YOU_WILL_USE_YOUR_CATEGORY_THIS_IS_NOT_REQUIRED'
+    ).then((accessToken) {
       // apply your logic here
     }).catchError((er) {
       debugPrint(er);
