@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this plugin will be documented in this file.
 
+## [1.0.6] - 31/01/2023
+### Updated
+- Updating request to Flourish API with `category` field
+
 ## [1.0.4] - 27/12/2022
 ### Updated
 - Updating README.MD
@@ -22,6 +26,7 @@ All notable changes to this plugin will be documented in this file.
 - Setup of the sdk
 
 [Unreleased]: https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main
+[1.0.6]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.6
 [1.0.4]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.4
 [1.0.3]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.3
 [1.0.2]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.2
