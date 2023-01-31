@@ -26,6 +26,7 @@ class Flourish {
   late String partnerId;
   late String secret;
   late String customerCode;
+  late String category;
   late WebviewContainer _webviewContainer;
   late String _token;
   late Endpoint _endpoint;
@@ -56,14 +57,14 @@ class Flourish {
   }
 
   Future<String> refreshToken() async {
-    _token = await this.authenticate(customerCode: customerCode);
+    _token = await this.authenticate(customerCode: customerCode, category: category);
     return _token;
   }
 
-  Future<String> authenticate({required String customerCode}) async {
+  Future<String> authenticate({required String customerCode, String category = ""}) async {
     this.customerCode = customerCode;
-    _token =
-        await _service.authenticate(this.partnerId, this.secret, customerCode);
+    this.category = category;
+    _token = await _service.authenticate(this.partnerId, this.secret, customerCode, category);
     await signIn();
     return _token;
   }
