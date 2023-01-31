@@ -14,7 +14,7 @@ class ApiService {
   Future<String> authenticate(
       String partnerId, String partnerSecret, String customerCode, String category) async {
     try {
-      final Map<String, String> requestData = {
+      Map<String, String> requestData = {
         "partner_uuid": partnerId,
         "partner_secret": partnerSecret,
         "customer_code": customerCode
