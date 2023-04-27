@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this plugin will be documented in this file.
 
+## [1.0.7] - 27/04/2023
+### Updated
+- Bump Kotlin plugin version to 1.5.20
+
 ## [1.0.6] - 31/01/2023
 ### Updated
 - Updating request to Flourish API with `category` field
