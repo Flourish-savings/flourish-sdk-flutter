@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this plugin will be documented in this file.
 
+## [1.0.8] - 10/05/2023
+### Updated
+- Adding event documentation
+
+## [1.0.7] - 27/04/2023
+### Updated
+- Bump Kotlin plugin version to 1.5.20
+
 ## [1.0.6] - 31/01/2023
 ### Updated
 - Updating request to Flourish API with `category` field
@@ -26,6 +34,8 @@ All notable changes to this plugin will be documented in this file.
 - Setup of the sdk
 
 [Unreleased]: https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main
+[1.0.8]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.8
+[1.0.7]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.7
 [1.0.6]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.6
 [1.0.4]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.4
 [1.0.3]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.3
