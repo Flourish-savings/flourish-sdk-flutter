@@ -214,6 +214,18 @@ flourish.onAllEvent((Event response) {
 });
 ```
 
+### Events to listen
+here you have all events we will return
+
+| event name      | description                                                                                |
+|-----------------|--------------------------------------------------------------------------------------------|
+| GoToAutoPayment | When you need to know when the user clicks to set up an automatic payment on our platform. |
+| GoToPayment     | When you need to know when the user clicks to set up a payment on our platform.            |
+| TriviaFinished  | When you need to know when the user finishes a Trivia game on our platform.                |
+| GoBack          | When you need to know when the user clicks on the back menu button on our platform.        |
+
+
+
 ## Examples
 Inside this repository, you have an example app to show how to integrate with us:
 
