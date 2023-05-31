@@ -15,7 +15,7 @@ class Endpoint {
   };
 
   final Map<Environment, String> _frontendUrlMapper = const {
-    Environment.production: "https://flourish-app.flourishfi.com/",
+    Environment.production: "https://platform.flourishfi.com/",
     Environment.staging: "https://platform-stg.flourishfi.com/",
     Environment.development: "http://10.0.2.2:3001/",
   };
