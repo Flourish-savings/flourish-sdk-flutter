@@ -9,6 +9,7 @@ import 'package:flourish_flutter_sdk/web_view/error_view.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
 
+import '../config/language.dart';
 import '../events/types/web_view_loaded_event.dart';
 
 class WebviewContainer extends StatefulWidget {
@@ -16,6 +17,7 @@ class WebviewContainer extends StatefulWidget {
     Key? key,
     required this.environment,
     required this.apiToken,
+    required this.language,
     required this.eventManager,
     required this.endpoint,
     required this.flourish,
@@ -25,6 +27,7 @@ class WebviewContainer extends StatefulWidget {
 
   final Environment environment;
   final String apiToken;
+  final Language language;
   final EventManager eventManager;
   final Endpoint endpoint;
   final Flourish flourish;
@@ -55,8 +58,10 @@ class WebviewContainerState extends State<WebviewContainer> {
   @override
   Widget build(BuildContext context) {
     String url = widget.endpoint.getFrontend();
-    String fullUrl = "$url?token=${widget.apiToken}";
-    //debugPrint("Full URL $fullUrl");
+    String langParam = widget.language.code() != null ? "?lang=${widget.language.code()}" : '';
+    String tokenParam = widget.language.code() != null ? "&token=${widget.apiToken}" : '?token=${widget.apiToken}';
+    String fullUrl = "$url$langParam$tokenParam";
+    print(fullUrl);
     return Container(
       color: Theme.of(context).primaryColor,
       child: SafeArea(

@@ -6,13 +6,11 @@ import 'package:flourish_flutter_sdk/config/environment_enum.dart';
 import 'package:flourish_flutter_sdk/events/event.dart';
 import 'package:flourish_flutter_sdk/events/event_manager.dart';
 import 'package:flourish_flutter_sdk/events/types/generic_event.dart';
-import 'package:flourish_flutter_sdk/events/types/retry_login_event.dart';
 import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
 import 'package:flourish_flutter_sdk/network/api_service.dart';
 import 'package:flourish_flutter_sdk/web_view/webview_container.dart';
 import 'package:flutter/services.dart';
-
 import 'events/types/auto_payment_event.dart';
 import 'events/types/back_event.dart';
 import 'events/types/payment_event.dart';
@@ -25,6 +23,7 @@ class Flourish {
   late Environment environment;
   late String partnerId;
   late String secret;
+  late Language language;
   late String customerCode;
   late String category;
   late WebviewContainer _webviewContainer;
@@ -43,7 +42,8 @@ class Flourish {
     this.partnerId = partnerId;
     this.secret = secret;
     this.environment = env;
-    this._endpoint = Endpoint(environment, language);
+    this.language = language;
+    this._endpoint = Endpoint(environment);
     this._service = ApiService(env, this._endpoint);
   }
 
@@ -148,6 +148,7 @@ class Flourish {
     this._webviewContainer = new WebviewContainer(
       environment: this.environment,
       apiToken: this._token,
+      language: this.language,
       eventManager: this.eventManager,
       endpoint: this._endpoint,
       flourish: this
