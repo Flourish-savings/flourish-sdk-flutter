@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:clipboard/clipboard.dart';
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
 import 'package:flourish_flutter_sdk/events/event.dart';
@@ -86,6 +87,10 @@ class WebviewContainerState extends State<WebviewContainer> {
                   final eventName = json['eventName'];
                   if(eventName == "RetryLogin"){
                     openErrorScreen();
+                    return;
+                  }
+                  if(eventName == "REFERRAL_COPY"){
+                    FlutterClipboard.copy(json['data']['referralCode']);
                     return;
                   }
                   Event event = Event.fromJson(json);
