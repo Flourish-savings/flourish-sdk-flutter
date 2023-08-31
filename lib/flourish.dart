@@ -75,7 +75,7 @@ class Flourish {
       return true;
     } on DioError catch (e) {
       eventManager.notify(
-        ErrorEvent('FAILED_TO_SIGN_IN', e.message),
+        ErrorEvent('FAILED_TO_SIGN_IN', e.message!),
       );
       return false;
     }
