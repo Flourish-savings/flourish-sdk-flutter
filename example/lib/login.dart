@@ -94,8 +94,7 @@ class _LoginState extends State<Login> {
           bool hasNotification = false;
 
           Flourish flourish = Flourish.initialize(
-            partnerId: credential.partnerId,
-            secret: credential.secretId,
+            token: 'HERE_YOU_WILL_USE_THE_RETRIEVED_API_TOKEN',
             env: Environment.staging,
             language: Language.english,
           );

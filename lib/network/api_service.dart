@@ -29,13 +29,13 @@ class ApiService {
     }
   }
 
-  Future<bool> signIn() async {
+  Future<bool> signIn(String apiToken) async {
     try {
       await _api!.post(
         '/sign_in',
         options: Options(
           headers: {
-            "Authorization": "Bearer $_token", // set content-length
+            "Authorization": "Bearer $apiToken", // set content-length
           },
         ),
       );
