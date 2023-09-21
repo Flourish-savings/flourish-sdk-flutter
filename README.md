@@ -36,8 +36,7 @@ dependencies:
 
 To use this SDK, you will need these elements:
 
-- partnerId: a unique identifier that will be provided by Flourish
-- secret: a string that represents a key, also provided by Flourish
+- access_token: a string that represents a token that you will retrieve from our API
 - costumer_code: a string that represents an identifier of yourself
 
 This plugin can be run in two different environments:
@@ -55,13 +54,13 @@ the sdk serves to encapsulate and help in loading this webview.
 
 ### Using the SDK
 ___
+After adding our module, it is necessary to retrieve an access token from our API, and we strongly recommend that it be done through a backend because the request needs your credentials and it's good to avoid the harmful environment of the web.
 
-First foremost, it is necessary to initialize the SDK providing the variables: `partnerId`, `secret`, `env` and `language`.
+Initialize the SDK providing the variables: `token`, `env` and `language`.
 
 ```dart
     Flourish flourish = Flourish.initialize(
-      partnerId: 'HERE_YOU_WILL_USE_YOUR_PARTNER_ID',
-      secret: 'HERE_YOU_WILL_USE_YOUR_SECRET',
+      token: 'HERE_YOU_WILL_USE_THE_RETRIEVED_API_TOKEN',
       env: Environment.staging,
       language: Language.english,
     );

@@ -34,25 +34,22 @@ class Flourish {
       const MethodChannel('flourish_flutter_sdk');
 
   Flourish._(
-    String partnerId,
-    String secret,
+    String token,
     Environment env,
     Language language
   ) {
-    this.partnerId = partnerId;
-    this.secret = secret;
+    this._token = token;
     this.environment = env;
     this._endpoint = Endpoint(environment, language);
     this._service = ApiService(env, this._endpoint);
   }
 
   factory Flourish.initialize({
-    required String partnerId,
-    required String secret,
+    required String token,
     required Language language,
     Environment env = Environment.production,
   }) {
-    return Flourish._(partnerId, secret, env, language);
+    return Flourish._(token, env, language);
   }
 
   Future<String> refreshToken() async {
@@ -62,15 +59,13 @@ class Flourish {
 
   Future<String> authenticate({required String customerCode}) async {
     this.customerCode = customerCode;
-    _token =
-        await _service.authenticate(this.partnerId, this.secret, customerCode);
     await signIn();
     return _token;
   }
 
   Future<bool> signIn() async {
     try {
-      await _service.signIn();
+      await _service.signIn(_token);
       return true;
     } on DioError catch (e) {
       eventManager.notify(
