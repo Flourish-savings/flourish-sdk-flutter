@@ -73,7 +73,7 @@ class Flourish {
     try {
       await _service.signIn();
       return true;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       eventManager.notify(
         ErrorEvent('FAILED_TO_SIGN_IN', e.message),
       );
