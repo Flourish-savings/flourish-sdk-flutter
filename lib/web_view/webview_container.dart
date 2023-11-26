@@ -7,13 +7,21 @@ import 'package:flourish_flutter_sdk/events/event.dart';
 import 'package:flourish_flutter_sdk/events/event_manager.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flourish_flutter_sdk/web_view/error_view.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../config/language.dart';
 import '../events/types/web_view_loaded_event.dart';
 
 class WebviewContainer extends StatefulWidget {
+  final Environment environment;
+  final String apiToken;
+  final Language language;
+  final EventManager eventManager;
+  final Endpoint endpoint;
+  final Flourish flourish;
+  final String? version;
+
   WebviewContainer({
     Key? key,
     required this.environment,
@@ -22,16 +30,10 @@ class WebviewContainer extends StatefulWidget {
     required this.eventManager,
     required this.endpoint,
     required this.flourish,
+    this.version,
   }) : super(key: key);
 
   final WebviewContainerState _wcs = new WebviewContainerState();
-
-  final Environment environment;
-  final String apiToken;
-  final Language language;
-  final EventManager eventManager;
-  final Endpoint endpoint;
-  final Flourish flourish;
 
   void loadUrl(String url) {
     _wcs.loadUrl(url);
@@ -52,17 +54,31 @@ class WebviewContainerState extends State<WebviewContainer> {
     this._controller.loadUrl(url);
   }
 
-  void config( Flourish flourish) {
+  void config(Flourish flourish) {
     this.flourish = flourish;
   }
 
   @override
   Widget build(BuildContext context) {
-    String url = widget.endpoint.getFrontend();
-    String langParam = widget.language.code() != null ? "?lang=${widget.language.code()}" : '';
-    String tokenParam = widget.language.code() != null ? "&token=${widget.apiToken}" : '?token=${widget.apiToken}';
-    String fullUrl = "$url$langParam$tokenParam";
+    String url = "";
+    String fullUrl = "";
+
+    if (widget.version != null && widget.version != "") {
+      url = widget.version == "V2"
+          ? widget.endpoint.getFrontendV2()
+          : widget.endpoint.getFrontendV3();
+
+      fullUrl = widget.version == "V2"
+          ? "${url}/${widget.language.code()}?token=${widget.apiToken}"
+          : "${url}?${widget.language.code()}&token=${widget.apiToken}";
+
+    } else {
+      url = widget.endpoint.getFrontendV3();
+      fullUrl = "${url}?${widget.language.code()}&token=${widget.apiToken}";
+    }
+
     print(fullUrl);
+
     return Container(
       color: Theme.of(context).primaryColor,
       child: SafeArea(
@@ -85,11 +101,11 @@ class WebviewContainerState extends State<WebviewContainer> {
                 onMessageReceived: (JavascriptMessage message) {
                   Map<String, dynamic> json = jsonDecode(message.message);
                   final eventName = json['eventName'];
-                  if(eventName == "RetryLogin"){
+                  if (eventName == "RetryLogin") {
                     openErrorScreen();
                     return;
                   }
-                  if(eventName == "REFERRAL_COPY"){
+                  if (eventName == "REFERRAL_COPY") {
                     FlutterClipboard.copy(json['data']['referralCode']);
                     return;
                   }
@@ -114,7 +130,8 @@ class WebviewContainerState extends State<WebviewContainer> {
   void openErrorScreen() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ErrorView(flourish: this.flourish)),
+      MaterialPageRoute(
+          builder: (context) => ErrorView(flourish: this.flourish)),
     );
   }
 }

@@ -23,6 +23,7 @@ class Flourish {
   late Environment environment;
   late String partnerId;
   late String secret;
+  late String? version;
   late Language language;
   late String customerCode;
   late String category;
@@ -36,6 +37,7 @@ class Flourish {
   Flourish._(
     String partnerId,
     String secret,
+    String? version,
     Environment env,
     Language language
   ) {
@@ -43,6 +45,7 @@ class Flourish {
     this.secret = secret;
     this.environment = env;
     this.language = language;
+    this.version = version;
     this._endpoint = Endpoint(environment);
     this._service = ApiService(env, this._endpoint);
   }
@@ -51,9 +54,10 @@ class Flourish {
     required String partnerId,
     required String secret,
     required Language language,
+    String? version,
     Environment env = Environment.production,
   }) {
-    return Flourish._(partnerId, secret, env, language);
+    return Flourish._(partnerId, secret, version, env, language);
   }
 
   Future<String> refreshToken() async {
@@ -151,7 +155,8 @@ class Flourish {
       language: this.language,
       eventManager: this.eventManager,
       endpoint: this._endpoint,
-      flourish: this
+      flourish: this,
+      version: version,
     );
   }
 

@@ -123,7 +123,8 @@ class _LoginState extends State<Login> {
             partnerId: credential.partnerId,
             secret: credential.secretId,
             env: Environment.staging,
-            language: Language.spanish,
+            language: Language.english,
+            version: "V3"
           );
 
           flourish
