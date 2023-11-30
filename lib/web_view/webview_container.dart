@@ -21,6 +21,7 @@ class WebviewContainer extends StatefulWidget {
   final Endpoint endpoint;
   final Flourish flourish;
   final String? version;
+  final String? trackingId;
 
   WebviewContainer({
     Key? key,
@@ -31,6 +32,7 @@ class WebviewContainer extends StatefulWidget {
     required this.endpoint,
     required this.flourish,
     this.version,
+    this.trackingId,
   }) : super(key: key);
 
   final WebviewContainerState _wcs = new WebviewContainerState();
@@ -75,6 +77,10 @@ class WebviewContainerState extends State<WebviewContainer> {
     } else {
       url = widget.endpoint.getFrontendV3();
       fullUrl = "${url}?${widget.language.code()}&token=${widget.apiToken}";
+    }
+
+    if(widget.trackingId != null) {
+      fullUrl = "${fullUrl}&ga_tracking=${widget.trackingId}";
     }
 
     print(fullUrl);
