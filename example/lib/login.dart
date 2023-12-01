@@ -96,7 +96,7 @@ class _LoginState extends State<Login> {
           Flourish flourish = Flourish.initialize(
             token: 'HERE_YOU_WILL_USE_THE_RETRIEVED_API_TOKEN',
             env: Environment.staging,
-            language: Language.english,
+            language: Language.spanish,
           );
 
           flourish

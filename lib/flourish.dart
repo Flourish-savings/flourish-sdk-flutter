@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
+import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk/events/event.dart';
 import 'package:flourish_flutter_sdk/events/event_manager.dart';
 import 'package:flourish_flutter_sdk/events/types/generic_event.dart';
-import 'package:flourish_flutter_sdk/events/types/retry_login_event.dart';
-import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
 import 'package:flourish_flutter_sdk/network/api_service.dart';
 import 'package:flourish_flutter_sdk/web_view/webview_container.dart';
@@ -17,7 +16,6 @@ import 'events/types/auto_payment_event.dart';
 import 'events/types/back_event.dart';
 import 'events/types/payment_event.dart';
 import 'events/types/trivia_finished_event.dart';
-
 
 class Flourish {
   EventManager eventManager = new EventManager();
@@ -33,11 +31,7 @@ class Flourish {
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
 
-  Flourish._(
-    String token,
-    Environment env,
-    Language language
-  ) {
+  Flourish._(String token, Environment env, Language language) {
     this._token = token;
     this.environment = env;
     this._endpoint = Endpoint(environment, language);
@@ -67,7 +61,7 @@ class Flourish {
     try {
       await _service.signIn(_token);
       return true;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       eventManager.notify(
         ErrorEvent('FAILED_TO_SIGN_IN', e.message),
       );
@@ -77,7 +71,7 @@ class Flourish {
 
   StreamSubscription<Event> onAllEvent(Function callback) {
     return this.onEvent.listen((Event e) {
-        callback(e);
+      callback(e);
     });
   }
 
@@ -140,12 +134,11 @@ class Flourish {
 
   void _openHome() {
     this._webviewContainer = new WebviewContainer(
-      environment: this.environment,
-      apiToken: this._token,
-      eventManager: this.eventManager,
-      endpoint: this._endpoint,
-      flourish: this
-    );
+        environment: this.environment,
+        apiToken: this._token,
+        eventManager: this.eventManager,
+        endpoint: this._endpoint,
+        flourish: this);
   }
 
   WebviewContainer getWebViewContainer() {
