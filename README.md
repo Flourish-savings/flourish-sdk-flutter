@@ -64,8 +64,11 @@ First foremost, it is necessary to initialize the SDK providing the variables: `
       secret: 'HERE_YOU_WILL_USE_YOUR_SECRET',
       env: Environment.staging,
       language: Language.english,
+      trackingId: 'HERE_YOU_WILL_USE_YOUR_GOOGLE_ANALYTICS_KEY_THIS_IS_NOT_REQUIRED'
     );
 ```
+
+The `trackingId` variable is used if you want to pass on your Google Analytics Key to be able to monitor the use of our platform by your users.
 
 Then, with the SDK instance initialized, it is time to perform the authentication in our backend, 
 to do this, it's required that you pass a `customer_code`, and you can also pass a `category` this one isn't required.
@@ -155,22 +158,6 @@ class _ExamplePageState extends State<ExamplePage> {
 }
 ```
 
-After a successful rendering, you should see something like this.
-
-<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_home.png"/>
-<br>
-<br>
-<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_wheel.png"/>
-<br>
-<br>
-
-
-There is a more elaborate example inside the sdk repository,
-you can access it by [clicking here](https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/example).
-
----
-
-
 ## EVENTS
 ___
 
@@ -236,9 +223,3 @@ This will simulate your Flutter App calling our application inside a Flutter web
 <br>
 <br>
 <img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/example_login.png"/>
-<br>
-<br>
-<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/example_home.png"/>
-<br>
-<br>
-<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_home.png"/>
