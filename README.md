@@ -169,16 +169,16 @@ You can listen to a specific already mapped event, an unmapped event, or all eve
 
 We have some events already mapped that you can listen to separately
 
-For example, if you need know when ou Trivia feature finished, you can listen to the "TriviaFinishedEvent"
+For example, if you need know when ou Trivia feature finished, you can listen to the "TriviaGameFinishedEvent"
 
 ```
-flourish.onTriviaFinishedEvent((TriviaFinishedEvent response) {
-  print("Event name: ${response.name}");
-  print("Event data: ${jsonEncode(response.data.toJson())}");
+flourish.onTriviaGameFinishedEvent((TriviaGameFinishedEvent response) {
+ print("Event name: ${response.name}");
+ print("Event data: ${jsonEncode(response.data.toJson())}");
 });
 ```
 you can find our all mapped events here:
-https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/lib/events/types
+https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/lib/events/types/v2
 
 ### Listen our unmapped events
 Even if our platform starts sending new unmapped events, it will not be necessary to update the SDK version to consume them.
@@ -204,15 +204,16 @@ flourish.onAllEvent((Event response) {
 ### Events to listen
 here you have all events we will return
 
-| Event name      | Description                                                                                                       |
-|-----------------|-------------------------------------------------------------------------------------------------------------------|
-| BACK_BUTTON_PRESSED | When you need to know when the user clicks on the back menu button on our platform.                        |
-| MISSION_ACTION     | When you need to know when the user clicks on a mission card                                |
-| TRIVIA_GAME_FINISHED  | When you need to know when the user finishes a Trivia game on our platform.                                       |
-| REFERRAL_COPY          | When you need to know when the user copy the referral code to the clipboard area.                             |
-| HOME_BANNER_ACTION      | When you need to know when the user clicks on the home banner.       |
-| ERROR      | When you need to know when a error happened.      |
-
+| Event name      | Description                                                                         |
+|-----------------|-------------------------------------------------------------------------------------|
+| BACK_BUTTON_PRESSED | When you need to know when the user clicks on the back menu button on our platform. |
+| TRIVIA_GAME_FINISHED  | When you need to know when the user finishes a Trivia game on our platform.         |
+| TRIVIA_CLOSED  | When you need to know when the user closed the Trivia game on our platform.         |
+| REFERRAL_COPY          | When you need to know when the user copy the referral code to the clipboard area.   |
+| GIFT_CARD_COPY  | When you need to know when the user copy the Gift code to the clipboard area.       |
+| HOME_BANNER_ACTION      | When you need to know when the user clicks on the home banner.                      |
+| MISSION_ACTION     | When you need to know when the user clicks on a mission card                        |
+| ERROR      | When you need to know when a error happened.                                        |
 
 
 ## Examples
