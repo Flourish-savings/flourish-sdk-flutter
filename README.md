@@ -56,6 +56,19 @@ the sdk serves to encapsulate and help in loading this webview.
 ### Using the SDK
 ___
 
+### 1 - Initialization
+
+##<span style="color:red;">IMPORTANT❗</span>
+
+
+<div style="border: 1px solid grey; padding: 10px;">
+
+**For the flow to work correctly and for us to have the metrics correctly to show our value, it is extremely important to initialize our SDK when opening your App, for example at startup or on the home screen. The most important thing is that it is not initialized at the same time as opening our module.**
+
+</div>
+
+___
+
 First foremost, it is necessary to initialize the SDK providing the variables: `partnerId`, `secret`, `env` and `language`.
 
 ```dart
@@ -82,6 +95,8 @@ to do this, it's required that you pass a `customer_code`, and you can also pass
       debugPrint(er);
     });
 ```
+
+### 2 - Open Flourish module
 
 Finally we must call the `home()` method, but remember
 that all our functionalities are displayed through a webview and,
