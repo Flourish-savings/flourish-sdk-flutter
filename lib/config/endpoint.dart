@@ -7,8 +7,8 @@ class Endpoint {
   const Endpoint(this.environment);
 
   final Map<Environment, String> _backendUrlMapper = const {
-    Environment.production: "https://api.flourishsavings.com/api/v1",
-    Environment.staging: "https://staging.flourishsavings.com/api/v1",
+    Environment.production: "https://api.flourishfi.com/api/v1",
+    Environment.staging: "https://staging.flourishfi.com/api/v1",
     Environment.development: "http://10.0.2.2:3000/api/v1",
   };
 
