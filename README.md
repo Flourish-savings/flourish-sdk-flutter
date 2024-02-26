@@ -87,79 +87,6 @@ in other words if you are developing with `Future` strategy for example you will
   flourish.home();
 ```
 
-Below is an example of an extremely basic widget on how to implement all these steps reported above
-
-```dart
-import 'package:flourish_flutter_sdk/config/environment_enum.dart';
-import 'package:flourish_flutter_sdk/config/language.dart';
-import 'package:flourish_flutter_sdk/flourish.dart';
-import 'package:flourish_flutter_sdk/web_view/webview_container.dart';
-import 'package:flutter/material.dart';
-
-class ExamplePage extends StatefulWidget {
-  const ExamplePage({super.key});
-
-  @override
-  State<StatefulWidget> createState() => _ExamplePageState();
-}
-
-class _ExamplePageState extends State<ExamplePage> {
-  WebviewContainer? flourishHome;
-
-  @override
-  void initState() {
-    super.initState();
-    Flourish flourish = Flourish.initialize(
-      partnerId: 'HERE_YOU_WILL_USE_YOUR_PARTNER_ID',
-      secret: 'HERE_YOU_WILL_USE_YOUR_SECRET',
-      env: Environment.staging,
-      language: Language.english,
-    );
-
-    flourish.authenticate(customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE').then((accessToken) {
-      setState(() {
-        flourishHome = flourish.home();
-      });
-    }).catchError((er) {
-      debugPrint(er);
-    });
-  }
-
-  // THIS IS JUST ANOTHER SUGGESTION OF IMPLEMENTATION USING ASYNC/AWAIT
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Flourish flourish = Flourish.initialize(
-  //     partnerId: 'HERE_YOU_WILL_USE_YOUR_PARTNER_ID',
-  //     secret: 'HERE_YOU_WILL_USE_YOUR_SECRET',
-  //     env: Environment.staging,
-  //     language: Language.english,
-  //   );
-  //
-  //   Future(() async {
-  //     String accessToken = await flourish.authenticate(customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE');
-  //
-  //     setState(() {
-  //       flourishHome = flourish.home();
-  //     });
-  //   });
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    return flourishHome ?? const Text('Loading');
-  }
-}
-```
-
-After a successful rendering, you should see something like this.
-
-<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_home.png"/>
-<br>
-<br>
-<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_wheel.png"/>
-<br>
-<br>
 
 
 There is a more elaborate example inside the sdk repository,
@@ -182,7 +109,7 @@ We have some events already mapped that you can listen to separately
 For example, if you need know when ou Trivia feature finished, you can listen to the "TriviaFinishedEvent"
 
 ```
-flourish.onTriviaFinishedEvent((TriviaFinishedEvent response) {
+flourish.onTriviaGameFinishedEvent((TriviaGameFinishedEvent response) {
   print("Event name: ${response.name}");
   print("Event data: ${jsonEncode(response.data.toJson())}");
 });
@@ -211,19 +138,17 @@ flourish.onAllEvent((Event response) {
 });
 ```
 
-## Examples
-Inside this repository, you have an example app to show how to integrate with us:
+### Events to listen
+here you have all events we will return
 
-https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/
-<br>
+| Event name           | Description                                                                         |
+|----------------------|-------------------------------------------------------------------------------------|
+| BACK_BUTTON_PRESSED  | When you need to know when the user clicks on the back menu button on our platform. |
+| TRIVIA_GAME_FINISHED | When you need to know when the user finishes a Trivia game on our platform.         |
+| TRIVIA_CLOSED        | When you need to know when the user closed the Trivia game on our platform.         |
+| REFERRAL_COPY        | When you need to know when the user copy the referral code to the clipboard area.   |
+| GIFT_CARD_COPY       | When you need to know when the user copy the Gift code to the clipboard area.       |
+| HOME_BANNER_ACTION   | When you need to know when the user clicks on the home banner.                      |
+| MISSION_ACTION       | When you need to know when the user clicks on a mission card                        |
+| INVALID_TOKEN        | When you need to know when then token expired.                                      |
 
-This will simulate your Flutter App calling our application inside a Flutter web-view component
-<br>
-<br>
-<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/example_login.png"/>
-<br>
-<br>
-<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/example_home.png"/>
-<br>
-<br>
-<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/flourish_home.png"/>

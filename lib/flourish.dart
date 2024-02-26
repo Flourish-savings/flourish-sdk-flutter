@@ -17,6 +17,15 @@ import 'events/types/back_event.dart';
 import 'events/types/payment_event.dart';
 import 'events/types/trivia_finished_event.dart';
 
+import 'events/types/v2/back_button_pressed_event.dart';
+import 'events/types/v2/gift_card_copy_event.dart';
+import 'events/types/v2/home_banner_action_event.dart';
+import 'events/types/v2/mission_action_event.dart';
+import 'events/types/v2/referral_copy_event.dart';
+import 'events/types/v2/trivia_close_event.dart';
+import 'events/types/v2/trivia_game_finished_event.dart';
+import 'events/types/v2/invalid_token_event.dart';
+
 class Flourish {
   EventManager eventManager = new EventManager();
   late ApiService _service;
@@ -122,6 +131,72 @@ class Flourish {
       }
     });
   }
+
+
+  StreamSubscription<Event> onBackButtonPressedEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is BackButtonPressedEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> onTriviaGameFinishedEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is TriviaGameFinishedEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> onTriviaCloseEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is TriviaCloseEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> onReferralCopyEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is ReferralCopyEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> onGiftCardCopyEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is GiftCardCopyEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> onHomeBannerActionEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is HomeBannerActionEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> onMissionActionEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is MissionActionEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> onInvalidTokenEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is InvalidTokenEvent) {
+        callback(e);
+      }
+    });
+  }
+
 
   Stream<Event> get onEvent {
     return eventManager.onEvent;
