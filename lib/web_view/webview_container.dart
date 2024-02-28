@@ -55,7 +55,7 @@ class WebviewContainerState extends State<WebviewContainer> {
   @override
   Widget build(BuildContext context) {
     String url = widget.endpoint.getFrontend();
-    String fullUrl = "$url?token=${widget.apiToken}";
+    String fullUrl = "$url&token=${widget.apiToken}";
     //debugPrint("Full URL $fullUrl");
     return Container(
       color: Theme.of(context).primaryColor,

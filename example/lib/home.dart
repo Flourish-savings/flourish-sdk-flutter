@@ -1,3 +1,4 @@
+import 'package:flourish_flutter_sdk/events/types/v2/invalid_token_event.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,14 @@ import 'package:flourish_flutter_sdk/events/types/retry_login_event.dart';
 import 'package:flourish_flutter_sdk/events/types/trivia_finished_event.dart';
 import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
 import 'dart:convert';
+
+import 'package:flourish_flutter_sdk/events/types/v2/back_button_pressed_event.dart';
+import 'package:flourish_flutter_sdk/events/types/v2/gift_card_copy_event.dart';
+import 'package:flourish_flutter_sdk/events/types/v2/home_banner_action_event.dart';
+import 'package:flourish_flutter_sdk/events/types/v2/mission_action_event.dart';
+import 'package:flourish_flutter_sdk/events/types/v2/referral_copy_event.dart';
+import 'package:flourish_flutter_sdk/events/types/v2/trivia_close_event.dart';
+import 'package:flourish_flutter_sdk/events/types/v2/trivia_game_finished_event.dart';
 
 class Home extends StatefulWidget {
   final String? title;
@@ -421,5 +430,47 @@ class _HomeState extends State<Home> {
       print("Event name: ${response.name}");
       print("Event data: ${jsonEncode(response.data.toJson())}");
     });
+
+
+    flourish.onBackButtonPressedEvent((BackButtonPressedEvent response) {
+      print("Event name: ${response.name}");
+      print("Event data: ${jsonEncode(response.data.toJson())}");
+    });
+
+    flourish.onTriviaGameFinishedEvent((TriviaGameFinishedEvent response) {
+      print("Event name: ${response.name}");
+      print("Event data: ${jsonEncode(response.data.toJson())}");
+    });
+
+    flourish.onTriviaCloseEvent((TriviaCloseEvent response) {
+      print("Event name: ${response.name}");
+      print("Event data: ${jsonEncode(response.data.toJson())}");
+    });
+
+    flourish.onReferralCopyEvent((ReferralCopyEvent response) {
+      print("Event name: ${response.name}");
+      print("Event data: ${jsonEncode(response.data.toJson())}");
+    });
+
+    flourish.onGiftCardCopyEvent((GiftCardCopyEvent response) {
+      print("Event name: ${response.name}");
+      print("Event data: ${jsonEncode(response.data.toJson())}");
+    });
+
+    flourish.onHomeBannerActionEvent((HomeBannerActionEvent response) {
+      print("Event name: ${response.name}");
+      print("Event data: ${jsonEncode(response.data.toJson())}");
+    });
+
+    flourish.onMissionActionEvent((MissionActionEvent response) {
+      print("Event name: ${response.name}");
+      print("Event data: ${jsonEncode(response.data.toJson())}");
+    });
+
+    flourish.onInvalidTokenEvent((InvalidTokenEvent response) {
+      print("Event name: ${response.name}");
+      print("Event data: ${jsonEncode(response.data.toJson())}");
+    });
+
   }
 }
