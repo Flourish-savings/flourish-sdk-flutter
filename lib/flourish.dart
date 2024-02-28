@@ -40,19 +40,19 @@ class Flourish {
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
 
-  Flourish._(String token, Environment env, Language language) {
+  Flourish({
+        required String token,
+        required Environment env,
+        required Language language,
+        required String customerCode
+      }) {
     this._token = token;
     this.environment = env;
     this._endpoint = Endpoint(environment, language);
     this._service = ApiService(env, this._endpoint);
-  }
+    this.customerCode = customerCode;
 
-  factory Flourish.initialize({
-    required String token,
-    required Language language,
-    Environment env = Environment.production,
-  }) {
-    return Flourish._(token, env, language);
+    authenticate(customerCode: customerCode);
   }
 
   Future<String> refreshToken() async {
