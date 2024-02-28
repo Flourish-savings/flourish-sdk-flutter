@@ -93,34 +93,29 @@ class _LoginState extends State<Login> {
           WidgetsFlutterBinding.ensureInitialized();
           bool hasNotification = false;
 
-          Flourish flourish = Flourish.initialize(
-            token: 'HERE_YOU_WILL_USE_THE_RETRIEVED_API_TOKEN',
+          Flourish flourish = Flourish(
+            token: 'eyJhbGciOiJIUzI1NiJ9.eyJjbGllbnRfaWQiOjI5LCJ1c2VyX2lkIjozMzEwLCJleHAiOjE3MDkzMDk1OTl9.Z1r7JZaunjg70ftciqjnLSBqU5ahbFmbRfEuPNI1tjY',
             env: Environment.staging,
-            language: Language.spanish,
+            language: Language.portugues,
+            customerCode: _customerCodeController.text
           );
 
-          flourish
-              .authenticate(customerCode: _customerCodeController.text)
-              .then((value) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MultiProvider(
-                  providers: [
-                    Provider<Flourish>.value(
-                      value: flourish,
-                    ),
-                    Provider<bool>.value(
-                      value: hasNotification,
-                    )
-                  ],
-                  child: Home(title: "Activities"),
-                ),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MultiProvider(
+                providers: [
+                  Provider<Flourish>.value(
+                    value: flourish,
+                  ),
+                  Provider<bool>.value(
+                    value: hasNotification,
+                  )
+                ],
+                child: Home(title: "Activities"),
               ),
-            );
-          }).catchError((er) {
-            print(er);
-          });
+            ),
+          );
         },
         child: Text(
           'LOGIN',

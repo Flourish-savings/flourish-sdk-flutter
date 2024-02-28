@@ -56,37 +56,21 @@ the sdk serves to encapsulate and help in loading this webview.
 ___
 After adding our module, it is necessary to retrieve an access token from our API, and we strongly recommend that it be done through a backend because the request needs your credentials and it's good to avoid the harmful environment of the web.
 
-Initialize the SDK providing the variables: `token`, `env` and `language`.
+Initialize the SDK providing the variables: `token`, `env`, `language` and `customerCode`.
 
 ```dart
-    Flourish flourish = Flourish.initialize(
-      token: 'HERE_YOU_WILL_USE_THE_RETRIEVED_API_TOKEN',
-      env: Environment.staging,
-      language: Language.english,
-    );
+  Flourish flourish = Flourish(
+     token: 'HERE_YOU_WILL_USE_THE_RETRIEVED_API_TOKEN',
+     env: Environment.staging,
+     language: Language.english,
+     customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE'
+  );
 ```
 
-Then, with the SDK instance initialized, it is time to perform the authentication in our backend,
-being only necessary to pass your `costumer_code`
-
-```dart
-    flourish.authenticate(customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE').then((accessToken) {
-      // apply your logic here
-    }).catchError((er) {
-      debugPrint(er);
-    });
-```
-
-Finally we must call the `home()` method, but remember
-that all our functionalities are displayed through a webview and,
-bearing in mind that authentication is an asynchronous request,
-it's only possible to call the `home()` method when getting a response from the request,
-in other words if you are developing with `Future` strategy for example you will put it inside the `then()` method.
-
+Finally we must call the `home()` method.
 ```dart
   flourish.home();
 ```
-
 
 
 There is a more elaborate example inside the sdk repository,
