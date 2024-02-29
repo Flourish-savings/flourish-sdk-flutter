@@ -6,404 +6,105 @@ import 'package:flourish_flutter_sdk/events/types/v2/referral_copy_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/trivia_close_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/trivia_game_finished_event.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
+import 'package:flourish_flutter_sdk_example/reward.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flourish_flutter_sdk/events/event.dart';
 import 'package:flourish_flutter_sdk/events/types/auto_payment_event.dart';
 import 'package:flourish_flutter_sdk/events/types/back_event.dart';
 import 'package:flourish_flutter_sdk/events/types/generic_event.dart';
 import 'package:flourish_flutter_sdk/events/types/payment_event.dart';
-import 'package:flourish_flutter_sdk/events/types/retry_login_event.dart';
 import 'package:flourish_flutter_sdk/events/types/trivia_finished_event.dart';
 import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
 import 'dart:convert';
 
-class Home extends StatefulWidget {
-  final String? title;
+import 'package:provider/provider.dart';
 
-  Home({Key? key, this.title}) : super(key: key);
+
+class Home extends StatefulWidget {
+  final String customerCode;
+
+  Home({Key? key, required this.customerCode}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  int _selectedIndex = 0;
+  late Flourish flourish;
 
   @override
   void initState() {
     super.initState();
+    flourish = Provider.of<Flourish>(
+      context,
+      listen: false,
+    );
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  bool _showAppBar() {
-    return _selectedIndex != 3;
-  }
 
   @override
   Widget build(BuildContext context) {
     buildPerformFlourishEvents();
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Colors.black38,
-        showUnselectedLabels: true,
-        selectedFontSize: 10,
-        unselectedFontSize: 10,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Transferencias',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'Pago Servicios',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.videogame_asset),
-            label: 'Rewards',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
-      appBar: _showAppBar()
-          ? AppBar(
-              title: Text(this.widget.title!),
-              centerTitle: true, // this is all you need
-              actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.notifications),
-                  tooltip: 'Notifications',
-                  onPressed: () {
-                    // scaffoldKey.currentState.showSnackBar(snackBar);
-                  },
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+                padding: const EdgeInsets.only(top: 100, left: 50, right: 50),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const Text(
+                        'Flourish App Example',
+                        style: TextStyle(
+                          fontSize: 30,
+                        ),
+                      ),
+                    ])),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 50, left: 50, right: 50, bottom: 200),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Color(0xFFf47621),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  minimumSize:
+                      Size(MediaQuery.of(context).size.width / 1.12, 55),
                 ),
-              ],
-            )
-          : null,
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: <Widget>[
-          Center(
-            child: Text('Inicio'),
-          ),
-          Center(
-            child: Text('Transferencias'),
-          ),
-          Center(
-            child: Text('Pago Servicios'),
-          ),
-          Provider.of<Flourish>(
-            context,
-            listen: false,
-          ).home(),
-        ],
-      ),
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-
-        child: Container(
-          color: Theme.of(context).primaryColor,
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: ListView(
-                  // Important: Remove any padding from the ListView.
-                  padding: EdgeInsets.zero,
-                  children: <Widget>[
-                    Container(
-                      height: 310,
-                      child: DrawerHeader(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                IconButton(
-                                  color: Colors.white,
-                                  icon: Icon(
-                                    Icons.close,
-                                    size: 40,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage('assets/images/avatar.png'),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Text(
-                                    'Sara Reyes',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 20),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        Image(
-                                          image: AssetImage(
-                                            'assets/images/dollar.png',
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            '\$855',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Text(
-                                      "Balance",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        Image(
-                                          image: AssetImage(
-                                            'assets/images/coin_small.png',
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            '35',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Text(
-                                      "Points",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
-                                    )
-                                  ],
-                                )
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  margin: const EdgeInsets.all(10),
-                                  child: ButtonTheme(
-                                    minWidth: 200,
-                                    padding: const EdgeInsets.all(5),
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        elevation: 5,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        backgroundColor: Color(0xffFDBA11),
-                                        textStyle: const TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        'SAVE',
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                      onPressed: () {
-                                        print('tap');
-                                      },
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/drawer_bg.png'),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RewardsScreen(flourish: flourish)
                     ),
-                    ListTile(
-                      leading: const Icon(
-                        Icons.account_balance_wallet,
-                        color: Colors.white,
-                      ),
-                      title: Text(
-                        'Accounts',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      onTap: () {
-                        // Update the state of the app
-                        // ...
-                        // Then close the drawer
-                        Navigator.pop(context);
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(
-                        Icons.verified_user,
-                        color: Color(0xffFDBA11),
-                      ),
-                      title: Row(
-                        children: <Widget>[
-                          Text(
-                            'My Activities',
-                            style: TextStyle(
-                              color: Color(0xffFDBA11),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 30, left: 5),
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Color(0xffFDBA11),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                            ),
-                            child: Text(
-                              'New',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 10),
-                            ),
-                          ),
-                        ],
-                      ),
-                      onTap: () {
-                        // Update the state of the app
-                        // ...
-                        // Then close the drawer
-                        Navigator.pop(context);
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(
-                        Icons.card_giftcard,
-                        color: Colors.white,
-                      ),
-                      title: Text(
-                        'Get \$5 dollars',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      onTap: () {
-                        // Update the state of the app
-                        // ...
-                        // Then close the drawer
-                        Navigator.pop(context);
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(
-                        Icons.settings,
-                        color: Colors.white,
-                      ),
-                      title: Text(
-                        'Settings',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      onTap: () {
-                        // Update the state of the app
-                        // ...
-                        // Then close the drawer
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
+                  );
+                },
+                child: Text(
+                  'Open Flourish module'.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              Container(
-                child: Column(
-                  children: <Widget>[
-                    Image(
-                      image: AssetImage('assets/images/logo.png'),
-                      width: 70,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Terms and Conditions',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+            ),
+          ],
         ),
-      ),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
   void buildPerformFlourishEvents() {
-    Flourish flourish =  Provider.of<Flourish>(
-      context,
-      listen: false,
-    );
-
     flourish.onAllEvent((Event response) {
-    print("Event name: ${response.name}");
+      print("Event name: ${response.name}");
     });
 
     flourish.onGenericEvent((GenericEvent response) {
-      if(response.name == "TRIVIA_GAME_FINISHED"){
+      if (response.name == "TRIVIA_GAME_FINISHED") {
         print("Event name: ${response.name}");
         print("Event data: ${jsonEncode(response.data.toJson())}");
       }
@@ -465,8 +166,5 @@ class _HomeState extends State<Home> {
       print("Event name: ${response.name}");
       print("Event data: ${jsonEncode(response.data.toJson())}");
     });
-
-
-
   }
 }

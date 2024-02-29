@@ -23,7 +23,6 @@ import 'events/types/v2/referral_copy_event.dart';
 import 'events/types/v2/trivia_close_event.dart';
 import 'events/types/v2/trivia_game_finished_event.dart';
 
-
 class Flourish {
   EventManager eventManager = new EventManager();
   late ApiService _service;
@@ -36,20 +35,21 @@ class Flourish {
   late String customerCode;
   late String category;
   late WebviewContainer _webviewContainer;
-  late String _token;
   late Endpoint _endpoint;
+  String _token = '';
 
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
 
-  Flourish._(
-    String partnerId,
-    String secret,
+  Flourish({
+    required String partnerId,
+    required String secret,
     String? version,
     String? trackingId,
-    Environment env,
-    Language language
-  ) {
+    required Environment env,
+    required Language language,
+    required String customerCode
+  }) {
     this.partnerId = partnerId;
     this.secret = secret;
     this.environment = env;
@@ -58,17 +58,9 @@ class Flourish {
     this.trackingId = trackingId;
     this._endpoint = Endpoint(environment);
     this._service = ApiService(env, this._endpoint);
-  }
+    this.customerCode = customerCode;
 
-  factory Flourish.initialize({
-    required String partnerId,
-    required String secret,
-    required Language language,
-    String? version,
-    String? trackingId,
-    Environment env = Environment.production,
-  }) {
-    return Flourish._(partnerId, secret, version, trackingId, env, language);
+    authenticate(customerCode: customerCode);
   }
 
   Future<String> refreshToken() async {

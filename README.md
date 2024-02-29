@@ -69,108 +69,26 @@ ___
 
 ___
 
-First foremost, it is necessary to initialize the SDK providing the variables: `partnerId`, `secret`, `env` and `language`.
+First foremost, it is necessary to initialize the SDK providing the variables: `token`, `env`, `language` and `customerCode`.
 
 ```dart
-    Flourish flourish = Flourish.initialize(
+    Flourish flourish = Flourish(
       partnerId: 'HERE_YOU_WILL_USE_YOUR_PARTNER_ID',
       secret: 'HERE_YOU_WILL_USE_YOUR_SECRET',
       env: Environment.staging,
       language: Language.english,
+      customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE',
       trackingId: 'HERE_YOU_WILL_USE_YOUR_GOOGLE_ANALYTICS_KEY_THIS_IS_NOT_REQUIRED'
     );
 ```
 
 The `trackingId` variable is used if you want to pass on your Google Analytics Key to be able to monitor the use of our platform by your users.
 
-Then, with the SDK instance initialized, it is time to perform the authentication in our backend, 
-to do this, it's required that you pass a `customer_code`, and you can also pass a `category` this one isn't required.
-
-```dart
-    flourish.authenticate(customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE'
-                          category: 'HERE_YOU_WILL_USE_YOUR_CATEGORY_THIS_IS_NOT_REQUIRED'
-    ).then((accessToken) {
-      // apply your logic here
-    }).catchError((er) {
-      debugPrint(er);
-    });
-```
-
 ### 2 - Open Flourish module
 
-Finally we must call the `home()` method, but remember
-that all our functionalities are displayed through a webview and,
-bearing in mind that authentication is an asynchronous request,
-it's only possible to call the `home()` method when getting a response from the request,
-in other words if you are developing with `Future` strategy for example you will put it inside the `then()` method.
-
+Finally we must call the `home()` method.
 ```dart
   flourish.home();
-```
-
-Below is an example of an extremely basic widget on how to implement all these steps reported above
-
-```dart
-import 'package:flourish_flutter_sdk/config/environment_enum.dart';
-import 'package:flourish_flutter_sdk/config/language.dart';
-import 'package:flourish_flutter_sdk/flourish.dart';
-import 'package:flourish_flutter_sdk/web_view/webview_container.dart';
-import 'package:flutter/material.dart';
-
-class ExamplePage extends StatefulWidget {
-  const ExamplePage({super.key});
-
-  @override
-  State<StatefulWidget> createState() => _ExamplePageState();
-}
-
-class _ExamplePageState extends State<ExamplePage> {
-  WebviewContainer? flourishHome;
-
-  @override
-  void initState() {
-    super.initState();
-    Flourish flourish = Flourish.initialize(
-      partnerId: 'HERE_YOU_WILL_USE_YOUR_PARTNER_ID',
-      secret: 'HERE_YOU_WILL_USE_YOUR_SECRET',
-      env: Environment.staging,
-      language: Language.english,
-    );
-
-    flourish.authenticate(customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE').then((accessToken) {
-      setState(() {
-        flourishHome = flourish.home();
-      });
-    }).catchError((er) {
-      debugPrint(er);
-    });
-  }
-
-  // THIS IS JUST ANOTHER SUGGESTION OF IMPLEMENTATION USING ASYNC/AWAIT
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Flourish flourish = Flourish.initialize(
-  //     partnerId: 'HERE_YOU_WILL_USE_YOUR_PARTNER_ID',
-  //     secret: 'HERE_YOU_WILL_USE_YOUR_SECRET',
-  //     env: Environment.staging,
-  //     language: Language.english,
-  //   );
-  //
-  //   Future(() async {
-  //     String accessToken = await flourish.authenticate(customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE');
-  //
-  //     setState(() {
-  //       flourishHome = flourish.home();
-  //     });
-  //   });
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    return flourishHome ?? const Text('Loading');
-  }
-}
 ```
 
 ## EVENTS
@@ -234,10 +152,5 @@ here you have all events we will return
 ## Examples
 Inside this repository, you have an example app to show how to integrate with us:
 
-https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/
+https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/example
 <br>
-
-This will simulate your Flutter App calling our application inside a Flutter web-view component
-<br>
-<br>
-<img width="363" src="https://raw.githubusercontent.com/Flourish-savings/flourish-sdk-flutter/main/images/example_login.png"/>
