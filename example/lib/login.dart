@@ -1,13 +1,13 @@
-import 'package:flourish_flutter_sdk/config/environment_enum.dart';
-import 'package:flourish_flutter_sdk/flourish.dart';
-import 'package:flourish_flutter_sdk/config/language.dart';
-import 'package:flourish_flutter_sdk_example/credential_factory.dart';
-import 'package:flourish_flutter_sdk_example/home.dart';
 import 'package:flourish_flutter_sdk_example/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'home.dart';
+import 'package:flourish_flutter_sdk/config/environment_enum.dart';
+import 'package:flourish_flutter_sdk/config/language.dart';
+import 'package:flourish_flutter_sdk_example/credential_factory.dart';
+import 'package:flourish_flutter_sdk/flourish.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -17,8 +17,6 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final _customerCodeController = TextEditingController();
   final _categoryController = TextEditingController();
-  Environment _envValue = Environment.staging;
-  Language _langValue = Language.spanish;
 
   Widget _buildCustomerCodeTF() {
     return Column(
@@ -107,47 +105,33 @@ class _LoginState extends State<Login> {
             return;
           }
 
-          Credential credential =
-              await CredentialFactory().fromEnv();
-
-          if (credential.empty()) {
-            _sendToast(
-                "Empty Credentials. Set .env file with partner and secret ID");
-            return;
-          }
-
           WidgetsFlutterBinding.ensureInitialized();
-          bool hasNotification = false;
 
-          Flourish flourish = Flourish.initialize(
-            partnerId: credential.partnerId,
-            secret: credential.secretId,
-            env: Environment.staging,
-            language: Language.english,
+          Credential credential =
+          await CredentialFactory().fromEnv();
+
+          Flourish flourish = Flourish(
+              partnerId: credential.partnerId,
+              secret: credential.secretId,
+              env: Environment.staging,
+              language: Language.english,
+              customerCode: _customerCodeController.text
           );
 
-          flourish
-              .authenticate(customerCode: _customerCodeController.text, category: _categoryController.text)
-              .then((value) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MultiProvider(
-                  providers: [
-                    Provider<Flourish>.value(
-                      value: flourish,
-                    ),
-                    Provider<bool>.value(
-                      value: hasNotification,
-                    )
-                  ],
-                  child: Home(title: "Activities"),
-                ),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MultiProvider(
+                providers: [
+                  Provider<Flourish>.value(
+                    value: flourish,
+                  )
+                ],
+                child: Home(customerCode: _customerCodeController.text),
               ),
-            );
-          }).catchError((er) {
-            print(er);
-          });
+            ),
+          );
+
         },
         child: Text(
           'LOGIN',
