@@ -69,7 +69,7 @@ ___
 
 ___
 
-First foremost, it is necessary to initialize the SDK providing the variables: `token`, `env`, `language` and `customerCode`.
+First foremost, it is necessary to initialize the SDK providing the variables: `partnerId`, `secret`, `env`, `language` and `customerCode`.
 
 ```dart
     Flourish flourish = Flourish(
