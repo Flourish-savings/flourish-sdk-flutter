@@ -32,7 +32,6 @@ class Flourish {
   late Environment environment;
   late String partnerId;
   late String secret;
-  late String customerCode;
   late WebviewContainer _webviewContainer;
   late String _token;
   late Endpoint _endpoint;
@@ -43,32 +42,19 @@ class Flourish {
   Flourish({
         required String token,
         required Environment env,
-        required Language language,
-        required String customerCode
+        required Language language
       }) {
     this._token = token;
     this.environment = env;
     this._endpoint = Endpoint(environment, language);
     this._service = ApiService(env, this._endpoint);
-    this.customerCode = customerCode;
 
-    authenticate(customerCode: customerCode);
+    signIn(token: token);
   }
 
-  Future<String> refreshToken() async {
-    _token = await this.authenticate(customerCode: customerCode);
-    return _token;
-  }
-
-  Future<String> authenticate({required String customerCode}) async {
-    this.customerCode = customerCode;
-    await signIn();
-    return _token;
-  }
-
-  Future<bool> signIn() async {
+  Future<bool> signIn({required String token}) async {
     try {
-      await _service.signIn(_token);
+      await _service.signIn(token);
       return true;
     } on DioException catch (e) {
       eventManager.notify(

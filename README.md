@@ -37,7 +37,6 @@ dependencies:
 To use this SDK, you will need these elements:
 
 - access_token: a string that represents a token that you will retrieve from our API
-- costumer_code: a string that represents an identifier of yourself
 
 This plugin can be run in two different environments:
 
@@ -56,14 +55,13 @@ the sdk serves to encapsulate and help in loading this webview.
 ___
 After adding our module, it is necessary to retrieve an access token from our API, and we strongly recommend that it be done through a backend because the request needs your credentials and it's good to avoid the harmful environment of the web.
 
-Initialize the SDK providing the variables: `token`, `env`, `language` and `customerCode`.
+Initialize the SDK providing the variables: `token`, `env`, `language`.
 
 ```dart
   Flourish flourish = Flourish(
      token: 'HERE_YOU_WILL_USE_THE_RETRIEVED_API_TOKEN',
      env: Environment.staging,
-     language: Language.english,
-     customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE'
+     language: Language.english
   );
 ```
 
