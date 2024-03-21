@@ -8,6 +8,7 @@ import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flourish_flutter_sdk/web_view/error_view.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../events/types/web_view_loaded_event.dart';
 
@@ -68,8 +69,11 @@ class WebviewContainerState extends State<WebviewContainer> {
             print(error.description);
             print(error.domain);
           },
-          navigationDelegate: (action) {
-            print(action.url);
+          navigationDelegate: (NavigationRequest request) {
+            if (request.url.endsWith('.pdf')) {
+              _launchURL(request.url);
+              return NavigationDecision.prevent;
+            }
             return NavigationDecision.navigate;
           },
           javascriptMode: JavascriptMode.unrestricted,
@@ -106,5 +110,10 @@ class WebviewContainerState extends State<WebviewContainer> {
       context,
       MaterialPageRoute(builder: (context) => ErrorView(flourish: this.flourish)),
     );
+  }
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    await launchUrl(uri);
   }
 }
