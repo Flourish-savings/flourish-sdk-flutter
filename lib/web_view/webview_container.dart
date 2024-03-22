@@ -7,7 +7,7 @@ import 'package:flourish_flutter_sdk/events/event_manager.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/material.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../events/types/web_view_loaded_event.dart';
 
 class WebviewContainer extends StatefulWidget {
@@ -67,8 +67,11 @@ class WebviewContainerState extends State<WebviewContainer> {
             print(error.description);
             print(error.domain);
           },
-          navigationDelegate: (action) {
-            print(action.url);
+          navigationDelegate: (NavigationRequest request) {
+            if (request.url.endsWith('.pdf')) {
+              _launchURL(request.url);
+              return NavigationDecision.prevent;
+            }
             return NavigationDecision.navigate;
           },
           javascriptMode: JavascriptMode.unrestricted,
@@ -90,6 +93,11 @@ class WebviewContainerState extends State<WebviewContainer> {
         ),
       ),
     );
+  }
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    await launchUrl(uri);
   }
 
   void _notify(Event event) {
