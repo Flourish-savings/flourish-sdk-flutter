@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../config/language.dart';
-import '../events/types/web_view_loaded_event.dart';
 
 class WebviewContainer extends StatefulWidget {
   final Environment environment;
@@ -37,10 +36,6 @@ class WebviewContainer extends StatefulWidget {
 
   final WebviewContainerState _wcs = new WebviewContainerState();
 
-  void loadUrl(String url) {
-    _wcs.loadUrl(url);
-  }
-
   @override
   WebviewContainerState createState() {
     _wcs.config(this.flourish);
@@ -49,12 +44,7 @@ class WebviewContainer extends StatefulWidget {
 }
 
 class WebviewContainerState extends State<WebviewContainer> {
-  late WebViewController _controller;
   late Flourish flourish;
-
-  void loadUrl(String url) {
-    this._controller.loadUrl(url);
-  }
 
   void config(Flourish flourish) {
     this.flourish = flourish;
@@ -73,61 +63,55 @@ class WebviewContainerState extends State<WebviewContainer> {
       fullUrl = widget.version == "V2"
           ? "${url}/${widget.language.code()}?token=${widget.apiToken}"
           : "${url}?${widget.language.code()}&token=${widget.apiToken}";
-
     } else {
       url = widget.endpoint.getFrontendV3();
-      fullUrl = "${url}?${widget.language.code()}&token=${widget.apiToken}";
+      fullUrl = "${url}?lang=${widget.language.code()}&token=${widget.apiToken}";
     }
 
-    if(widget.trackingId != null) {
+    if (widget.trackingId != null) {
       fullUrl = "${fullUrl}&ga_tracking=${widget.trackingId}";
     }
 
     print(fullUrl);
 
-    return Container(
-      color: Theme.of(context).primaryColor,
-      child: SafeArea(
-        top: true,
-        child: WebView(
-          initialUrl: fullUrl,
-          debuggingEnabled: true,
-          onWebResourceError: (error) {
-            print(error.description);
-            print(error.domain);
-          },
-          navigationDelegate: (NavigationRequest request) {
+    var controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..addJavaScriptChannel(
+        'AppChannel',
+        onMessageReceived: (JavaScriptMessage message) {
+          print(message.message);
+
+          Map<String, dynamic> json = jsonDecode(message.message);
+          final eventName = json['eventName'];
+          if (eventName == "REFERRAL_COPY") {
+            FlutterClipboard.copy(json['data']['referralCode']);
+            return;
+          }
+          Event event = Event.fromJson(json);
+          this._notify(event);
+        },
+      )
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (String url) {},
+          onPageFinished: (String url) {},
+          onWebResourceError: (WebResourceError error) {},
+          onNavigationRequest: (NavigationRequest request) {
             if (request.url.endsWith('.pdf')) {
               _launchURL(request.url);
               return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;
           },
-          javascriptMode: JavascriptMode.unrestricted,
-          javascriptChannels: Set.from([
-            JavascriptChannel(
-                name: 'AppChannel',
-                onMessageReceived: (JavascriptMessage message) {
-                  Map<String, dynamic> json = jsonDecode(message.message);
-                  final eventName = json['eventName'];
-                  if (eventName == "RetryLogin") {
-                    openErrorScreen();
-                    return;
-                  }
-                  if (eventName == "REFERRAL_COPY") {
-                    FlutterClipboard.copy(json['data']['referralCode']);
-                    return;
-                  }
-                  Event event = Event.fromJson(json);
-                  this._notify(event);
-                })
-          ]),
-          onWebViewCreated: (WebViewController controller) {
-            Event event = WebViewLoadedEvent();
-            _controller = controller;
-            this._notify(event);
-          },
         ),
+      )
+      ..loadRequest(Uri.parse(fullUrl));
+
+    return Container(
+      color: Theme.of(context).primaryColor,
+      child: SafeArea(
+        top: true,
+        child: WebViewWidget(controller: controller),
       ),
     );
   }
