@@ -22,6 +22,7 @@ import 'events/types/v2/mission_action_event.dart';
 import 'events/types/v2/referral_copy_event.dart';
 import 'events/types/v2/trivia_close_event.dart';
 import 'events/types/v2/trivia_game_finished_event.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class Flourish {
   EventManager eventManager = new EventManager();
@@ -36,6 +37,7 @@ class Flourish {
   late String category;
   late WebviewContainer _webviewContainer;
   late Endpoint _endpoint;
+  late String _sdkVersion;
   String _token = '';
 
   static const MethodChannel _channel =
@@ -78,7 +80,9 @@ class Flourish {
 
   Future<bool> signIn() async {
     try {
-      await _service.signIn();
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      _sdkVersion = packageInfo.version;
+      await _service.signIn(_sdkVersion);
       return true;
     } on DioException catch (e) {
       eventManager.notify(
@@ -217,6 +221,7 @@ class Flourish {
       flourish: this,
       version: version,
       trackingId: trackingId,
+      sdkVersion: _sdkVersion,
     );
   }
 

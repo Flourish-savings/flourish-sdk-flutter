@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ApiService {
   Dio? _api;
@@ -35,13 +36,14 @@ class ApiService {
     }
   }
 
-  Future<bool> signIn() async {
+  Future<bool> signIn(String sdkVersion) async {
     try {
       await _api!.post(
         '/sign_in',
         options: Options(
           headers: {
             "Authorization": "Bearer $_token", // set content-length
+            "Sdk-Version": "$sdkVersion"
           },
         ),
       );
