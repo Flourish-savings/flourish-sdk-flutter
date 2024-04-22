@@ -21,6 +21,7 @@ class WebviewContainer extends StatefulWidget {
   final Flourish flourish;
   final String? version;
   final String? trackingId;
+  final String? sdkVersion;
 
   WebviewContainer({
     Key? key,
@@ -32,6 +33,7 @@ class WebviewContainer extends StatefulWidget {
     required this.flourish,
     this.version,
     this.trackingId,
+    this.sdkVersion,
   }) : super(key: key);
 
   final WebviewContainerState _wcs = new WebviewContainerState();
@@ -70,6 +72,10 @@ class WebviewContainerState extends State<WebviewContainer> {
 
     if (widget.trackingId != null) {
       fullUrl = "${fullUrl}&ga_tracking=${widget.trackingId}";
+    }
+
+    if (widget.sdkVersion != null) {
+      fullUrl = "${fullUrl}&sdk_version=${widget.sdkVersion}";
     }
 
     print(fullUrl);
