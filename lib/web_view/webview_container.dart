@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../config/language.dart';
+import 'package:share_plus/share_plus.dart';
 
 class WebviewContainer extends StatefulWidget {
   final Environment environment;
@@ -90,7 +91,9 @@ class WebviewContainerState extends State<WebviewContainer> {
           Map<String, dynamic> json = jsonDecode(message.message);
           final eventName = json['eventName'];
           if (eventName == "REFERRAL_COPY") {
-            FlutterClipboard.copy(json['data']['referralCode']);
+            var referralCode = json['data']['referralCode'];
+            FlutterClipboard.copy(referralCode);
+            Share.share(referralCode);
             return;
           }
           Event event = Event.fromJson(json);
