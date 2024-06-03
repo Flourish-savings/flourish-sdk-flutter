@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 class ApiService {
   Dio? _api;

@@ -22,7 +22,7 @@ import 'events/types/v2/mission_action_event.dart';
 import 'events/types/v2/referral_copy_event.dart';
 import 'events/types/v2/trivia_close_event.dart';
 import 'events/types/v2/trivia_game_finished_event.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+//import 'package:package_info_plus/package_info_plus.dart';
 
 class Flourish {
   EventManager eventManager = new EventManager();
@@ -80,8 +80,8 @@ class Flourish {
 
   Future<bool> signIn() async {
     try {
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      _sdkVersion = packageInfo.version;
+      //PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      _sdkVersion = "2.8.2";
       await _service.signIn(_sdkVersion);
       return true;
     } on DioException catch (e) {

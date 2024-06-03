@@ -8,10 +8,10 @@ import 'package:flourish_flutter_sdk/events/event_manager.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flourish_flutter_sdk/web_view/error_view.dart';
 import 'package:flutter/material.dart';
+//import 'package:share_plus/share_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../config/language.dart';
-import 'package:share_plus/share_plus.dart';
 
 class WebviewContainer extends StatefulWidget {
   final Environment environment;
@@ -93,7 +93,7 @@ class WebviewContainerState extends State<WebviewContainer> {
           if (eventName == "REFERRAL_COPY") {
             var referralCode = json['data']['referralCode'];
             FlutterClipboard.copy(referralCode);
-            Share.share(referralCode);
+            //Share.share(referralCode);
             return;
           }
           Event event = Event.fromJson(json);
