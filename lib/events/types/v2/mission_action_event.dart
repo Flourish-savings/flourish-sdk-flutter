@@ -12,7 +12,8 @@ class MissionActionEvent extends Event {
   factory MissionActionEvent.from(Map<String, dynamic> json) {
 
     var data = Data(
-        type: json['data']
+        missionType: json['data']['missionType'],
+        missionEvent: json['data']['missionEvent']
     );
 
     return MissionActionEvent(
@@ -28,11 +29,13 @@ class MissionActionEvent extends Event {
 }
 
 class Data {
-  String type;
+  String missionType;
+  String missionEvent;
 
-  Data({required this.type});
+  Data({required this.missionType, required this.missionEvent});
 
   Map toJson() => {
-    'type': type
+    'missionType': missionType,
+    'missionEvent': missionEvent
   };
 }
