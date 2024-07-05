@@ -26,7 +26,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 class Flourish {
   EventManager eventManager = new EventManager();
-  late ApiService _service;
+  late ApiService service;
   late Environment environment;
   late String partnerId;
   late String secret;
@@ -35,10 +35,10 @@ class Flourish {
   late Language language;
   late String customerCode;
   late String category;
-  late WebviewContainer _webviewContainer;
-  late Endpoint _endpoint;
-  late String _sdkVersion;
-  String _token = '';
+  late WebviewContainer webviewContainer;
+  late Endpoint endpoint;
+  late String sdkVersion;
+  String token = '';
 
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
@@ -58,31 +58,31 @@ class Flourish {
     this.language = language;
     this.version = version;
     this.trackingId = trackingId;
-    this._endpoint = Endpoint(environment);
-    this._service = ApiService(env, this._endpoint);
+    this.endpoint = Endpoint(environment);
+    this.service = ApiService(env, this.endpoint);
     this.customerCode = customerCode;
 
     authenticate(customerCode: customerCode);
   }
 
   Future<String> refreshToken() async {
-    _token = await this.authenticate(customerCode: customerCode, category: category);
-    return _token;
+    token = await this.authenticate(customerCode: customerCode, category: category);
+    return token;
   }
 
   Future<String> authenticate({required String customerCode, String category = ""}) async {
     this.customerCode = customerCode;
     this.category = category;
-    _token = await _service.authenticate(this.partnerId, this.secret, customerCode, category);
+    token = await service.authenticate(this.partnerId, this.secret, customerCode, category);
     await signIn();
-    return _token;
+    return token;
   }
 
   Future<bool> signIn() async {
     try {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      _sdkVersion = packageInfo.version;
-      await _service.signIn(_sdkVersion);
+      sdkVersion = packageInfo.version;
+      await service.signIn(sdkVersion);
       return true;
     } on DioException catch (e) {
       eventManager.notify(
@@ -208,25 +208,25 @@ class Flourish {
 
   WebviewContainer home() {
     this._openHome();
-    return this._webviewContainer;
+    return this.webviewContainer;
   }
 
   void _openHome() {
-    this._webviewContainer = new WebviewContainer(
+    this.webviewContainer = new WebviewContainer(
       environment: this.environment,
-      apiToken: this._token,
+      apiToken: this.token,
       language: this.language,
       eventManager: this.eventManager,
-      endpoint: this._endpoint,
+      endpoint: this.endpoint,
       flourish: this,
       version: version,
       trackingId: trackingId,
-      sdkVersion: _sdkVersion,
+      sdkVersion: sdkVersion,
     );
   }
 
   WebviewContainer getWebViewContainer() {
-    return _webviewContainer;
+    return webviewContainer;
   }
 
   static Future<String> get platformVersion async {
