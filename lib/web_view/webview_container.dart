@@ -7,6 +7,7 @@ import 'package:flourish_flutter_sdk/events/event.dart';
 import 'package:flourish_flutter_sdk/events/event_manager.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flourish_flutter_sdk/web_view/error_view.dart';
+import 'package:flourish_flutter_sdk/web_view/load_page_error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -48,6 +49,7 @@ class WebviewContainer extends StatefulWidget {
 
 class WebviewContainerState extends State<WebviewContainer> {
   late Flourish flourish;
+  bool _isLoading = true;
 
   void config(Flourish flourish) {
     this.flourish = flourish;
@@ -104,7 +106,10 @@ class WebviewContainerState extends State<WebviewContainer> {
         NavigationDelegate(
           onPageStarted: (String url) {},
           onPageFinished: (String url) {},
-          onWebResourceError: (WebResourceError error) {},
+          onHttpError: (HttpResponseError error) {},
+          onWebResourceError: (WebResourceError error) {
+              openLoadPageErrorScreen();
+            },
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.endsWith('.pdf')) {
               _launchURL(request.url);
@@ -139,6 +144,14 @@ class WebviewContainerState extends State<WebviewContainer> {
       context,
       MaterialPageRoute(
           builder: (context) => ErrorView(flourish: this.flourish)),
+    );
+  }
+
+  void openLoadPageErrorScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => LoadPageErrorView(flourish: this.flourish)),
     );
   }
 }
