@@ -94,9 +94,9 @@ class _LoginState extends State<Login> {
           bool hasNotification = false;
 
           Flourish flourish = Flourish(
-            token: 'HERE_YOU_WILL_USE_THE_RETRIEVED_API_TOKEN',
+            token: 'eyJhbGciOiJIUzI1NiJ9.eyJjbGllbnRfaWQiOjcsInVzZXJfaWQiOjM0MDQsImV4cCI6MTcyMDcyNDYxNn0.iAyduu34ZwAoldzR3kyEHyiGZtJOzgVl2XnTri295os',
             env: Environment.staging,
-            language: Language.portugues,
+            language: Language.spanish,
           );
 
           Navigator.push(

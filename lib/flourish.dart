@@ -28,13 +28,14 @@ import 'events/types/v2/invalid_token_event.dart';
 
 class Flourish {
   EventManager eventManager = new EventManager();
-  late ApiService _service;
+  late ApiService service;
   late Environment environment;
   late String partnerId;
   late String secret;
-  late WebviewContainer _webviewContainer;
-  late String _token;
-  late Endpoint _endpoint;
+  late WebviewContainer webviewContainer;
+  late String token;
+  late Language language;
+  late Endpoint endpoint;
 
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
@@ -44,17 +45,18 @@ class Flourish {
         required Environment env,
         required Language language
       }) {
-    this._token = token;
+    this.token = token;
     this.environment = env;
-    this._endpoint = Endpoint(environment, language);
-    this._service = ApiService(env, this._endpoint);
+    this.language = language;
+    this.endpoint = Endpoint(environment, language);
+    this.service = ApiService(env, this.endpoint);
 
     signIn(token: token);
   }
 
   Future<bool> signIn({required String token}) async {
     try {
-      await _service.signIn(token);
+      await service.signIn(token);
       return true;
     } on DioException catch (e) {
       eventManager.notify(
@@ -190,20 +192,20 @@ class Flourish {
 
   WebviewContainer home() {
     this._openHome();
-    return this._webviewContainer;
+    return this.webviewContainer;
   }
 
   void _openHome() {
-    this._webviewContainer = new WebviewContainer(
+    this.webviewContainer = new WebviewContainer(
         environment: this.environment,
-        apiToken: this._token,
+        apiToken: this.token,
         eventManager: this.eventManager,
-        endpoint: this._endpoint,
+        endpoint: this.endpoint,
         flourish: this);
   }
 
   WebviewContainer getWebViewContainer() {
-    return _webviewContainer;
+    return webviewContainer;
   }
 
   static Future<String> get platformVersion async {
