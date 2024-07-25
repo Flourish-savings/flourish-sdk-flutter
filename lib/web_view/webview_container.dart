@@ -66,24 +66,25 @@ class WebviewContainerState extends State<WebviewContainer> {
           : widget.endpoint.getFrontendV3();
 
       fullUrl = widget.version == "V2"
-          ? "${url}/${widget.language.code()}?token=${widget.apiToken}"
-          : "${url}?${widget.language.code()}&token=${widget.apiToken}";
+          ? "$url/${widget.language.code()}?token=${widget.apiToken}"
+          : "$url?${widget.language.code()}&token=${widget.apiToken}";
     } else {
       url = widget.endpoint.getFrontendV3();
-      fullUrl = "${url}?lang=${widget.language.code()}&token=${widget.apiToken}";
+      fullUrl = "$url?lang=${widget.language.code()}&token=${widget.apiToken}";
     }
 
     if (widget.trackingId != null) {
-      fullUrl = "${fullUrl}&ga_tracking=${widget.trackingId}";
+      fullUrl = "$fullUrl&ga_tracking=${widget.trackingId}";
     }
 
     if (widget.sdkVersion != null) {
-      fullUrl = "${fullUrl}&sdk_version=${widget.sdkVersion}";
+      fullUrl = "$fullUrl&sdk_version=${widget.sdkVersion}";
     }
 
     print(fullUrl);
 
     var controller = WebViewController()
+      ..setBackgroundColor(Colors.white)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..addJavaScriptChannel(
         'AppChannel',
@@ -98,6 +99,9 @@ class WebviewContainerState extends State<WebviewContainer> {
             Share.share(referralCode);
             return;
           }
+          if (eventName == "INVALID_TOKEN") {
+            openErrorScreen();
+          }
           Event event = Event.fromJson(json);
           this._notify(event);
         },
@@ -108,7 +112,7 @@ class WebviewContainerState extends State<WebviewContainer> {
           onPageFinished: (String url) {},
           onHttpError: (HttpResponseError error) {},
           onWebResourceError: (WebResourceError error) {
-              openLoadPageErrorScreen();
+              openLoadPageErrorScreen(error);
             },
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.endsWith('.pdf')) {
@@ -120,9 +124,10 @@ class WebviewContainerState extends State<WebviewContainer> {
         ),
       )
       ..loadRequest(Uri.parse(fullUrl));
+    
 
     return Container(
-      color: Theme.of(context).primaryColor,
+      color: Colors.white,
       child: SafeArea(
         top: true,
         child: WebViewWidget(controller: controller),
@@ -140,18 +145,22 @@ class WebviewContainerState extends State<WebviewContainer> {
   }
 
   void openErrorScreen() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
           builder: (context) => ErrorView(flourish: this.flourish)),
     );
   }
 
-  void openLoadPageErrorScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => LoadPageErrorView(flourish: this.flourish)),
-    );
+  void openLoadPageErrorScreen(WebResourceError error) {
+    if(error.errorType == WebResourceErrorType.connect ||
+       error.errorType == WebResourceErrorType.timeout ||
+       error.errorType == WebResourceErrorType.hostLookup ){
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => LoadPageErrorView(flourish: this.flourish)),
+      );
+    }
   }
 }

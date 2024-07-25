@@ -127,8 +127,7 @@ class LoadPageErrorState extends State<LoadPageErrorView> {
                               endpoint: this._flourish.endpoint,
                               flourish: this._flourish,
                               version: this._flourish.version,
-                              trackingId: this._flourish.trackingId,
-                              sdkVersion: this._flourish.sdkVersion,
+                              trackingId: this._flourish.trackingId
                             )
                         ),
                       );

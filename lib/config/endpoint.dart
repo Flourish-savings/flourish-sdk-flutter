@@ -9,7 +9,7 @@ class Endpoint {
   final Map<Environment, String> _backendUrlMapper = const {
     Environment.production: "https://api.flourishfi.com/api/v1",
     Environment.staging: "https://api-stg.flourishfi.com/api/v1",
-    Environment.development: "http://10.0.2.2:3000/api/v1",
+    Environment.development: "https://api-stg.flourishfi.com/api/v1",
   };
 
   final Map<Environment, String> _frontendUrlMapperV2 = const {
