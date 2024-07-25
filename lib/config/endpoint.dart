@@ -15,13 +15,13 @@ class Endpoint {
   final Map<Environment, String> _frontendUrlMapperV2 = const {
     Environment.production: "https://flourish-app.flourishfi.com",
     Environment.staging: "https://flourish-app-stg.flourishfi.com",
-    Environment.development: "http://7b2d-201-17-67-93.ngrok-free.app",
+    Environment.development: "http://10.0.2.2:3000",
   };
 
   final Map<Environment, String> _frontendUrlMapperV3 = const {
     Environment.production: "https://platform.flourishfi.com",
     Environment.staging: "https://platform-stg.flourishfi.com",
-    Environment.development: "http://7b2d-201-17-67-93.ngrok-free.app",
+    Environment.development: "http://10.0.2.2:3000",
   };
 
   String getFrontendV2() {
