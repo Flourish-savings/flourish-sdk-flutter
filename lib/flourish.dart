@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
+import 'package:flourish_flutter_sdk/config/configuration.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
 import 'package:flourish_flutter_sdk/events/event.dart';
 import 'package:flourish_flutter_sdk/events/event_manager.dart';
@@ -22,7 +23,6 @@ import 'events/types/v2/mission_action_event.dart';
 import 'events/types/v2/referral_copy_event.dart';
 import 'events/types/v2/trivia_close_event.dart';
 import 'events/types/v2/trivia_game_finished_event.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 class Flourish {
   EventManager eventManager = new EventManager();
@@ -37,7 +37,6 @@ class Flourish {
   late String category;
   late WebviewContainer webviewContainer;
   late Endpoint endpoint;
-  late String sdkVersion;
   String token = '';
 
   static const MethodChannel _channel =
@@ -80,9 +79,7 @@ class Flourish {
 
   Future<bool> signIn() async {
     try {
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      sdkVersion = packageInfo.version;
-      await service.signIn(sdkVersion);
+      await service.signIn(SdkInfo.version);
       return true;
     } on DioException catch (e) {
       eventManager.notify(
@@ -221,7 +218,7 @@ class Flourish {
       flourish: this,
       version: version,
       trackingId: trackingId,
-      sdkVersion: sdkVersion,
+      sdkVersion: SdkInfo.version,
     );
   }
 

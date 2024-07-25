@@ -68,7 +68,7 @@ class _HomeState extends State<Home> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Color(0xFFf47621),
+                  backgroundColor: Color(0xff2f7f86),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),

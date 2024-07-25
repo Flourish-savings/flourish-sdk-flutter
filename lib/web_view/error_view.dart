@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
-import 'webview_container.dart';
 
 class ErrorView extends StatefulWidget {
 
@@ -38,7 +34,7 @@ class ErrorViewState extends State<ErrorView> {
   Widget build(BuildContext context) {
     _flourish.refreshToken()
         .then((value) {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) =>_flourish.home()

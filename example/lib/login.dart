@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
           child: TextField(
             keyboardType: TextInputType.text,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xff2f7f86),
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
@@ -42,7 +42,7 @@ class _LoginState extends State<Login> {
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.supervised_user_circle,
-                color: Colors.white,
+                color: Color(0xff2f7f86),
               ),
               hintText: 'Enter your Customer code',
               hintStyle: kHintTextStyle,
@@ -58,7 +58,7 @@ class _LoginState extends State<Login> {
           child: TextField(
             keyboardType: TextInputType.text,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xff2f7f86),
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
@@ -66,7 +66,7 @@ class _LoginState extends State<Login> {
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.supervised_user_circle,
-                color: Colors.white,
+                color: Color(0xff2f7f86),
               ),
               hintText: 'Enter your Category',
               hintStyle: kHintTextStyle,
@@ -89,10 +89,10 @@ class _LoginState extends State<Login> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Color(0xff2f7f86),
           textStyle: const TextStyle(
             fontSize: 20,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
         onPressed: () async {
@@ -113,7 +113,7 @@ class _LoginState extends State<Login> {
           Flourish flourish = Flourish(
               partnerId: credential.partnerId,
               secret: credential.secretId,
-              env: Environment.staging,
+              env: Environment.development,
               language: Language.english,
               customerCode: _customerCodeController.text
           );
@@ -136,7 +136,7 @@ class _LoginState extends State<Login> {
         child: Text(
           'LOGIN',
           style: TextStyle(
-            color: Color(0xFF527DAA),
+            color: Colors.white,
             letterSpacing: 1.5,
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
@@ -154,7 +154,7 @@ class _LoginState extends State<Login> {
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.red,
-        textColor: Colors.white,
+        textColor: Colors.black,
         fontSize: 16.0);
   }
 
@@ -175,10 +175,10 @@ class _LoginState extends State<Login> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Color(0xFFf47621),
-                      Color(0xFFf58b45),
-                      Color(0xFFf58b45),
-                      Color(0xFFf47621),
+                      Color(0xffffffff),
+                      Color(0xffffffff),
+                      Color(0xffffffff),
+                      Color(0xffffffff),
                     ],
                     stops: [0.1, 0.4, 0.7, 0.9],
                   ),
@@ -198,7 +198,7 @@ class _LoginState extends State<Login> {
                       Text(
                         'Sign In',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xff2f7f86),
                           fontFamily: 'OpenSans',
                           fontSize: 30.0,
                           fontWeight: FontWeight.bold,
