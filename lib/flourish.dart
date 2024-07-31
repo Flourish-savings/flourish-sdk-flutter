@@ -42,7 +42,7 @@ class Flourish {
   static const MethodChannel _channel =
       const MethodChannel('flourish_flutter_sdk');
 
-  Flourish({
+  Flourish._({
     required String partnerId,
     required String secret,
     String? version,
@@ -60,8 +60,31 @@ class Flourish {
     this.endpoint = Endpoint(environment);
     this.service = ApiService(env, this.endpoint);
     this.customerCode = customerCode;
+  }
 
-    authenticate(customerCode: customerCode);
+  static Future<Flourish> create({
+    required String partnerId,
+    required String secret,
+    required Environment env,
+    required Language language,
+    required String customerCode,
+    String? version,
+    String? trackingId
+  }) async {
+
+    Flourish flourish = Flourish._(
+        partnerId: partnerId,
+        secret: secret,
+        version: version,
+        trackingId: trackingId,
+        env: env,
+        language: language,
+        customerCode: customerCode
+    );
+
+    await flourish.authenticate(customerCode: customerCode);
+
+    return flourish;
   }
 
   Future<String> refreshToken() async {
