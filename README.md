@@ -72,7 +72,7 @@ ___
 First foremost, it is necessary to initialize the SDK providing the variables: `partnerId`, `secret`, `env`, `language` and `customerCode`.
 
 ```dart
-    Flourish flourish = Flourish(
+    Flourish flourish = await Flourish.create(
       partnerId: 'HERE_YOU_WILL_USE_YOUR_PARTNER_ID',
       secret: 'HERE_YOU_WILL_USE_YOUR_SECRET',
       env: Environment.staging,
