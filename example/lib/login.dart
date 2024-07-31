@@ -110,12 +110,12 @@ class _LoginState extends State<Login> {
           Credential credential =
           await CredentialFactory().fromEnv();
 
-          Flourish flourish = Flourish(
-              partnerId: credential.partnerId,
-              secret: credential.secretId,
-              env: Environment.development,
-              language: Language.english,
-              customerCode: _customerCodeController.text
+          Flourish flourish = await Flourish.create(
+            partnerId: credential.partnerId,
+            secret: credential.secretId,
+            env: Environment.staging,
+            language: Language.english,
+            customerCode: _customerCodeController.text
           );
 
           Navigator.push(
