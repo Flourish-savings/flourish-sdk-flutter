@@ -16,8 +16,9 @@ import 'package:flourish_flutter_sdk/events/types/payment_event.dart';
 import 'package:flourish_flutter_sdk/events/types/trivia_finished_event.dart';
 import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
 import 'dart:convert';
-
-import 'package:provider/provider.dart';
+import 'package:flourish_flutter_sdk/config/environment_enum.dart';
+import 'package:flourish_flutter_sdk/config/language.dart';
+import 'package:flourish_flutter_sdk_example/credential_factory.dart';
 
 
 class Home extends StatefulWidget {
@@ -35,16 +36,33 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    flourish = Provider.of<Flourish>(
-      context,
-      listen: false,
+    initFlourishSdk();
+  }
+
+  Future<void> initFlourishSdk() async {
+
+    Credential credential =
+    await CredentialFactory().fromEnv();
+
+    Flourish _flourish = await Flourish.create(
+        partnerId: credential.partnerId,
+        secret: credential.secretId,
+        env: Environment.staging,
+        language: Language.english,
+        customerCode: this.widget.customerCode
     );
+
+    // Update the state with fetched data
+    setState(() {
+      this.flourish = _flourish;
+      buildPerformFlourishEvents();
+    });
   }
 
 
   @override
   Widget build(BuildContext context) {
-    buildPerformFlourishEvents();
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -99,6 +117,10 @@ class _HomeState extends State<Home> {
   }
 
   void buildPerformFlourishEvents() {
+    flourish.onErrorEvent((Event response) {
+      print("Event name: ${response.name}");
+    });
+
     flourish.onAllEvent((Event response) {
       print("Event name: ${response.name}");
     });

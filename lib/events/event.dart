@@ -67,5 +67,5 @@ class Event {
 class ErrorEvent extends Event {
   final String code;
   final String? message;
-  ErrorEvent(this.code, this.message) : super(name: 'error');
+  ErrorEvent(this.code, this.message) : super(name: 'ErrorEvent');
 }

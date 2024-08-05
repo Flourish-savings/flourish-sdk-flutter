@@ -93,11 +93,18 @@ class Flourish {
   }
 
   Future<String> authenticate({required String customerCode, String category = ""}) async {
-    this.customerCode = customerCode;
-    this.category = category;
-    token = await service.authenticate(this.partnerId, this.secret, customerCode, category);
-    await signIn();
-    return token;
+    try {
+      this.customerCode = customerCode;
+      this.category = category;
+      token = await service.authenticate(this.partnerId, this.secret, customerCode, category);
+      await signIn();
+      return token;
+    } on DioException catch (e) {
+      eventManager.notify(
+      ErrorEvent('AUTHENTICATION_FAILURE', e.message),
+      );
+      return "";
+    }
   }
 
   Future<bool> signIn() async {
@@ -106,7 +113,7 @@ class Flourish {
       return true;
     } on DioException catch (e) {
       eventManager.notify(
-        ErrorEvent('FAILED_TO_SIGN_IN', e.message),
+        ErrorEvent('SIGN_IN_FAILED', e.message),
       );
       return false;
     }
@@ -217,6 +224,14 @@ class Flourish {
   StreamSubscription<Event> onMissionActionEvent(Function callback) {
     return this.onEvent.listen((Event e) {
       if (e is MissionActionEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  StreamSubscription<Event> onErrorEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is ErrorEvent) {
         callback(e);
       }
     });

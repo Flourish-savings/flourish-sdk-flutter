@@ -2,12 +2,7 @@ import 'package:flourish_flutter_sdk_example/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 import 'home.dart';
-import 'package:flourish_flutter_sdk/config/environment_enum.dart';
-import 'package:flourish_flutter_sdk/config/language.dart';
-import 'package:flourish_flutter_sdk_example/credential_factory.dart';
-import 'package:flourish_flutter_sdk/flourish.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -107,28 +102,10 @@ class _LoginState extends State<Login> {
 
           WidgetsFlutterBinding.ensureInitialized();
 
-          Credential credential =
-          await CredentialFactory().fromEnv();
-
-          Flourish flourish = await Flourish.create(
-            partnerId: credential.partnerId,
-            secret: credential.secretId,
-            env: Environment.staging,
-            language: Language.english,
-            customerCode: _customerCodeController.text
-          );
-
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MultiProvider(
-                providers: [
-                  Provider<Flourish>.value(
-                    value: flourish,
-                  )
-                ],
-                child: Home(customerCode: _customerCodeController.text),
-              ),
+              builder: (context) => Home(customerCode: _customerCodeController.text),
             ),
           );
 
