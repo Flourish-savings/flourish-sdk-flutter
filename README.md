@@ -137,18 +137,23 @@ flourish.onAllEvent((Event response) {
 ### Events to listen
 here you have all events we will return
 
-| Event name      | Description                                                                         |
-|-----------------|-------------------------------------------------------------------------------------|
-| BACK_BUTTON_PRESSED | When you need to know when the user clicks on the back menu button on our platform. |
-| HOME_BACK_BUTTON_PRESSED | When you need to know when the user clicks on the back menu button when on the home screen of our platform.           |
-| ONBOARDING_BACK_BUTTON_PRESSED | When you need to know when the user clicks on the back menu button when on the onboarding screen of our platform.           |
-| TRIVIA_GAME_FINISHED  | When you need to know when the user finishes a Trivia game on our platform.         |
-| TRIVIA_CLOSED  | When you need to know when the user closed the Trivia game on our platform.         |
-| REFERRAL_COPY          | When you need to know when the user copy the referral code to the clipboard area.   |
-| GIFT_CARD_COPY  | When you need to know when the user copy the Gift code to the clipboard area.       |
-| HOME_BANNER_ACTION      | When you need to know when the user clicks on the home banner.                      |
-| MISSION_ACTION     | When you need to know when the user clicks on a mission card                        |
-| ERROR      | When you need to know when a error happened.                                        |
+| Event name                     | Description                                                                                                       |
+|--------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| BACK_BUTTON_PRESSED            | When you need to know when the user clicks on the back menu button on our platform.                               |
+| ERROR_BACK_BUTTON_PRESSED      | When you need to know when the user clicks on the back menu button on our error page.                             |
+| HOME_BACK_BUTTON_PRESSED       | When you need to know when the user clicks on the back menu button when on the home screen of our platform.       |
+| ONBOARDING_BACK_BUTTON_PRESSED | When you need to know when the user clicks on the back menu button when on the onboarding screen of our platform. |
+| TERMS_ACCEPTED                 | When you need to know when the user clicks to accept the terms.                                                   |
+| TRIVIA_GAME_FINISHED           | When you need to know when the user finishes a Trivia game on our platform.                                       |
+| TRIVIA_CLOSED                  | When you need to know when the user closed the Trivia game on our platform.                                       |
+| REFERRAL_COPY                  | When you need to know when the user copy the referral code to the clipboard area.                                 |
+| REFERRAL_FINISHED              | When you need to know when the referral finished.                                                                 |
+| REFERRAL_REWARD_REDEEMED       | When you need to know when the user redeem the referral rewards.                                                  |
+| REFERRAL_REWARD_SKIPPED        | When you need to know when the user slipped the referral rewards.                                                 |
+| GIFT_CARD_COPY                 | When you need to know when the user copy the Gift code to the clipboard area.                                     |
+| HOME_BANNER_ACTION             | When you need to know when the user clicks on the home banner.                                                    |
+| MISSION_ACTION                 | When you need to know when the user clicks on a mission card                                                      |
+| ERROR                          | When you need to know when a error happened.                                                                      |
 
 
 ## Examples

@@ -9,12 +9,11 @@ import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flourish_flutter_sdk/web_view/error_view.dart';
 import 'package:flourish_flutter_sdk/web_view/load_page_error_view.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../config/language.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-import 'generic_error_pageview.dart';
+import '../config/language.dart';
 
 class WebviewContainer extends StatefulWidget {
   final Environment environment;
@@ -113,8 +112,8 @@ class WebviewContainerState extends State<WebviewContainer> {
           onPageFinished: (String url) {},
           onHttpError: (HttpResponseError error) {},
           onWebResourceError: (WebResourceError error) {
-              openLoadPageErrorScreen(error);
-            },
+            openLoadPageErrorScreen(error);
+          },
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.endsWith('.pdf')) {
               _launchURL(request.url);
@@ -130,9 +129,7 @@ class WebviewContainerState extends State<WebviewContainer> {
       color: Colors.white,
       child: SafeArea(
         top: true,
-        child: this.flourish.token.isEmpty
-            ? GenericErrorPageView(flourish: this.flourish,)
-            : WebViewWidget(controller: controller),
+        child: WebViewWidget(controller: controller),
       ),
     );
   }
@@ -155,9 +152,10 @@ class WebviewContainerState extends State<WebviewContainer> {
   }
 
   void openLoadPageErrorScreen(WebResourceError error) {
-    if(error.errorType == WebResourceErrorType.connect ||
-       error.errorType == WebResourceErrorType.timeout ||
-       error.errorType == WebResourceErrorType.hostLookup ){
+    if (error.errorType == WebResourceErrorType.connect ||
+        error.errorType == WebResourceErrorType.timeout ||
+        error.errorType == WebResourceErrorType.hostLookup ||
+        error.errorCode == -1009) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

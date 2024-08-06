@@ -1,3 +1,3 @@
 class SdkInfo {
-  static const String version = "2.9.7";
+  static const String version = "2.10.0";
 }
