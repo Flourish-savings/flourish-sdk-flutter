@@ -103,9 +103,6 @@ class Flourish {
       return token;
     } on DioException catch (e) {
       eventManager.notify(
-        ErrorEvent('AUTHENTICATION_FAILURE', e.message),
-      );
-      eventManager.notify(
         GenericEvent(event: "AUTHENTICATION_FAILURE"),
       );
       return "";
@@ -117,9 +114,6 @@ class Flourish {
       await service.signIn(SdkInfo.version);
       return true;
     } on DioException catch (e) {
-      eventManager.notify(
-        ErrorEvent('SIGN_IN_FAILED', e.message),
-      );
       eventManager.notify(
         GenericEvent(event: "SIGN_IN_FAILED"),
       );

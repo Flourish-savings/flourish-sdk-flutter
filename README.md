@@ -153,7 +153,8 @@ here you have all events we will return
 | GIFT_CARD_COPY                 | When you need to know when the user copy the Gift code to the clipboard area.                                     |
 | HOME_BANNER_ACTION             | When you need to know when the user clicks on the home banner.                                                    |
 | MISSION_ACTION                 | When you need to know when the user clicks on a mission card                                                      |
-| ERROR                          | When you need to know when a error happened.                                                                      |
+| AUTHENTICATION_FAILURE         | When you need to know when the Authentication failed                                                              |
+| ERROR                          | When you need to know when a not mapped error happened.                                                           |
 
 
 ## Examples
