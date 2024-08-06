@@ -14,6 +14,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../config/language.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'generic_error_pageview.dart';
+
 class WebviewContainer extends StatefulWidget {
   final Environment environment;
   final String apiToken;
@@ -49,7 +51,6 @@ class WebviewContainer extends StatefulWidget {
 
 class WebviewContainerState extends State<WebviewContainer> {
   late Flourish flourish;
-  bool _isLoading = true;
 
   void config(Flourish flourish) {
     this.flourish = flourish;
@@ -124,13 +125,14 @@ class WebviewContainerState extends State<WebviewContainer> {
         ),
       )
       ..loadRequest(Uri.parse(fullUrl));
-    
 
     return Container(
       color: Colors.white,
       child: SafeArea(
         top: true,
-        child: WebViewWidget(controller: controller),
+        child: this.flourish.token.isEmpty
+            ? GenericErrorPageView(flourish: this.flourish,)
+            : WebViewWidget(controller: controller),
       ),
     );
   }
