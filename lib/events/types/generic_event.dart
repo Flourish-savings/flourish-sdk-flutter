@@ -1,13 +1,12 @@
 import '../event.dart';
 
 class GenericEvent extends Event {
-  static const EVENT_NAME = "Generic";
 
-  GenericEvent({required this.name, required this.data})
-      : super(name: EVENT_NAME);
+  GenericEvent({required this.event, this.data})
+      : super(name: event);
 
-  final String name;
-  final Data data;
+  final String event;
+  final Data? data;
 
   factory GenericEvent.from(Map<String, dynamic> json) {
 
@@ -16,13 +15,13 @@ class GenericEvent extends Event {
     );
 
     return GenericEvent(
-        name: json['eventName'],
+        event: json['eventName'],
         data: data
     );
   }
 
   Map toJson() {
-    Map? data = this.data.toJson();
+    Map? data = this.data?.toJson();
     return {'name': name, 'data': data};
   }
 

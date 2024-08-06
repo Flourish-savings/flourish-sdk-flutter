@@ -10,8 +10,10 @@ import 'package:flourish_flutter_sdk/events/types/generic_event.dart';
 import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
 import 'package:flourish_flutter_sdk/network/api_service.dart';
+import 'package:flourish_flutter_sdk/web_view/generic_error_pageview.dart';
 import 'package:flourish_flutter_sdk/web_view/webview_container.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'events/types/auto_payment_event.dart';
 import 'events/types/back_event.dart';
 import 'events/types/payment_event.dart';
@@ -101,7 +103,10 @@ class Flourish {
       return token;
     } on DioException catch (e) {
       eventManager.notify(
-      ErrorEvent('AUTHENTICATION_FAILURE', e.message),
+        ErrorEvent('AUTHENTICATION_FAILURE', e.message),
+      );
+      eventManager.notify(
+        GenericEvent(event: "AUTHENTICATION_FAILURE"),
       );
       return "";
     }
@@ -114,6 +119,9 @@ class Flourish {
     } on DioException catch (e) {
       eventManager.notify(
         ErrorEvent('SIGN_IN_FAILED', e.message),
+      );
+      eventManager.notify(
+        GenericEvent(event: "SIGN_IN_FAILED"),
       );
       return false;
     }
@@ -241,7 +249,10 @@ class Flourish {
     return eventManager.onEvent;
   }
 
-  WebviewContainer home() {
+  Widget home() {
+    if(this.token.isEmpty){
+      return GenericErrorPageView(flourish: this);
+    }
     this._openHome();
     return this.webviewContainer;
   }

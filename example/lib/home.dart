@@ -48,7 +48,7 @@ class _HomeState extends State<Home> {
         partnerId: credential.partnerId,
         secret: credential.secretId,
         env: Environment.staging,
-        language: Language.english,
+        language: Language.portugues,
         customerCode: this.widget.customerCode
     );
 
@@ -117,7 +117,7 @@ class _HomeState extends State<Home> {
   }
 
   void buildPerformFlourishEvents() {
-    flourish.onErrorEvent((Event response) {
+    flourish.onErrorEvent((ErrorEvent response) {
       print("Event name: ${response.name}");
     });
 
@@ -128,7 +128,7 @@ class _HomeState extends State<Home> {
     flourish.onGenericEvent((GenericEvent response) {
       if (response.name == "TRIVIA_GAME_FINISHED") {
         print("Event name: ${response.name}");
-        print("Event data: ${jsonEncode(response.data.toJson())}");
+        print("Event data: ${jsonEncode(response.data?.toJson())}");
       }
     });
 
