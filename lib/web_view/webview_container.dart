@@ -48,42 +48,16 @@ class WebviewContainer extends StatefulWidget {
   }
 }
 
-class WebviewContainerState extends State<WebviewContainer> {
+class WebviewContainerState extends State<WebviewContainer> with WidgetsBindingObserver {
   late Flourish flourish;
-
-  void config(Flourish flourish) {
-    this.flourish = flourish;
-  }
+  late WebViewController controller;
+  bool _wasPaused = false;
 
   @override
-  Widget build(BuildContext context) {
-    String url = "";
-    String fullUrl = "";
-
-    if (widget.version != null && widget.version != "") {
-      url = widget.version == "V2"
-          ? widget.endpoint.getFrontendV2()
-          : widget.endpoint.getFrontendV3();
-
-      fullUrl = widget.version == "V2"
-          ? "$url/${widget.language.code()}?token=${widget.apiToken}"
-          : "$url?${widget.language.code()}&token=${widget.apiToken}";
-    } else {
-      url = widget.endpoint.getFrontendV3();
-      fullUrl = "$url?lang=${widget.language.code()}&token=${widget.apiToken}";
-    }
-
-    if (widget.trackingId != null) {
-      fullUrl = "$fullUrl&ga_tracking=${widget.trackingId}";
-    }
-
-    if (widget.sdkVersion != null) {
-      fullUrl = "$fullUrl&sdk_version=${widget.sdkVersion}";
-    }
-
-    print(fullUrl);
-
-    var controller = WebViewController()
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    controller = WebViewController()
       ..setBackgroundColor(Colors.white)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..addJavaScriptChannel(
@@ -122,9 +96,61 @@ class WebviewContainerState extends State<WebviewContainer> {
             return NavigationDecision.navigate;
           },
         ),
-      )
-      ..loadRequest(Uri.parse(fullUrl));
+      );
+    _loadWebView();
+  }
 
+  void _loadWebView() {
+    String url = "";
+    String fullUrl = "";
+
+    if (widget.version != null && widget.version != "") {
+      url = widget.version == "V2"
+          ? widget.endpoint.getFrontendV2()
+          : widget.endpoint.getFrontendV3();
+
+      fullUrl = widget.version == "V2"
+          ? "$url/${widget.language.code()}?token=${widget.apiToken}"
+          : "$url?${widget.language.code()}&token=${widget.apiToken}";
+    } else {
+      url = widget.endpoint.getFrontendV3();
+      fullUrl = "$url?lang=${widget.language.code()}&token=${widget.apiToken}";
+    }
+
+    if (widget.trackingId != null) {
+      fullUrl = "$fullUrl&ga_tracking=${widget.trackingId}";
+    }
+
+    if (widget.sdkVersion != null) {
+      fullUrl = "$fullUrl&sdk_version=${widget.sdkVersion}";
+    }
+
+    print(fullUrl);
+    final encoded = Uri.encodeFull(fullUrl);
+
+    controller.loadRequest(Uri.parse(encoded));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      _loadWebView();
+    }
+  }
+
+  void config(Flourish flourish) {
+    this.flourish = flourish;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
       child: SafeArea(
