@@ -44,41 +44,22 @@ class Flourish {
       const MethodChannel('flourish_flutter_sdk');
 
   Flourish({
-    required String partnerId,
-    required String secret,
-    String? version,
-    String? trackingId,
+    required String token,
     required Environment env,
     required Language language,
-    required String customerCode
   }) {
-    this.partnerId = partnerId;
-    this.secret = secret;
+    this._token = token;
     this.environment = env;
     this.language = language;
-    this.version = version;
-    this.trackingId = trackingId;
+    this.version = null;
+    this.trackingId = null;
     this._endpoint = Endpoint(environment);
     this._service = ApiService(env, this._endpoint);
-    this.customerCode = customerCode;
 
-    authenticate(customerCode: customerCode);
+    signIn(token: token);
   }
 
-  Future<String> refreshToken() async {
-    _token = await this.authenticate(customerCode: customerCode, category: category);
-    return _token;
-  }
-
-  Future<String> authenticate({required String customerCode, String category = ""}) async {
-    this.customerCode = customerCode;
-    this.category = category;
-    _token = await _service.authenticate(this.partnerId, this.secret, customerCode, category);
-    await signIn();
-    return _token;
-  }
-
-  Future<bool> signIn() async {
+  Future<bool> signIn({required String token}) async {
     try {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       _sdkVersion = packageInfo.version;

@@ -36,17 +36,6 @@ class ErrorViewState extends State<ErrorView> {
 
   @override
   Widget build(BuildContext context) {
-    _flourish.refreshToken()
-        .then((value) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>_flourish.home()
-            ),
-          );
-        }).catchError((er) {
-          print(er);
-        });
     return Scaffold(
       body: Stack(
         children: <Widget> [
