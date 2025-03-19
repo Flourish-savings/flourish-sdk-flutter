@@ -107,15 +107,10 @@ class _LoginState extends State<Login> {
 
           WidgetsFlutterBinding.ensureInitialized();
 
-          Credential credential =
-          await CredentialFactory().fromEnv();
-
           Flourish flourish = Flourish(
-              partnerId: credential.partnerId,
-              secret: credential.secretId,
+              token: 'HERE WILL BE THE TOKEN',
               env: Environment.staging,
               language: Language.english,
-              customerCode: _customerCodeController.text
           );
 
           Navigator.push(
