@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flourish_flutter_sdk/events/types/v2/back_button_pressed_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/gift_card_copy_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/home_banner_action_event.dart';
@@ -20,11 +22,13 @@ import 'package:flourish_flutter_sdk/config/environment_enum.dart';
 import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk_example/credential_factory.dart';
 
-
 class Home extends StatefulWidget {
   final String customerCode;
 
-  Home({Key? key, required this.customerCode}) : super(key: key);
+  const Home({
+    super.key,
+    required this.customerCode,
+  });
 
   @override
   _HomeState createState() => _HomeState();
@@ -36,53 +40,55 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    initFlourishSdk();
+    unawaited(initFlourishSdk());
   }
 
   Future<void> initFlourishSdk() async {
+    final credential = await CredentialFactory().fromEnv();
 
-    Credential credential =
-    await CredentialFactory().fromEnv();
-
-    Flourish _flourish = await Flourish.create(
-        partnerId: credential.partnerId,
-        secret: credential.secretId,
-        env: Environment.staging,
-        language: Language.portugues,
-        customerCode: this.widget.customerCode
+    final _flourish = await Flourish.create(
+      partnerId: credential.partnerId,
+      secret: credential.secretId,
+      env: Environment.staging,
+      language: Language.portugues,
+      customerCode: this.widget.customerCode,
     );
 
     // Update the state with fetched data
     setState(() {
-      this.flourish = _flourish;
+      flourish = _flourish;
       buildPerformFlourishEvents();
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
-                padding: const EdgeInsets.only(top: 100, left: 50, right: 50),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Text(
-                        'Flourish App Example',
-                        style: TextStyle(
-                          fontSize: 30,
-                        ),
-                      ),
-                    ])),
+              padding: const EdgeInsets.only(top: 100, left: 50, right: 50),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Text(
+                    'Flourish App Example',
+                    style: TextStyle(
+                      fontSize: 30,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(
-                  top: 50, left: 50, right: 50, bottom: 200),
+                top: 50,
+                left: 50,
+                right: 50,
+                bottom: 200,
+              ),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -90,14 +96,16 @@ class _HomeState extends State<Home> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  minimumSize:
-                      Size(MediaQuery.of(context).size.width / 1.12, 55),
+                  minimumSize: Size(
+                    MediaQuery.sizeOf(context).width / 1.12,
+                    55,
+                  ),
                 ),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => RewardsScreen(flourish: flourish)
+                      builder: (context) => RewardsScreen(flourish: flourish),
                     ),
                   );
                 },
@@ -126,7 +134,7 @@ class _HomeState extends State<Home> {
     });
 
     flourish.onGenericEvent((GenericEvent response) {
-      if (response.name == "TRIVIA_GAME_FINISHED") {
+      if (response.name == Event.TRIVIA_GAME_FINISHED) {
         print("Event name: ${response.name}");
         print("Event data: ${jsonEncode(response.data?.toJson())}");
       }

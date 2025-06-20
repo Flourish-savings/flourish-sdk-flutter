@@ -105,10 +105,10 @@ class _LoginState extends State<Login> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Home(customerCode: _customerCodeController.text),
+              builder: (context) =>
+                  Home(customerCode: _customerCodeController.text),
             ),
           );
-
         },
         child: Text(
           'LOGIN',

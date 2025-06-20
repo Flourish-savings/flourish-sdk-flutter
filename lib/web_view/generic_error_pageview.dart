@@ -1,42 +1,41 @@
+import 'package:flourish_flutter_sdk/config/language.dart';
+import 'package:flourish_flutter_sdk/events/event.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flutter/material.dart';
 import '../events/types/generic_event.dart';
 
 class GenericErrorPageView extends StatefulWidget {
-
-  final GenericErrorPageState _wcs = new GenericErrorPageState();
   final Flourish flourish;
 
   GenericErrorPageView({
-    Key? key,
+    super.key,
     required this.flourish,
-  }) : super(key: key);
+  });
 
   @override
-  GenericErrorPageState createState() {
-    _wcs.config(flourish);
-    return _wcs;
-  }
+  GenericErrorPageState createState() => GenericErrorPageState();
 }
 
 class GenericErrorPageState extends State<GenericErrorPageView> {
-  late String title;
-  late String description;
+  String get title {
+    switch (widget.flourish.language) {
+      case Language.english:
+        return 'Oops, something went wrong!';
+      case Language.spanish:
+        return 'Huy! Algo salió mal.';
+      case Language.portugues:
+        return 'Opa, algo deu errado.';
+    }
+  }
 
-  void config(Flourish flourish) {
-    switch (flourish.language.name) {
-      case "english":
-        this.title = 'Oops, something went wrong!';
-        this.description = 'Please, contact us through support.';
-        break;
-      case "spanish":
-        this.title = 'Huy! Algo salió mal.';
-        this.description = 'Por favor, contacta con soporte.';
-        break;
-      case "portugues":
-        this.title = 'Opa, algo deu errado.';
-        this.description = 'Por favor, contate o nosso suporte.';
-        break;
+  String get description {
+    switch (widget.flourish.language) {
+      case Language.english:
+        return 'Please, contact us through support.';
+      case Language.spanish:
+        return 'Por favor, contacta con soporte.';
+      case Language.portugues:
+        return 'Por favor, contate o nosso suporte.';
     }
   }
 
@@ -48,7 +47,7 @@ class GenericErrorPageState extends State<GenericErrorPageView> {
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             widget.flourish.eventManager.notify(
-              GenericEvent(event: "ERROR_BACK_BUTTON_PRESSED"),
+              GenericEvent(event: Event.ERROR_BACK_BUTTON_PRESSED),
             );
           },
         ),
@@ -80,7 +79,7 @@ class GenericErrorPageState extends State<GenericErrorPageView> {
               ),
               SizedBox(height: 16),
               Text(
-                this.title,
+                title,
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.black54,
@@ -88,7 +87,7 @@ class GenericErrorPageState extends State<GenericErrorPageView> {
               ),
               SizedBox(height: 16),
               Text(
-                this.description,
+                description,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,

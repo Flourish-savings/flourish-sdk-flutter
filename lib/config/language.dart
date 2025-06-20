@@ -1,17 +1,16 @@
 enum Language {
   spanish,
   english,
-  portugues
-}
+  portugues;
 
-final Map<Language, String> langMap = {
-  Language.spanish: 'es',
-  Language.english: 'en',
-  Language.portugues: 'pt',
-};
-
-extension LangCode on Language {
-  String? code() {
-    return langMap[this];
+  String get code {
+    switch (this) {
+      case Language.spanish:
+        return 'es';
+      case Language.english:
+        return 'en';
+      case Language.portugues:
+        return 'pt';
+    }
   }
 }

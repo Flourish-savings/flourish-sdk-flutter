@@ -3,21 +3,14 @@ import 'dart:async';
 import 'package:flourish_flutter_sdk/events/event.dart';
 
 class EventManager {
-  final StreamController<Event> _eventStreamController =
-      StreamController<Event>();
-  late Stream<Event>? _stream =
+  final StreamController<Event> _eventStreamController = StreamController();
+  late Stream<Event> _stream =
       _eventStreamController.stream.asBroadcastStream();
 
-  Stream<Event> get onEvent {
-    if (_stream == null) {
-      _stream = _eventStreamController.stream.asBroadcastStream();
-    }
-    return _stream!;
-  }
+  Stream<Event> get onEvent => _stream;
 
   void notify(Event event) {
-    if (!_eventStreamController.isClosed) {
-      _eventStreamController.add(event);
-    }
+    if (_eventStreamController.isClosed) return;
+    _eventStreamController.add(event);
   }
 }

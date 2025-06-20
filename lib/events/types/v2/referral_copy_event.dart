@@ -1,39 +1,26 @@
 import '../../event.dart';
 
 class ReferralCopyEvent extends Event {
-
-  static const EVENT_NAME = "REFERRAL_COPY";
-
-  ReferralCopyEvent({required this.data})
-      : super(name: EVENT_NAME);
+  const ReferralCopyEvent({required this.data})
+      : super(name: Event.REFERRAL_COPY);
 
   final Data data;
 
   factory ReferralCopyEvent.from(Map<String, dynamic> json) {
+    final data = Data(referralCode: json['data']['referralCode']);
 
-    var data = Data(
-        referralCode: json['data']['referralCode']
-    );
-
-    return ReferralCopyEvent(
-        data: data
-    );
+    return ReferralCopyEvent(data: data);
   }
 
-  Map toJson() {
-    Map? data = this.data.toJson();
-    return {'name': name, 'data': data};
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'data': data.toJson()};
   }
-
 }
 
 class Data {
-  String referralCode;
+  final String referralCode;
 
-  Data({required this.referralCode});
+  const Data({required this.referralCode});
 
-  Map toJson() => {
-    'referralCode': referralCode
-  };
+  Map<String, dynamic> toJson() => {'referralCode': referralCode};
 }
-

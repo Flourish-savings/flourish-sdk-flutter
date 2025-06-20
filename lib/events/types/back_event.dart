@@ -1,38 +1,25 @@
 import '../event.dart';
 
 class BackEvent extends Event {
-
-  static const EVENT_NAME = "GoBack";
-
-  BackEvent({required this.data})
-      : super(name: EVENT_NAME);
+  const BackEvent({required this.data}) : super(name: Event.GO_BACK);
 
   final Data data;
 
   factory BackEvent.from(Map<String, dynamic> json) {
+    final data = Data(route: json['data']['route']);
 
-    var data = Data(
-        route: json['data']['route']
-    );
-
-    return BackEvent(
-        data: data
-    );
+    return BackEvent(data: data);
   }
 
-  Map toJson() {
-    Map? data = this.data.toJson();
-    return {'name': name, 'data': data};
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'data': data.toJson()};
   }
-
 }
 
 class Data {
-  String route;
+  final String route;
 
-  Data({required this.route});
+  const Data({required this.route});
 
-  Map toJson() => {
-    'route': route
-  };
+  Map<String, dynamic> toJson() => {'route': route};
 }

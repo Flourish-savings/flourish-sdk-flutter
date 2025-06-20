@@ -1,38 +1,26 @@
 import '../../event.dart';
 
 class HomeBannerActionEvent extends Event {
-
-  static const EVENT_NAME = "HOME_BANNER_ACTION";
-
-  HomeBannerActionEvent({required this.data})
-      : super(name: EVENT_NAME);
+  const HomeBannerActionEvent({required this.data})
+      : super(name: Event.HOME_BANNER_ACTION);
 
   final Data data;
 
   factory HomeBannerActionEvent.from(Map<String, dynamic> json) {
+    final data = Data(data: json['data']);
 
-    var data = Data(
-        data: json['data']
-    );
-
-    return HomeBannerActionEvent(
-        data: data
-    );
+    return HomeBannerActionEvent(data: data);
   }
 
-  Map toJson() {
-    Map? data = this.data.toJson();
-    return {'name': name, 'data': data};
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'data': data.toJson()};
   }
-
 }
 
 class Data {
-  String data;
+  final String data;
 
-  Data({required this.data});
+  const Data({required this.data});
 
-  Map toJson() => {
-    'data': data
-  };
+  Map<String, dynamic> toJson() => {'data': data};
 }

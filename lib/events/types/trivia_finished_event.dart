@@ -1,71 +1,69 @@
 import '../event.dart';
 
 class TriviaFinishedEvent extends Event {
-
-  static const EVENT_NAME = "TriviaFinished";
-
-  TriviaFinishedEvent({required this.data})
-      : super(name: EVENT_NAME);
+  const TriviaFinishedEvent({required this.data})
+      : super(name: Event.TRIVIA_FINISHED);
 
   final Data data;
 
   factory TriviaFinishedEvent.from(Map<String, dynamic> json) {
+    final List<Prizes> prizeList = [];
+    final prizes = json['data']['prizes'];
 
-    List<Prizes> prizeList = [];
-
-    if(json['data']['prizes'].length > 0){
-      prizeList = List<Prizes>.from(
-          json['data']['prizes']
-              .map((prize) => Prizes.fromJson(prize))
+    if (prizes.length > 0) {
+      prizeList.addAll(
+        prizes.map((prize) => Prizes.fromJson(prize)),
       );
     }
 
-    var data = Data(
+    final data = Data(
         hits: json['data']['hits'],
         questions: json['data']['questions'],
-        prizes: prizeList
-    );
+        prizes: prizeList);
 
-    return TriviaFinishedEvent(
-        data: data
-    );
-
+    return TriviaFinishedEvent(data: data);
   }
 
-  Map toJson() {
-    Map? data = this.data.toJson();
-    return {'name': name, 'data': data};
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'data': data.toJson()};
   }
-
 }
 
 class Data {
-  int hits;
-  int questions;
-  List<Prizes> prizes;
+  final int hits;
+  final int questions;
+  final List<Prizes> prizes;
 
-  Data({required this.hits, required this.questions, required this.prizes});
+  const Data({
+    required this.hits,
+    required this.questions,
+    required this.prizes,
+  });
 
-  Map toJson() {
-    return {'hits': hits, 'questions': questions, 'prizes': prizes};
+  Map<String, dynamic> toJson() {
+    return {
+      'hits': hits,
+      'questions': questions,
+      'prizes': prizes.map((p) => p.toJson()).toList(),
+    };
   }
 }
 
 class Prizes {
-  int quantity;
-  String category;
+  final int quantity;
+  final String category;
 
-  Prizes({required this.quantity, required this.category});
+  const Prizes({required this.quantity, required this.category});
 
   factory Prizes.fromJson(Map<String, dynamic> json) {
-    return new Prizes(
+    return Prizes(
       quantity: json['quantity'],
       category: json['category'],
     );
   }
 
-  Map toJson() => {
-    'quantity': quantity,
-    'category': category,
-  };
+  Map<String, dynamic> toJson() => {
+        'quantity': quantity,
+        'category': category,
+      };
 }
