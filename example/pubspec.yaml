@@ -32,9 +32,13 @@ dependencies:
   flutter_dotenv: ^5.0.2
   fluttertoast: ^8.0.9
 
+dependency_overrides:
+  win32: 5.10.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

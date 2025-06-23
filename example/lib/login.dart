@@ -13,6 +13,13 @@ class _LoginState extends State<Login> {
   final _customerCodeController = TextEditingController();
   final _categoryController = TextEditingController();
 
+  @override
+  void dispose() {
+    _customerCodeController.dispose();
+    _categoryController.dispose();
+    super.dispose();
+  }
+
   Widget _buildCustomerCodeTF() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,17 +103,15 @@ class _LoginState extends State<Login> {
           print(_categoryController.text);
 
           if (_customerCodeController.text.trim().isEmpty) {
-            _sendToast("Customer code is required");
-            return;
+            return _sendToast("Customer code is required");
           }
 
-          WidgetsFlutterBinding.ensureInitialized();
-
-          Navigator.push(
+          await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  Home(customerCode: _customerCodeController.text),
+              builder: (context) => Home(
+                customerCode: _customerCodeController.text,
+              ),
             ),
           );
         },
@@ -124,72 +129,41 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _sendToast(message) {
-    Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.black,
-        fontSize: 16.0);
+  Future<void> _sendToast(message) {
+    return Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.black,
+      fontSize: 16.0,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: double.infinity,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xffffffff),
-                      Color(0xffffffff),
-                      Color(0xffffffff),
-                      Color(0xffffffff),
-                    ],
-                    stops: [0.1, 0.4, 0.7, 0.9],
-                  ),
-                ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(
+          horizontal: 40.0,
+          vertical: 120.0,
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Sign In',
+              style: TextStyle(
+                color: Color(0xff2f7f86),
+                fontFamily: 'OpenSans',
+                fontSize: 30.0,
+                fontWeight: FontWeight.bold,
               ),
-              Container(
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 40.0,
-                    vertical: 120.0,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: Color(0xff2f7f86),
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 30.0),
-                      _buildCustomerCodeTF(),
-                      _buildLoginBtn(),
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
+            ),
+            SizedBox(height: 30.0),
+            _buildCustomerCodeTF(),
+            _buildLoginBtn(),
+          ],
         ),
       ),
     );

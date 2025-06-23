@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:clipboard/clipboard.dart';
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
 import 'package:flourish_flutter_sdk/events/event.dart';
@@ -11,6 +10,7 @@ import 'package:flourish_flutter_sdk/web_view/error_view.dart';
 import 'package:flourish_flutter_sdk/web_view/load_page_error_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -196,7 +196,7 @@ class WebviewContainerState extends State<WebviewContainer>
   void _handleReferralCopy(dynamic data) {
     final referralCode = data['referralCode'];
     if (referralCode == null) return;
-    unawaited(FlutterClipboard.copy(referralCode));
+    unawaited(Clipboard.setData(ClipboardData(text: referralCode)));
     unawaited(Share.share(referralCode));
   }
 
