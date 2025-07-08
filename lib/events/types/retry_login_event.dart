@@ -1,32 +1,20 @@
 import '../event.dart';
 
 class RetryLoginEvent extends Event {
-
-  static const EVENT_NAME = "RetryLogin";
-
-  RetryLoginEvent({required this.data})
-      : super(name: EVENT_NAME);
+  const RetryLoginEvent({required this.data}) : super(name: Event.RETRY_LOGIN);
 
   final Data data;
 
   factory RetryLoginEvent.from(Map<String, dynamic> json) {
+    final data = Data(code: json['data']['code']);
 
-    var data = Data(
-        code: json['data']['code']
-    );
-
-    return RetryLoginEvent(
-        data: data
-    );
+    return RetryLoginEvent(data: data);
   }
-
 }
 
 class Data {
-  String code;
-  Data({required this.code});
+  final String code;
+  const Data({required this.code});
 
-  Map toJson() => {
-    'code': code
-  };
+  Map<String, dynamic> toJson() => {'code': code};
 }

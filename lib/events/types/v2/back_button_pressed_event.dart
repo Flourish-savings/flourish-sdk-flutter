@@ -1,38 +1,26 @@
 import '../../event.dart';
 
 class BackButtonPressedEvent extends Event {
-
-  static const EVENT_NAME = "BACK_BUTTON_PRESSED";
-
-  BackButtonPressedEvent({required this.data})
-      : super(name: EVENT_NAME);
+  const BackButtonPressedEvent({required this.data})
+      : super(name: Event.BACK_BUTTON_PRESSED);
 
   final Data data;
 
   factory BackButtonPressedEvent.from(Map<String, dynamic> json) {
+    final data = Data(path: json['data']['path']);
 
-    var data = Data(
-        path: json['data']['path']
-    );
-
-    return BackButtonPressedEvent(
-        data: data
-    );
+    return BackButtonPressedEvent(data: data);
   }
 
-  Map toJson() {
-    Map? data = this.data.toJson();
-    return {'name': name, 'data': data};
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'data': data.toJson()};
   }
-
 }
 
 class Data {
-  String path;
+  final String path;
 
-  Data({required this.path});
+  const Data({required this.path});
 
-  Map toJson() => {
-    'path': path
-  };
+  Map<String, dynamic> toJson() => {'path': path};
 }

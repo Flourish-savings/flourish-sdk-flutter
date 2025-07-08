@@ -12,7 +12,6 @@ import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
 import 'package:flourish_flutter_sdk/network/api_service.dart';
 import 'package:flourish_flutter_sdk/web_view/generic_error_pageview.dart';
 import 'package:flourish_flutter_sdk/web_view/webview_container.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'events/types/auto_payment_event.dart';
 import 'events/types/back_event.dart';
@@ -27,7 +26,7 @@ import 'events/types/v2/trivia_close_event.dart';
 import 'events/types/v2/trivia_game_finished_event.dart';
 
 class Flourish {
-  EventManager eventManager = new EventManager();
+  EventManager eventManager = EventManager();
   late ApiService service;
   late Environment environment;
   late String partnerId;
@@ -41,9 +40,6 @@ class Flourish {
   late Endpoint endpoint;
   String token = '';
 
-  static const MethodChannel _channel =
-      const MethodChannel('flourish_flutter_sdk');
-
   Flourish._({
     required String partnerId,
     required String secret,
@@ -51,7 +47,7 @@ class Flourish {
     String? trackingId,
     required Environment env,
     required Language language,
-    required String customerCode
+    required String customerCode,
   }) {
     this.partnerId = partnerId;
     this.secret = secret;
@@ -71,17 +67,16 @@ class Flourish {
     required Language language,
     required String customerCode,
     String? version,
-    String? trackingId
+    String? trackingId,
   }) async {
-
     Flourish flourish = Flourish._(
-        partnerId: partnerId,
-        secret: secret,
-        version: version,
-        trackingId: trackingId,
-        env: env,
-        language: language,
-        customerCode: customerCode
+      partnerId: partnerId,
+      secret: secret,
+      version: version,
+      trackingId: trackingId,
+      env: env,
+      language: language,
+      customerCode: customerCode,
     );
 
     await flourish.authenticate(customerCode: customerCode);
@@ -89,21 +84,33 @@ class Flourish {
     return flourish;
   }
 
+  bool get isTokenValid => token.isNotEmpty;
+
   Future<String> refreshToken() async {
-    token = await this.authenticate(customerCode: customerCode, category: category);
-    return token;
+    return token = await this.authenticate(
+      customerCode: customerCode,
+      category: category,
+    );
   }
 
-  Future<String> authenticate({required String customerCode, String category = ""}) async {
+  Future<String> authenticate({
+    required String customerCode,
+    String category = "",
+  }) async {
     try {
       this.customerCode = customerCode;
       this.category = category;
-      token = await service.authenticate(this.partnerId, this.secret, customerCode, category);
+      token = await service.authenticate(
+        this.partnerId,
+        this.secret,
+        customerCode,
+        category,
+      );
       await signIn();
       return token;
-    } on DioException catch (e) {
+    } on DioException catch (_) {
       eventManager.notify(
-        GenericEvent(event: "AUTHENTICATION_FAILURE"),
+        GenericEvent(event: Event.AUTHENTICATION_FAILURE),
       );
       return "";
     }
@@ -113,9 +120,9 @@ class Flourish {
     try {
       await service.signIn(SdkInfo.version);
       return true;
-    } on DioException catch (e) {
+    } on DioException catch (_) {
       eventManager.notify(
-        GenericEvent(event: "SIGN_IN_FAILED"),
+        GenericEvent(event: Event.SIGN_IN_FAILED),
       );
       return false;
     }
@@ -123,7 +130,7 @@ class Flourish {
 
   StreamSubscription<Event> onAllEvent(Function callback) {
     return this.onEvent.listen((Event e) {
-        callback(e);
+      callback(e);
     });
   }
 
@@ -239,20 +246,15 @@ class Flourish {
     });
   }
 
-  Stream<Event> get onEvent {
-    return eventManager.onEvent;
-  }
+  Stream<Event> get onEvent => eventManager.onEvent;
 
   Widget home() {
-    if(this.token.isEmpty){
-      return GenericErrorPageView(flourish: this);
-    }
-    this._openHome();
-    return this.webviewContainer;
+    if (!isTokenValid) return GenericErrorPageView(flourish: this);
+    return _openHome();
   }
 
-  void _openHome() {
-    this.webviewContainer = new WebviewContainer(
+  Widget _openHome() {
+    return webviewContainer = WebviewContainer(
       environment: this.environment,
       apiToken: this.token,
       language: this.language,
@@ -265,12 +267,5 @@ class Flourish {
     );
   }
 
-  WebviewContainer getWebViewContainer() {
-    return webviewContainer;
-  }
-
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
+  WebviewContainer getWebViewContainer() => webviewContainer;
 }

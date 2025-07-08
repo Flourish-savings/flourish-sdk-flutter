@@ -18,18 +18,31 @@ class Event {
   static const String TRIVIA_FINISHED = 'TriviaFinished';
   static const String RETRY_LOGIN = 'RetryLogin';
   static const String GO_BACK = 'GoBack';
+  static const String WEBVIEW_LOADED = 'WebViewLoaded';
 
+  /// When you need to know when the user clicks on the back menu button on our platform.
   static const String BACK_BUTTON_PRESSED = 'BACK_BUTTON_PRESSED';
+  /// When you need to know when the user finishes a Trivia game on our platform.
   static const String TRIVIA_GAME_FINISHED = 'TRIVIA_GAME_FINISHED';
+  /// When you need to know when the user closed the Trivia game on our platform.
   static const String TRIVIA_CLOSED = 'TRIVIA_CLOSED';
+  /// When you need to know when the user copy the referral code to the clipboard area.
   static const String REFERRAL_COPY = 'REFERRAL_COPY';
+  /// When you need to know when the user copy the Gift code to the clipboard area.
   static const String GIFT_CARD_COPY = 'GIFT_CARD_COPY';
+  /// When you need to know when the user clicks on the home banner.
   static const String HOME_BANNER_ACTION = 'HOME_BANNER_ACTION';
+  /// When you need to know when the user clicks on a mission card.
   static const String MISSION_ACTION = 'MISSION_ACTION';
+  /// When you need to know when the user clicks on the back menu button on our error page.
+  static const String ERROR_BACK_BUTTON_PRESSED = 'ERROR_BACK_BUTTON_PRESSED';
+  /// When you need to know when the Authentication failed.
+  static const String AUTHENTICATION_FAILURE = 'AUTHENTICATION_FAILURE';
+  static const String SIGN_IN_FAILED = 'SIGN_IN_FAILED';
 
   final String name;
 
-  Event({required this.name});
+  const Event({required this.name});
 
   factory Event.fromJson(Map<String, dynamic> json) {
     final eventName = json['eventName'];
@@ -67,5 +80,5 @@ class Event {
 class ErrorEvent extends Event {
   final String code;
   final String? message;
-  ErrorEvent(this.code, this.message) : super(name: 'ErrorEvent');
+  const ErrorEvent(this.code, this.message) : super(name: 'ErrorEvent');
 }

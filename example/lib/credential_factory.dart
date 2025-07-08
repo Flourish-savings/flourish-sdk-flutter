@@ -15,7 +15,6 @@ class Credential {
 }
 
 class CredentialFactory {
-
   static const ENV_FILE = '.env';
   static const PARTNER_ID_KEY = 'PARTNER_ID';
   static const PARTNER_SECRET_KEY = 'PARTNER_SECRET';
