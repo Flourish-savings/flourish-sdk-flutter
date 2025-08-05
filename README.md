@@ -36,7 +36,7 @@ dependencies:
 
 To use this SDK, you will need these elements:
 
-- partnerId: a unique identifier that will be provided by Flourish
+- uuid: a unique identifier that will be provided by Flourish
 - secret: a string that represents a key, also provided by Flourish
 - costumer_code: a string that represents an identifier of yourself
 
@@ -69,11 +69,11 @@ ___
 
 ___
 
-First foremost, it is necessary to initialize the SDK providing the variables: `partnerId`, `secret`, `env`, `language` and `customerCode`.
+First foremost, it is necessary to initialize the SDK providing the variables: `uuid`, `secret`, `env`, `language` and `customerCode`.
 
 ```dart
     Flourish flourish = await Flourish.create(
-      partnerId: 'HERE_YOU_WILL_USE_YOUR_PARTNER_ID',
+      uuid: 'HERE_YOU_WILL_USE_YOUR_PARTNER_ID',
       secret: 'HERE_YOU_WILL_USE_YOUR_SECRET',
       env: Environment.staging,
       language: Language.english,

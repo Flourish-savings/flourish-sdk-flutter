@@ -108,10 +108,11 @@ packages:
   flourish_flutter_sdk:
     dependency: "direct main"
     description:
-      path: ".."
-      relative: true
-    source: path
-    version: "3.0.0"
+      name: flourish_flutter_sdk
+      sha256: "23471852246e3d4f29e6284bdcda7f6d32170d62e7a74fedcd9d245e77257772"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
   flutter:
     dependency: "direct main"
     description: flutter

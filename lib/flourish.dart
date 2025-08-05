@@ -29,7 +29,7 @@ class Flourish {
   EventManager eventManager = EventManager();
   late ApiService service;
   late Environment environment;
-  late String partnerId;
+  late String uuid;
   late String secret;
   late String? version;
   late String? trackingId;
@@ -39,9 +39,10 @@ class Flourish {
   late WebviewContainer webviewContainer;
   late Endpoint endpoint;
   String token = '';
+  String url = '';
 
   Flourish._({
-    required String partnerId,
+    required String uuid,
     required String secret,
     String? version,
     String? trackingId,
@@ -49,7 +50,7 @@ class Flourish {
     required Language language,
     required String customerCode,
   }) {
-    this.partnerId = partnerId;
+    this.uuid = uuid;
     this.secret = secret;
     this.environment = env;
     this.language = language;
@@ -61,7 +62,7 @@ class Flourish {
   }
 
   static Future<Flourish> create({
-    required String partnerId,
+    required String uuid,
     required String secret,
     required Environment env,
     required Language language,
@@ -70,7 +71,7 @@ class Flourish {
     String? trackingId,
   }) async {
     Flourish flourish = Flourish._(
-      partnerId: partnerId,
+      uuid: uuid,
       secret: secret,
       version: version,
       trackingId: trackingId,
@@ -100,31 +101,24 @@ class Flourish {
     try {
       this.customerCode = customerCode;
       this.category = category;
-      token = await service.authenticate(
-        this.partnerId,
+      Response response = await service.authenticate(
+        this.uuid,
         this.secret,
         customerCode,
         category,
+        this.language.code,
+        SdkInfo.version,
       );
-      await signIn();
+
+      token = response.data['session_token'];
+      url = response.data['url'];
+
       return token;
     } on DioException catch (_) {
       eventManager.notify(
         GenericEvent(event: Event.AUTHENTICATION_FAILURE),
       );
       return "";
-    }
-  }
-
-  Future<bool> signIn() async {
-    try {
-      await service.signIn(SdkInfo.version);
-      return true;
-    } on DioException catch (_) {
-      eventManager.notify(
-        GenericEvent(event: Event.SIGN_IN_FAILED),
-      );
-      return false;
     }
   }
 
@@ -257,6 +251,7 @@ class Flourish {
     return webviewContainer = WebviewContainer(
       environment: this.environment,
       apiToken: this.token,
+      platformUrl: this.url,
       language: this.language,
       eventManager: this.eventManager,
       endpoint: this.endpoint,

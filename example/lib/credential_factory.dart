@@ -10,7 +10,7 @@ class Credential {
   });
 
   bool empty() {
-    return this.partnerId.isEmpty || this.secretId.isEmpty;
+    return partnerId.isEmpty || secretId.isEmpty;
   }
 }
 

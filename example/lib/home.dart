@@ -35,7 +35,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Flourish? flourish;
+  Flourish? _flourish;
 
   @override
   void initState() {
@@ -45,17 +45,17 @@ class _HomeState extends State<Home> {
 
   Future<void> initFlourishSdk() async {
     final credential = await CredentialFactory().fromEnv();
-    final _flourish = await Flourish.create(
-      partnerId: credential.partnerId,
+    var flourish = await Flourish.create(
+      uuid: credential.partnerId,
       secret: credential.secretId,
       env: Environment.staging,
-      language: Language.english,
+      language: Language.spanish,
       customerCode: widget.customerCode,
     );
     // Update the state with fetched data
     setState(() {
-      flourish = _flourish;
-      buildPerformFlourishEvents(_flourish);
+      _flourish = flourish;
+      buildPerformFlourishEvents(flourish);
     });
   }
 
@@ -99,14 +99,14 @@ class _HomeState extends State<Home> {
                     55,
                   ),
                 ),
-                onPressed: flourish != null ? () {
+                onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RewardsScreen(flourish: flourish!),
+                      builder: (context) => RewardsScreen(flourish: _flourish!),
                     ),
                   );
-                } : null,
+                },
                 child: Text(
                   'Open Flourish module'.toUpperCase(),
                   style: const TextStyle(

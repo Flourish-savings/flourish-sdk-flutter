@@ -13,25 +13,30 @@ class ApiService {
     );
   }
 
-  Future<String> authenticate(
+  Future<Response> authenticate(
     String partnerId,
     String partnerSecret,
     String customerCode,
     String category,
+    String language,
+    String sdkVersion,
   ) async {
-    final requestData = <String, String>{
-      "partner_uuid": partnerId,
-      "partner_secret": partnerSecret,
+    final requestData = {
+      "uuid": partnerId,
+      "secret": partnerSecret,
       "customer_code": customerCode,
-      if (category.isNotEmpty) "category": category,
+      "metadata": {
+        "sdk_version": sdkVersion,
+        "platform": "flutter",
+        "language": language
+      }
     };
 
     Response res = await httpClient.post(
-      '/access_token',
+      '/authentication',
       data: requestData,
     );
-    _token = res.data['access_token'];
-    return _token!;
+    return res;
   }
 
   Future<bool> signIn(String sdkVersion) async {

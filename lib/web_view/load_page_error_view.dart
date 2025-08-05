@@ -131,6 +131,7 @@ class LoadPageErrorState extends State<LoadPageErrorView> {
                             builder: (context) => WebviewContainer(
                               environment: widget.flourish.environment,
                               apiToken: widget.flourish.token,
+                              platformUrl: widget.flourish.url,
                               language: widget.flourish.language,
                               eventManager: widget.flourish.eventManager,
                               endpoint: widget.flourish.endpoint,

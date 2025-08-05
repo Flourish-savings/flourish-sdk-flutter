@@ -6,9 +6,9 @@ class Endpoint {
   Endpoint(this.environment);
 
   final Map<Environment, Uri> _backendUriMapper = {
-    Environment.production: Uri.https('api.flourishfi.com', '/api/v1'),
-    Environment.staging: Uri.https('api-stg.flourishfi.com', '/api/v1'),
-    Environment.development: Uri.https('api-stg.flourishfi.com', '/api/v1'),
+    Environment.production: Uri.https('auth.flourishfi.com', '/api/v3'),
+    Environment.staging: Uri.https('auth-stg.flourishfi.com', '/api/v3'),
+    Environment.development: Uri.https('auth-stg.flourishfi.com', '/api/v3'),
   };
 
   final Map<Environment, Uri> _frontendUriMapperV2 = {

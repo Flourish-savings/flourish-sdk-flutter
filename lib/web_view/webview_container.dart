@@ -20,6 +20,7 @@ import '../config/language.dart';
 class WebviewContainer extends StatefulWidget {
   final Environment environment;
   final String apiToken;
+  final String platformUrl;
   final Language language;
   final EventManager eventManager;
   final Endpoint endpoint;
@@ -32,6 +33,7 @@ class WebviewContainer extends StatefulWidget {
     super.key,
     required this.environment,
     required this.apiToken,
+    required this.platformUrl,
     required this.language,
     required this.eventManager,
     required this.endpoint,
@@ -102,52 +104,15 @@ class WebviewContainerState extends State<WebviewContainer>
   }
 
   void _loadWebView() {
-    if (widget.version == "V2") {
-      _loadV2WebView();
-    } else {
-      _loadV3WebView();
-    }
-  }
-
-  void _loadV2WebView() {
-    final uri = widget.endpoint.getFrontendV2();
-
-    final queryParams = <String, String>{
-      'token': widget.apiToken,
-    };
-
-    _addOptionalParams(queryParams);
-
-    final finalUri = uri.replace(
-      path: '${uri.path}/${widget.language.code}',
-      queryParameters: queryParams,
-    );
-
-    _loadUri(finalUri);
-  }
-
-  void _loadV3WebView() {
-    final uri = widget.endpoint.getFrontendV3();
+    final uri = Uri.https(widget.platformUrl);
 
     final queryParams = <String, String>{
       'token': widget.apiToken,
       'lang': widget.language.code,
     };
 
-    _addOptionalParams(queryParams);
-
     final finalUri = uri.replace(queryParameters: queryParams);
     _loadUri(finalUri);
-  }
-
-  void _addOptionalParams(Map<String, String> queryParams) {
-    if (widget.trackingId != null) {
-      queryParams['ga_tracking'] = widget.trackingId!;
-    }
-
-    if (widget.sdkVersion != null) {
-      queryParams['sdk_version'] = widget.sdkVersion!;
-    }
   }
 
   void _loadUri(Uri uri) {

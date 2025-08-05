@@ -1,6 +1,3 @@
-import java.util.Properties
-import java.io.FileInputStream
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -8,30 +5,23 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Load keystore properties
-val keystorePropertiesFile = rootProject.file("key.properties")
-val keystoreProperties = Properties()
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-}
-
 android {
-    namespace = "com.flourishfi.sdk.example"
+    namespace = "com.flourishfi.sdk.flourish_flutter_sdk_example"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973"
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.flourishfi.sdk.example"
+        applicationId = "com.flourishfi.sdk.flourish_flutter_sdk_example"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -42,32 +32,27 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String?
-            keyPassword = keystoreProperties["keyPassword"] as String?
-            storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }
-            storePassword = keystoreProperties["storePassword"] as String?
+            storeFile = file(System.getenv("KEY_STORE") ?: "/Users/flourishfi/key.jks")
+            storePassword = System.getenv("KEY_PASSWORD") ?: "123456"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "upload"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "123456"
         }
     }
 
     buildTypes {
-        release {
-            signingConfig = if (keystorePropertiesFile.exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
-            }
+        getByName("release") {
+            isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("release")
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
-    }
-
-    lint {
-        disable += "InvalidPackage"
+//        release {
+//            // TODO: Add your own signing config for the release build.
+//            // Signing with the debug keys for now, so `flutter run --release` works.
+//            signingConfig = signingConfigs.getByName("debug")
+//        }
     }
 }
 
 flutter {
     source = "../.."
-}
-
-kotlin {
-    jvmToolchain(17)
 }
