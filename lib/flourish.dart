@@ -10,9 +10,10 @@ import 'package:flourish_flutter_sdk/events/types/generic_event.dart';
 import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
 import 'package:flourish_flutter_sdk/network/api_service.dart';
-import 'package:flourish_flutter_sdk/web_view/generic_error_pageview.dart';
+import 'package:flourish_flutter_sdk/web_view/flourish_token_error_page.dart';
 import 'package:flourish_flutter_sdk/web_view/webview_container.dart';
 import 'package:flutter/widgets.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'events/types/auto_payment_event.dart';
 import 'events/types/back_event.dart';
 import 'events/types/payment_event.dart';
@@ -31,13 +32,18 @@ class Flourish {
   late Environment environment;
   late String uuid;
   late String secret;
-  late String? version;
-  late String? trackingId;
+  String? version;
+  String? trackingId;
   late Language language;
   late String customerCode;
   late String category;
   late WebviewContainer webviewContainer;
   late Endpoint endpoint;
+  late bool reloadPageOnAppResume;
+  void Function(BuildContext context, WebResourceError error)? onWebViewLoadError;
+  void Function(BuildContext context)? onAuthError;
+  Widget? onTokenErrorWidget;
+  WebViewController? webViewController;
   String token = '';
   String url = '';
 
@@ -49,6 +55,10 @@ class Flourish {
     required Environment env,
     required Language language,
     required String customerCode,
+    required bool reloadPageOnAppResume,
+    void Function(BuildContext context, WebResourceError error)? onWebViewLoadError,
+    void Function(BuildContext context)? onAuthError,
+    Widget? onTokenErrorWidget,
   }) {
     this.uuid = uuid;
     this.secret = secret;
@@ -59,6 +69,10 @@ class Flourish {
     this.endpoint = Endpoint(environment);
     this.service = ApiService(env, this.endpoint);
     this.customerCode = customerCode;
+    this.reloadPageOnAppResume = reloadPageOnAppResume;
+    this.onWebViewLoadError = onWebViewLoadError;
+    this.onAuthError = onAuthError;
+    this.onTokenErrorWidget = onTokenErrorWidget;
   }
 
   static Future<Flourish> create({
@@ -67,10 +81,14 @@ class Flourish {
     required Environment env,
     required Language language,
     required String customerCode,
+    bool reloadPageOnAppResume = true,
+    void Function(BuildContext context, WebResourceError error)? onWebViewLoadError,
+    void Function(BuildContext context)? onAuthError,
+    Widget? onTokenErrorWidget,
     String? version,
     String? trackingId,
   }) async {
-    Flourish flourish = Flourish._(
+    final flourish = Flourish._(
       uuid: uuid,
       secret: secret,
       version: version,
@@ -78,6 +96,10 @@ class Flourish {
       env: env,
       language: language,
       customerCode: customerCode,
+      reloadPageOnAppResume: reloadPageOnAppResume,
+      onWebViewLoadError: onWebViewLoadError,
+      onAuthError: onAuthError,
+      onTokenErrorWidget: onTokenErrorWidget,
     );
 
     await flourish.authenticate(customerCode: customerCode);
@@ -243,19 +265,21 @@ class Flourish {
   Stream<Event> get onEvent => eventManager.onEvent;
 
   Widget home() {
-    if (!isTokenValid) return GenericErrorPageView(flourish: this);
+    final errorWidget =
+        onTokenErrorWidget ?? FlourishTokenErrorPage(flourish: this);
+    if (!isTokenValid) return errorWidget;
     return _openHome();
   }
 
   Widget _openHome() {
     return webviewContainer = WebviewContainer(
-      environment: this.environment,
-      apiToken: this.token,
-      platformUrl: this.url,
-      language: this.language,
-      eventManager: this.eventManager,
-      endpoint: this.endpoint,
       flourish: this,
+      environment: environment,
+      apiToken: token,
+      platformUrl: url,
+      language: language,
+      eventManager: eventManager,
+      endpoint: endpoint,
       version: version,
       trackingId: trackingId,
       sdkVersion: SdkInfo.version,

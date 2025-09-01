@@ -35,6 +35,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final List<StreamSubscription> _subscriptions = [];
   Flourish? _flourish;
 
   @override
@@ -45,18 +46,27 @@ class _HomeState extends State<Home> {
 
   Future<void> initFlourishSdk() async {
     final credential = await CredentialFactory().fromEnv();
-    var flourish = await Flourish.create(
+    final flourish = await Flourish.create(
       uuid: credential.partnerId,
       secret: credential.secretId,
       env: Environment.staging,
       language: Language.spanish,
       customerCode: widget.customerCode,
     );
-    // Update the state with fetched data
+    // Update the state with fetched data only if the screen is still mounted
+    if (!mounted) return;
     setState(() {
       _flourish = flourish;
-      buildPerformFlourishEvents(flourish);
+      subscribeToFlourishEvents(flourish);
     });
+  }
+
+  @override
+  void dispose() {
+    for (final sub in _subscriptions) {
+      sub.cancel();
+    }
+    super.dispose();
   }
 
   @override
@@ -122,77 +132,65 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void buildPerformFlourishEvents(Flourish flourish) {
-    flourish.onErrorEvent((ErrorEvent response) {
-      print("Event name: ${response.name}");
-    });
-
-    flourish.onAllEvent((Event response) {
-      print("Event name: ${response.name}");
-    });
-
-    flourish.onGenericEvent((GenericEvent response) {
-      if (response.name == Event.TRIVIA_GAME_FINISHED) {
+  void subscribeToFlourishEvents(Flourish flourish) {
+    _subscriptions.addAll([
+      flourish.onErrorEvent((ErrorEvent response) {
         print("Event name: ${response.name}");
-        print("Event data: ${jsonEncode(response.data?.toJson())}");
-      }
-    });
-
-    flourish.onWebViewLoadedEvent((WebViewLoadedEvent response) {
-      print("Event name: ${response.name}");
-    });
-
-    flourish.onAutoPaymentEvent((AutoPaymentEvent response) {
-      print("Event name: ${response.name}");
-    });
-
-    flourish.onPaymentEvent((PaymentEvent response) {
-      print("Event name: ${response.name}");
-    });
-
-    flourish.onTriviaFinishedEvent((TriviaFinishedEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
-    });
-
-    flourish.onBackEvent((BackEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
-    });
-
-    flourish.onBackButtonPressedEvent((BackButtonPressedEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
-    });
-
-    flourish.onTriviaGameFinishedEvent((TriviaGameFinishedEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
-    });
-
-    flourish.onTriviaCloseEvent((TriviaCloseEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
-    });
-
-    flourish.onReferralCopyEvent((ReferralCopyEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
-    });
-
-    flourish.onGiftCardCopyEvent((GiftCardCopyEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
-    });
-
-    flourish.onHomeBannerActionEvent((HomeBannerActionEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
-    });
-
-    flourish.onMissionActionEvent((MissionActionEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
-    });
+      }),
+      flourish.onAllEvent((Event response) {
+        print("Event name: ${response.name}");
+      }),
+      flourish.onGenericEvent((GenericEvent response) {
+        if (response.name == Event.TRIVIA_GAME_FINISHED) {
+          print("Event name: ${response.name}");
+          print("Event data: ${jsonEncode(response.data?.toJson())}");
+        }
+      }),
+      flourish.onWebViewLoadedEvent((WebViewLoadedEvent response) {
+        print("Event name: ${response.name}");
+      }),
+      flourish.onAutoPaymentEvent((AutoPaymentEvent response) {
+        print("Event name: ${response.name}");
+      }),
+      flourish.onPaymentEvent((PaymentEvent response) {
+        print("Event name: ${response.name}");
+      }),
+      flourish.onTriviaFinishedEvent((TriviaFinishedEvent response) {
+        print("Event name: ${response.name}");
+        print("Event data: ${jsonEncode(response.data.toJson())}");
+      }),
+      flourish.onBackEvent((BackEvent response) {
+        print("Event name: ${response.name}");
+        print("Event data: ${jsonEncode(response.data.toJson())}");
+      }),
+      flourish.onBackButtonPressedEvent((BackButtonPressedEvent response) {
+        print("Event name: ${response.name}");
+        print("Event data: ${jsonEncode(response.data.toJson())}");
+      }),
+      flourish.onTriviaGameFinishedEvent((TriviaGameFinishedEvent response) {
+        print("Event name: ${response.name}");
+        print("Event data: ${jsonEncode(response.data.toJson())}");
+      }),
+      flourish.onTriviaCloseEvent((TriviaCloseEvent response) {
+        print("Event name: ${response.name}");
+        print("Event data: ${jsonEncode(response.data.toJson())}");
+      }),
+      flourish.onReferralCopyEvent((ReferralCopyEvent response) {
+        print("Event name: ${response.name}");
+        print("Event data: ${jsonEncode(response.data.toJson())}");
+      }),
+      flourish.onGiftCardCopyEvent((GiftCardCopyEvent response) {
+        print("Event name: ${response.name}");
+        print("Event data: ${jsonEncode(response.data.toJson())}");
+      }),
+      flourish.onHomeBannerActionEvent((HomeBannerActionEvent response) {
+        print("Event name: ${response.name}");
+        print("Event data: ${jsonEncode(response.data.toJson())}");
+      }),
+      flourish.onMissionActionEvent((MissionActionEvent response) {
+        print("Event name: ${response.name}");
+        print("Event data: ${jsonEncode(response.data.toJson())}");
+      }),
+    ]);
   }
 }
