@@ -42,6 +42,17 @@ class WebviewContainer extends StatefulWidget {
     this.sdkVersion,
   });
 
+  Uri get initialLink {
+    final uri = Uri.https(platformUrl);
+
+    final queryParams = <String, String>{
+      'token': apiToken,
+      'lang': language.code,
+    };
+
+    return uri.replace(queryParameters: queryParams);
+  }
+
   @override
   WebviewContainerState createState() => WebviewContainerState();
 }
@@ -76,14 +87,14 @@ class WebviewContainerState extends State<WebviewContainer>
         ),
       );
     flourish.webViewController = controller;
-    unawaited(_loadWebView());
+    unawaited(_loadWebView(widget.initialLink));
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (flourish.reloadPageOnAppResume && state == AppLifecycleState.resumed) {
-      unawaited(_loadWebView());
+      unawaited(_loadWebView(widget.initialLink));
     }
   }
 
@@ -102,19 +113,7 @@ class WebviewContainerState extends State<WebviewContainer>
     super.dispose();
   }
 
-  Future<void> _loadWebView() async {
-    final uri = Uri.https(widget.platformUrl);
-
-    final queryParams = <String, String>{
-      'token': widget.apiToken,
-      'lang': widget.language.code,
-    };
-
-    final finalUri = uri.replace(queryParameters: queryParams);
-    return _loadUri(finalUri);
-  }
-
-  Future<void> _loadUri(Uri uri) async {
+  Future<void> _loadWebView(Uri uri) async {
     if (kDebugMode) print(uri.toString());
     return controller.loadRequest(uri);
   }
