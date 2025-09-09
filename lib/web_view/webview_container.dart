@@ -16,6 +16,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'flourish_token_error_page.dart';
+
 class WebviewContainer extends StatefulWidget {
   final Environment environment;
   final String apiToken;
@@ -83,6 +85,27 @@ class WebviewContainerState extends State<WebviewContainer>
               return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;
+          },
+          onPageFinished: (String url) async {
+            final statusCode = await controller.runJavaScriptReturningResult(
+                'window.performance.getEntries().find(e => e.entryType === "navigation").responseStatus'
+            );
+
+            final content = await controller.runJavaScriptReturningResult(
+                'document.documentElement.innerText'
+            ) as String;
+
+            if (statusCode == 403 &&
+                content.contains('AccessDenied')) {
+              if (mounted) {
+                await Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FlourishTokenErrorPage(flourish: flourish),
+                  ),
+                );
+              }
+            }
           },
         ),
       );
@@ -184,6 +207,16 @@ class WebviewContainerState extends State<WebviewContainer>
   }
 
   Future<dynamic> handleLoadingPageError(WebResourceError error) async {
+    if (error.errorCode == 403) {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FlourishTokenErrorPage(flourish: flourish),
+          ),
+        );
+      }
+    }
     if (error.errorType == WebResourceErrorType.connect ||
         error.errorType == WebResourceErrorType.timeout ||
         error.errorType == WebResourceErrorType.hostLookup ||
