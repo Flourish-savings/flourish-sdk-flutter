@@ -1,22 +1,22 @@
 import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk/events/event.dart';
+import 'package:flourish_flutter_sdk/events/types/generic_event.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flutter/material.dart';
-import '../events/types/generic_event.dart';
 
-class GenericErrorPageView extends StatefulWidget {
+class FlourishTokenErrorPage extends StatefulWidget {
   final Flourish flourish;
 
-  GenericErrorPageView({
+  FlourishTokenErrorPage({
     super.key,
     required this.flourish,
   });
 
   @override
-  GenericErrorPageState createState() => GenericErrorPageState();
+  FlourishTokenErrorPageState createState() => FlourishTokenErrorPageState();
 }
 
-class GenericErrorPageState extends State<GenericErrorPageView> {
+class FlourishTokenErrorPageState extends State<FlourishTokenErrorPage> {
   String get title {
     switch (widget.flourish.language) {
       case Language.english:

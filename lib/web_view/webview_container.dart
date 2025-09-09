@@ -3,19 +3,18 @@ import 'dart:convert';
 
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
+import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk/events/event.dart';
 import 'package:flourish_flutter_sdk/events/event_manager.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
-import 'package:flourish_flutter_sdk/web_view/error_view.dart';
-import 'package:flourish_flutter_sdk/web_view/load_page_error_view.dart';
+import 'package:flourish_flutter_sdk/web_view/auth_error_page.dart';
+import 'package:flourish_flutter_sdk/web_view/webview_load_error_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
-import '../config/language.dart';
 
 class WebviewContainer extends StatefulWidget {
   final Environment environment;
@@ -43,6 +42,17 @@ class WebviewContainer extends StatefulWidget {
     this.sdkVersion,
   });
 
+  Uri get initialLink {
+    final uri = Uri.https(platformUrl);
+
+    final queryParams = <String, String>{
+      'token': apiToken,
+      'lang': language.code,
+    };
+
+    return uri.replace(queryParameters: queryParams);
+  }
+
   @override
   WebviewContainerState createState() => WebviewContainerState();
 }
@@ -66,9 +76,7 @@ class WebviewContainerState extends State<WebviewContainer>
       )
       ..setNavigationDelegate(
         NavigationDelegate(
-          onWebResourceError: (WebResourceError error) {
-            openLoadPageErrorScreen(error);
-          },
+          onWebResourceError: handleLoadingPageError,
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.endsWith('.pdf')) {
               unawaited(_launchURL(request.url));
@@ -78,14 +86,15 @@ class WebviewContainerState extends State<WebviewContainer>
           },
         ),
       );
-    _loadWebView();
+    flourish.webViewController = controller;
+    unawaited(_loadWebView(widget.initialLink));
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed) {
-      _loadWebView();
+    if (flourish.reloadPageOnAppResume && state == AppLifecycleState.resumed) {
+      unawaited(_loadWebView(widget.initialLink));
     }
   }
 
@@ -100,24 +109,13 @@ class WebviewContainerState extends State<WebviewContainer>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    flourish.webViewController = null;
     super.dispose();
   }
 
-  void _loadWebView() {
-    final uri = Uri.https(widget.platformUrl);
-
-    final queryParams = <String, String>{
-      'token': widget.apiToken,
-      'lang': widget.language.code,
-    };
-
-    final finalUri = uri.replace(queryParameters: queryParams);
-    _loadUri(finalUri);
-  }
-
-  void _loadUri(Uri uri) {
+  Future<void> _loadWebView(Uri uri) async {
     if (kDebugMode) print(uri.toString());
-    controller.loadRequest(uri);
+    return controller.loadRequest(uri);
   }
 
   @override
@@ -145,10 +143,10 @@ class WebviewContainerState extends State<WebviewContainer>
 
       switch (eventName) {
         case "REFERRAL_COPY":
-          _handleReferralCopy(json['data']);
+          unawaited(_handleReferralCopy(json['data']));
           break;
         case "INVALID_TOKEN":
-          unawaited(openErrorScreen());
+          unawaited(handleAuthError());
           break;
         default:
           _handleGenericEvent(json);
@@ -158,11 +156,11 @@ class WebviewContainerState extends State<WebviewContainer>
     }
   }
 
-  void _handleReferralCopy(dynamic data) {
+  Future<void> _handleReferralCopy(dynamic data) async {
     final referralCode = data['referralCode'];
-    if (referralCode == null) return;
-    unawaited(Clipboard.setData(ClipboardData(text: referralCode)));
-    unawaited(Share.share(referralCode));
+    if (referralCode == null) return print('referralCode is empty');
+    await Clipboard.setData(ClipboardData(text: referralCode));
+    await Share.share(referralCode);
   }
 
   void _handleGenericEvent(Map<String, dynamic> json) {
@@ -174,24 +172,29 @@ class WebviewContainerState extends State<WebviewContainer>
     widget.eventManager.notify(event);
   }
 
-  Future<void> openErrorScreen() {
-    return Navigator.pushReplacement(
+  Future<void> handleAuthError() async {
+    final onAuthError = flourish.onAuthError;
+    if (onAuthError != null) return onAuthError(context);
+    await Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => ErrorView(flourish: flourish),
+        builder: (context) => AuthErrorPage(flourish: flourish),
       ),
     );
   }
 
-  Future<dynamic> openLoadPageErrorScreen(WebResourceError error) async {
+  Future<dynamic> handleLoadingPageError(WebResourceError error) async {
     if (error.errorType == WebResourceErrorType.connect ||
         error.errorType == WebResourceErrorType.timeout ||
         error.errorType == WebResourceErrorType.hostLookup ||
         error.errorCode == -1009) {
+      final onWebViewLoadError = flourish.onWebViewLoadError;
+      if (onWebViewLoadError != null) return onWebViewLoadError(context, error);
+
       return Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => LoadPageErrorView(flourish: flourish),
+          builder: (context) => WebViewLoadErrorPage(flourish: flourish),
         ),
       );
     }
