@@ -156,6 +156,9 @@ class WebviewContainerState extends State<WebviewContainer> {
     if(error.errorType == WebResourceErrorType.connect ||
        error.errorType == WebResourceErrorType.timeout ||
        error.errorType == WebResourceErrorType.hostLookup ){
+      this._notify(
+        ErrorEvent('NETWORK_CONNECTION_ERROR', error.description),
+      );
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

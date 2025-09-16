@@ -113,8 +113,8 @@ class _LoginState extends State<Login> {
           Flourish flourish = Flourish(
               partnerId: credential.partnerId,
               secret: credential.secretId,
-              env: Environment.development,
-              language: Language.english,
+              env: Environment.staging,
+              language: Language.spanish,
               customerCode: _customerCodeController.text
           );
 

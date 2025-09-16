@@ -1,4 +1,4 @@
-[<img width="400" src="https://github.com/Flourish-savings/flourish-sdk-flutter/blob/main/images/logo_flourish.png?raw=true"/>](https://flourishfi.com)
+[<img width="400" src="https://github.com/Flourish-savings/flourish_sdk_flutter/blob/main/images/logo_flourish.png?raw=true"/>](https://flourishfi.com)
 <br>
 <br>
 # Flourish SDK Flutter
@@ -111,7 +111,7 @@ flourish.onTriviaGameFinishedEvent((TriviaGameFinishedEvent response) {
 });
 ```
 you can find our all mapped events here:
-https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/lib/events/types/v2
+https://github.com/Flourish-savings/flourish_sdk_flutter/tree/main/lib/events/types/v2
 
 ### Listen our unmapped events
 Even if our platform starts sending new unmapped events, it will not be necessary to update the SDK version to consume them.
@@ -152,5 +152,5 @@ here you have all events we will return
 ## Examples
 Inside this repository, you have an example app to show how to integrate with us:
 
-https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main/example
+https://github.com/Flourish-savings/flourish_sdk_flutter/tree/main/example
 <br>

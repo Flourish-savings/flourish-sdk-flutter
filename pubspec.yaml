@@ -1,11 +1,11 @@
 name: flourish_flutter_sdk
 description: Flourish SDK for partners integrate.
-version: 2.9.10
-homepage: https://github.com/Flourish-savings/flourish-sdk-flutter
+version: 2.9.11
+homepage: https://github.com/Flourish-savings/flourish_sdk_flutter
 
 environment:
   sdk: ">=3.4.4 <4.0.0"
-  flutter: ">=3.2.3"
+  flutter: ">=3.22.3"
 
 dependencies:
   flutter:
@@ -34,8 +34,8 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.flourishfi.flourish_flutter_sdk
-        pluginClass: FlourishFlutterSdkPlugin
+        package: com.flourishfi.sdk.flourish_sdk_flutter
+        pluginClass: FlourishSdkFlutterPlugin
       ios:
         pluginClass: FlourishFlutterSdkPlugin
   # To add assets to your plugin package, add an assets section, like this:

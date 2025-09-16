@@ -33,12 +33,12 @@ All notable changes to this plugin will be documented in this file.
 ### Added
 - Setup of the sdk
 
-[Unreleased]: https://github.com/Flourish-savings/flourish-sdk-flutter/tree/main
-[1.0.8]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.8
-[1.0.7]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.7
-[1.0.6]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.6
-[1.0.4]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.4
-[1.0.3]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.3
-[1.0.2]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.2
-[1.0.1]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.1
-[1.0.0]: https://github.com/Flourish-savings/flourish-sdk-flutter/releases/tag/1.0.0
+[Unreleased]: https://github.com/Flourish-savings/flourish_sdk_flutter/tree/main
+[1.0.8]: https://github.com/Flourish-savings/flourish_sdk_flutter/releases/tag/1.0.8
+[1.0.7]: https://github.com/Flourish-savings/flourish_sdk_flutter/releases/tag/1.0.7
+[1.0.6]: https://github.com/Flourish-savings/flourish_sdk_flutter/releases/tag/1.0.6
+[1.0.4]: https://github.com/Flourish-savings/flourish_sdk_flutter/releases/tag/1.0.4
+[1.0.3]: https://github.com/Flourish-savings/flourish_sdk_flutter/releases/tag/1.0.3
+[1.0.2]: https://github.com/Flourish-savings/flourish_sdk_flutter/releases/tag/1.0.2
+[1.0.1]: https://github.com/Flourish-savings/flourish_sdk_flutter/releases/tag/1.0.1
+[1.0.0]: https://github.com/Flourish-savings/flourish_sdk_flutter/releases/tag/1.0.0

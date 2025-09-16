@@ -1,0 +1,27 @@
+version: 2.1
+
+jobs:
+  publish:
+    docker:
+      - image: dart:stable
+    steps:
+      - checkout
+      - run:
+          name: Config Pub credentials
+          command: |
+            mkdir -p ~/.pub-cache
+            echo "$PUB_CREDENTIALS" > ~/.pub-cache/credentials.json
+      - run:
+          name: Publish package
+          command: dart pub publish --skip-validation --force
+
+workflows:
+  version: 2
+  publish-workflow:
+    jobs:
+      - publish:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
