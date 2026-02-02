@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:dio/dio.dart';
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
@@ -46,7 +48,7 @@ class ApiService {
           },
         ),
       );
-      print("logged in");
+      developer.log('Signed in successfully', name: 'FlourishSDK');
       return true;
     } on DioError catch (e) {
       throw e;
