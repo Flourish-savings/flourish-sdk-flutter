@@ -39,6 +39,8 @@ class Event {
   /// When you need to know when the Authentication failed.
   static const String AUTHENTICATION_FAILURE = 'AUTHENTICATION_FAILURE';
   static const String SIGN_IN_FAILED = 'SIGN_IN_FAILED';
+  /// When an error occurs in the web application (network, business logic, maintenance, etc.)
+  static const String ERROR = 'ERROR';
 
   final String name;
 
@@ -71,6 +73,8 @@ class Event {
         return HomeBannerActionEvent.from(json);
       case MISSION_ACTION:
         return MissionActionEvent.from(json);
+      case ERROR:
+        return ErrorEvent.fromJson(json);
       default:
         return GenericEvent.from(json);
     }
@@ -80,5 +84,18 @@ class Event {
 class ErrorEvent extends Event {
   final String code;
   final String? message;
-  const ErrorEvent(this.code, this.message) : super(name: 'ErrorEvent');
+
+  const ErrorEvent({
+    required this.code,
+    this.message,
+  }) : super(name: Event.ERROR);
+
+  factory ErrorEvent.fromJson(Map<String, dynamic> json) {
+    final rawData = json['data'];
+    final data = rawData is Map<String, dynamic> ? rawData : <String, dynamic>{};
+    return ErrorEvent(
+      code: data['code']?.toString() ?? 'UNKNOWN_ERROR',
+      message: data['message']?.toString(),
+    );
+  }
 }

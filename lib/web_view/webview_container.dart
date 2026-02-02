@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer' as developer;
 
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
@@ -9,7 +10,6 @@ import 'package:flourish_flutter_sdk/events/event_manager.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flourish_flutter_sdk/web_view/auth_error_page.dart';
 import 'package:flourish_flutter_sdk/web_view/webview_load_error_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
@@ -137,7 +137,7 @@ class WebviewContainerState extends State<WebviewContainer>
   }
 
   Future<void> _loadWebView(Uri uri) async {
-    if (kDebugMode) print(uri.toString());
+    developer.log('Loading URL: $uri', name: 'FlourishSDK');
     return controller.loadRequest(uri);
   }
 
@@ -158,7 +158,7 @@ class WebviewContainerState extends State<WebviewContainer>
   }
 
   void _handleJavaScriptMessage(JavaScriptMessage message) {
-    if (kDebugMode) print(message.message);
+    developer.log('JS message received: ${message.message}', name: 'FlourishSDK');
 
     try {
       final json = jsonDecode(message.message);
@@ -171,17 +171,23 @@ class WebviewContainerState extends State<WebviewContainer>
         case "INVALID_TOKEN":
           unawaited(handleAuthError());
           break;
+        case "ERROR":
+          unawaited(handleWebAppError(json));
+          break;
         default:
           _handleGenericEvent(json);
       }
     } catch (e) {
-      if (kDebugMode) print('Error handling JS message: $e');
+      developer.log('Error handling JS message', name: 'FlourishSDK', error: e);
     }
   }
 
   Future<void> _handleReferralCopy(dynamic data) async {
     final referralCode = data['referralCode'];
-    if (referralCode == null) return print('referralCode is empty');
+    if (referralCode == null) {
+      developer.log('referralCode is empty', name: 'FlourishSDK', level: 900);
+      return;
+    }
     await Clipboard.setData(ClipboardData(text: referralCode));
     await Share.share(referralCode);
   }
@@ -196,8 +202,11 @@ class WebviewContainerState extends State<WebviewContainer>
   }
 
   Future<void> handleAuthError() async {
+    if (!mounted) return;
+
     final onAuthError = flourish.onAuthError;
     if (onAuthError != null) return onAuthError(context);
+
     await Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -206,30 +215,66 @@ class WebviewContainerState extends State<WebviewContainer>
     );
   }
 
+  Future<void> handleWebAppError(Map<String, dynamic> json) async {
+    final errorEvent = ErrorEvent.fromJson(json);
+    _notify(errorEvent);
+
+    if (!mounted) return;
+
+    final onError = flourish.onError;
+    if (onError != null) return onError(context, errorEvent);
+
+    await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FlourishTokenErrorPage(flourish: flourish),
+      ),
+    );
+  }
+
   Future<dynamic> handleLoadingPageError(WebResourceError error) async {
+    developer.log(
+      'WebView Load Error - code: ${error.errorCode}, '
+      'type: ${error.errorType}, '
+      'description: ${error.description}, '
+      'isForMainFrame: ${error.isForMainFrame}',
+      name: 'FlourishSDK',
+      level: 1000,
+    );
+
     if (error.errorCode == 403) {
       if (mounted) {
-        Navigator.pushReplacement(
+        return Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => FlourishTokenErrorPage(flourish: flourish),
           ),
         );
       }
+      return;
     }
+
     if (error.errorType == WebResourceErrorType.connect ||
         error.errorType == WebResourceErrorType.timeout ||
         error.errorType == WebResourceErrorType.hostLookup ||
         error.errorCode == -1009) {
+      developer.log(
+        'Network connectivity error detected - invoking error handler',
+        name: 'FlourishSDK',
+        level: 900,
+      );
+
       final onWebViewLoadError = flourish.onWebViewLoadError;
       if (onWebViewLoadError != null) return onWebViewLoadError(context, error);
 
-      return Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => WebViewLoadErrorPage(flourish: flourish),
-        ),
-      );
+      if (mounted) {
+        return Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WebViewLoadErrorPage(flourish: flourish),
+          ),
+        );
+      }
     }
   }
 }
