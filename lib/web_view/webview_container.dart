@@ -51,7 +51,6 @@ class WebviewContainer extends StatefulWidget {
 
 class WebviewContainerState extends State<WebviewContainer> {
   late Flourish flourish;
-  bool _isLoading = true;
 
   void config(Flourish flourish) {
     this.flourish = flourish;

@@ -32,7 +32,7 @@ class ApiService {
       );
       _token = res.data['access_token'];
       return _token!;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       throw e;
     }
   }
@@ -50,7 +50,7 @@ class ApiService {
       );
       developer.log('Signed in successfully', name: 'FlourishSDK');
       return true;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       throw e;
     }
   }
