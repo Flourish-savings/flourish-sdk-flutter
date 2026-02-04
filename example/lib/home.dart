@@ -16,6 +16,7 @@ import 'package:flourish_flutter_sdk/events/types/payment_event.dart';
 import 'package:flourish_flutter_sdk/events/types/trivia_finished_event.dart';
 import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
 import 'dart:convert';
+import 'dart:developer' as developer;
 
 import 'package:provider/provider.dart';
 
@@ -100,71 +101,65 @@ class _HomeState extends State<Home> {
 
   void buildPerformFlourishEvents() {
     flourish.onAllEvent((Event response) {
-      print("Event name: ${response.name}");
+      developer.log('Event: ${response.name}', name: 'FlourishExample');
     });
 
     flourish.onGenericEvent((GenericEvent response) {
       if (response.name == "TRIVIA_GAME_FINISHED") {
-        print("Event name: ${response.name}");
-        print("Event data: ${jsonEncode(response.data.toJson())}");
+        developer.log('${response.name} - data: ${jsonEncode(response.data.toJson())}', name: 'FlourishExample');
       }
     });
 
     flourish.onWebViewLoadedEvent((WebViewLoadedEvent response) {
-      print("Event name: ${response.name}");
+      developer.log(response.name, name: 'FlourishExample');
     });
 
     flourish.onAutoPaymentEvent((AutoPaymentEvent response) {
-      print("Event name: ${response.name}");
+      developer.log(response.name, name: 'FlourishExample');
     });
 
     flourish.onPaymentEvent((PaymentEvent response) {
-      print("Event name: ${response.name}");
+      developer.log(response.name, name: 'FlourishExample');
     });
 
     flourish.onTriviaFinishedEvent((TriviaFinishedEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
+      developer.log('${response.name} - data: ${jsonEncode(response.data.toJson())}', name: 'FlourishExample');
     });
 
     flourish.onBackEvent((BackEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
+      developer.log('${response.name} - data: ${jsonEncode(response.data.toJson())}', name: 'FlourishExample');
     });
 
     flourish.onBackButtonPressedEvent((BackButtonPressedEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
+      developer.log('${response.name} - data: ${jsonEncode(response.data.toJson())}', name: 'FlourishExample');
     });
 
     flourish.onTriviaGameFinishedEvent((TriviaGameFinishedEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
+      developer.log('${response.name} - data: ${jsonEncode(response.data.toJson())}', name: 'FlourishExample');
     });
 
     flourish.onTriviaCloseEvent((TriviaCloseEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
+      developer.log('${response.name} - data: ${jsonEncode(response.data.toJson())}', name: 'FlourishExample');
     });
 
     flourish.onReferralCopyEvent((ReferralCopyEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
+      developer.log('${response.name} - data: ${jsonEncode(response.data.toJson())}', name: 'FlourishExample');
     });
 
     flourish.onGiftCardCopyEvent((GiftCardCopyEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
+      developer.log('${response.name} - data: ${jsonEncode(response.data.toJson())}', name: 'FlourishExample');
     });
 
     flourish.onHomeBannerActionEvent((HomeBannerActionEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
+      developer.log('${response.name} - data: ${jsonEncode(response.data.toJson())}', name: 'FlourishExample');
     });
 
     flourish.onMissionActionEvent((MissionActionEvent response) {
-      print("Event name: ${response.name}");
-      print("Event data: ${jsonEncode(response.data.toJson())}");
+      developer.log('${response.name} - data: ${jsonEncode(response.data.toJson())}', name: 'FlourishExample');
+    });
+
+    flourish.onErrorEvent((ErrorEvent response) {
+      developer.log('Error: ${response.code} - ${response.message}', name: 'FlourishExample', level: 1000);
     });
   }
 }

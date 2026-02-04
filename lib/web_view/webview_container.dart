@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:developer' as developer;
 
 import 'package:clipboard/clipboard.dart';
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
@@ -81,7 +83,7 @@ class WebviewContainerState extends State<WebviewContainer> {
       fullUrl = "$fullUrl&sdk_version=${widget.sdkVersion}";
     }
 
-    print(fullUrl);
+    developer.log('Loading URL: $fullUrl', name: 'FlourishSDK');
 
     var controller = WebViewController()
       ..setBackgroundColor(Colors.white)
@@ -89,21 +91,7 @@ class WebviewContainerState extends State<WebviewContainer> {
       ..addJavaScriptChannel(
         'AppChannel',
         onMessageReceived: (JavaScriptMessage message) {
-          print(message.message);
-
-          Map<String, dynamic> json = jsonDecode(message.message);
-          final eventName = json['eventName'];
-          if (eventName == "REFERRAL_COPY") {
-            var referralCode = json['data']['referralCode'];
-            FlutterClipboard.copy(referralCode);
-            Share.share(referralCode);
-            return;
-          }
-          if (eventName == "INVALID_TOKEN") {
-            openErrorScreen();
-          }
-          Event event = Event.fromJson(json);
-          this._notify(event);
+          _handleJavaScriptMessage(message);
         },
       )
       ..setNavigationDelegate(
@@ -112,7 +100,7 @@ class WebviewContainerState extends State<WebviewContainer> {
           onPageFinished: (String url) {},
           onHttpError: (HttpResponseError error) {},
           onWebResourceError: (WebResourceError error) {
-              openLoadPageErrorScreen(error);
+              handleLoadingPageError(error);
             },
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.endsWith('.pdf')) {
@@ -124,7 +112,7 @@ class WebviewContainerState extends State<WebviewContainer> {
         ),
       )
       ..loadRequest(Uri.parse(fullUrl));
-    
+
 
     return Container(
       color: Colors.white,
@@ -133,6 +121,38 @@ class WebviewContainerState extends State<WebviewContainer> {
         child: WebViewWidget(controller: controller),
       ),
     );
+  }
+
+  void _handleJavaScriptMessage(JavaScriptMessage message) {
+    developer.log('JS message received: ${message.message}', name: 'FlourishSDK');
+
+    try {
+      Map<String, dynamic> json = jsonDecode(message.message);
+      final eventName = json['eventName'];
+
+      switch (eventName) {
+        case "REFERRAL_COPY":
+          var referralCode = json['data']['referralCode'];
+          if (referralCode == null) {
+            developer.log('referralCode is empty', name: 'FlourishSDK', level: 900);
+            return;
+          }
+          FlutterClipboard.copy(referralCode);
+          Share.share(referralCode);
+          break;
+        case "INVALID_TOKEN":
+          handleAuthError();
+          break;
+        case "ERROR":
+          unawaited(handleWebAppError(json));
+          break;
+        default:
+          Event event = Event.fromJson(json);
+          _notify(event);
+      }
+    } catch (e) {
+      developer.log('Error handling JS message', name: 'FlourishSDK', error: e);
+    }
   }
 
   Future<void> _launchURL(String url) async {
@@ -144,7 +164,12 @@ class WebviewContainerState extends State<WebviewContainer> {
     widget.eventManager.notify(event);
   }
 
-  void openErrorScreen() {
+  void handleAuthError() {
+    if (!mounted) return;
+
+    final onAuthError = flourish.onAuthError;
+    if (onAuthError != null) return onAuthError(context);
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -152,18 +177,67 @@ class WebviewContainerState extends State<WebviewContainer> {
     );
   }
 
-  void openLoadPageErrorScreen(WebResourceError error) {
-    if(error.errorType == WebResourceErrorType.connect ||
-       error.errorType == WebResourceErrorType.timeout ||
-       error.errorType == WebResourceErrorType.hostLookup ){
+  Future<void> handleWebAppError(Map<String, dynamic> json) async {
+    final errorEvent = ErrorEvent.fromJson(json);
+    _notify(errorEvent);
+
+    if (!mounted) return;
+
+    final onError = flourish.onError;
+    if (onError != null) return onError(context, errorEvent);
+
+    await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ErrorView(flourish: this.flourish)),
+    );
+  }
+
+  void handleLoadingPageError(WebResourceError error) {
+    developer.log(
+      'WebView Load Error - code: ${error.errorCode}, '
+      'type: ${error.errorType}, '
+      'description: ${error.description}, '
+      'isForMainFrame: ${error.isForMainFrame}',
+      name: 'FlourishSDK',
+      level: 1000,
+    );
+
+    if (error.errorCode == 403) {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ErrorView(flourish: this.flourish)),
+        );
+      }
+      return;
+    }
+
+    if (error.errorType == WebResourceErrorType.connect ||
+        error.errorType == WebResourceErrorType.timeout ||
+        error.errorType == WebResourceErrorType.hostLookup ||
+        error.errorCode == -1009) {
+      developer.log(
+        'Network connectivity error detected - invoking error handler',
+        name: 'FlourishSDK',
+        level: 900,
+      );
+
       this._notify(
         ErrorEvent('NETWORK_CONNECTION_ERROR', error.description),
       );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => LoadPageErrorView(flourish: this.flourish)),
-      );
+
+      final onWebViewLoadError = flourish.onWebViewLoadError;
+      if (onWebViewLoadError != null) return onWebViewLoadError(context, error);
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoadPageErrorView(flourish: this.flourish)),
+        );
+      }
     }
   }
 }

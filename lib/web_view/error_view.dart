@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -41,7 +43,7 @@ class ErrorViewState extends State<ErrorView> {
             ),
           );
         }).catchError((er) {
-          print(er);
+          developer.log('Token refresh failed', name: 'FlourishSDK', error: er);
         });
     return Scaffold(
       body: Stack(

@@ -26,6 +26,12 @@ class Event {
   static const String GIFT_CARD_COPY = 'GIFT_CARD_COPY';
   static const String HOME_BANNER_ACTION = 'HOME_BANNER_ACTION';
   static const String MISSION_ACTION = 'MISSION_ACTION';
+  /// When you need to know when the user clicks on the back menu button on our error page.
+  static const String ERROR_BACK_BUTTON_PRESSED = 'ERROR_BACK_BUTTON_PRESSED';
+  /// When you need to know when the Authentication failed.
+  static const String AUTHENTICATION_FAILURE = 'AUTHENTICATION_FAILURE';
+  /// When an error occurs in the web application (network, business logic, maintenance, etc.)
+  static const String ERROR = 'ERROR';
 
   final String name;
 
@@ -58,6 +64,8 @@ class Event {
         return HomeBannerActionEvent.from(json);
       case MISSION_ACTION:
         return MissionActionEvent.from(json);
+      case ERROR:
+        return ErrorEvent.fromJson(json);
       default:
         return GenericEvent.from(json);
     }
@@ -67,5 +75,15 @@ class Event {
 class ErrorEvent extends Event {
   final String code;
   final String? message;
-  ErrorEvent(this.code, this.message) : super(name: 'error');
+
+  ErrorEvent(this.code, this.message) : super(name: Event.ERROR);
+
+  factory ErrorEvent.fromJson(Map<String, dynamic> json) {
+    final rawData = json['data'];
+    final data = rawData is Map<String, dynamic> ? rawData : <String, dynamic>{};
+    return ErrorEvent(
+      data['code']?.toString() ?? 'UNKNOWN_ERROR',
+      data['message']?.toString(),
+    );
+  }
 }
