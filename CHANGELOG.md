@@ -1,7 +1,9 @@
 # Changelog
 All notable changes to this plugin will be documented in this file.
 
-## [2.9.14] - 02/02/2026
+## [2.9.14] - 04/02/2026
+
+## [2.9.13] - 02/02/2026
 ### Added
 - `onError` callback on `Flourish` constructor for handling web app errors (network, business logic, onboarding, maintenance)
 - `onAuthError` callback on `Flourish` constructor for handling authentication/token errors
