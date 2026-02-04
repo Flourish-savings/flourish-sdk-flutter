@@ -1,6 +1,4 @@
 # IDE files
 .vscode/
 *.iml
-
-# Example app
-example/
+.vscode/launch.json
