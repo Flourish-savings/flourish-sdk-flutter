@@ -1,7 +1,11 @@
 # Changelog
 All notable changes to this plugin will be documented in this file.
 
-## [3.2.0] - 30/01/2026
+## [4.0.0] - 30/01/2026
+### Breaking Changes
+- `ErrorEvent` now uses named arguments: `ErrorEvent({required code, message})` (was positional `ErrorEvent(code, message)`)
+- `ErrorEvent.name` changed from `'ErrorEvent'` to `'ERROR'` (`Event.ERROR`)
+
 ### Added
 - New `onError` callback in `Flourish.create()` for custom handling of web app ERROR events
 - `ErrorEvent.fromJson()` factory for parsing ERROR postMessage events from the web app
@@ -19,6 +23,7 @@ All notable changes to this plugin will be documented in this file.
   - SDK logs use `name: 'FlourishSDK'` — filter in DevTools to see only SDK logs
   - Error logs use `level: 1000`, warnings use `level: 900`, info uses default level
   - Error objects passed via `error` parameter for structured inspection in DevTools
+  - The auth token query param is redacted in URL logs, and JS messages log only the event name (no raw payload) to avoid leaking secrets/PII in production logs
 
 ### Error Scenarios Reference
 

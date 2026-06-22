@@ -137,8 +137,18 @@ class WebviewContainerState extends State<WebviewContainer>
   }
 
   Future<void> _loadWebView(Uri uri) async {
-    developer.log('Loading URL: $uri', name: 'FlourishSDK');
+    developer.log('Loading URL: ${_redactToken(uri)}', name: 'FlourishSDK');
     return controller.loadRequest(uri);
+  }
+
+  /// Masks sensitive query params (e.g. the auth token) before logging a URL.
+  String _redactToken(Uri uri) {
+    if (uri.queryParameters.isEmpty) return uri.toString();
+    final sanitized = Map<String, String>.from(uri.queryParameters);
+    for (final key in const ['token', 'apiToken']) {
+      if (sanitized.containsKey(key)) sanitized[key] = '[REDACTED]';
+    }
+    return uri.replace(queryParameters: sanitized).toString();
   }
 
   @override
@@ -158,11 +168,10 @@ class WebviewContainerState extends State<WebviewContainer>
   }
 
   void _handleJavaScriptMessage(JavaScriptMessage message) {
-    developer.log('JS message received: ${message.message}', name: 'FlourishSDK');
-
     try {
       final json = jsonDecode(message.message);
       final eventName = json['eventName'];
+      developer.log('JS event received: $eventName', name: 'FlourishSDK');
 
       switch (eventName) {
         case "REFERRAL_COPY":
