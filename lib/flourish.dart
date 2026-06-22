@@ -22,6 +22,7 @@ import 'events/types/v2/back_button_pressed_event.dart';
 import 'events/types/v2/gift_card_copy_event.dart';
 import 'events/types/v2/home_banner_action_event.dart';
 import 'events/types/v2/mission_action_event.dart';
+import 'events/types/v2/open_external_url_event.dart';
 import 'events/types/v2/referral_copy_event.dart';
 import 'events/types/v2/trivia_close_event.dart';
 import 'events/types/v2/trivia_game_finished_event.dart';
@@ -323,6 +324,19 @@ class Flourish {
   StreamSubscription<Event> onMissionActionEvent(Function callback) {
     return this.onEvent.listen((Event e) {
       if (e is MissionActionEvent) {
+        callback(e);
+      }
+    });
+  }
+
+  /// Fires when the web app opens an external URL (e.g. a partner store link).
+  ///
+  /// Event: [Event.OPEN_EXTERNAL_URL]. The SDK already opens the URL in the
+  /// device's default browser; this stream is for observability only (e.g.
+  /// analytics). [OpenExternalUrlEvent.data] exposes the `url`.
+  StreamSubscription<Event> onOpenExternalUrlEvent(Function callback) {
+    return this.onEvent.listen((Event e) {
+      if (e is OpenExternalUrlEvent) {
         callback(e);
       }
     });

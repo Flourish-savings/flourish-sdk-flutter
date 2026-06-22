@@ -5,6 +5,7 @@ import 'package:flourish_flutter_sdk/events/types/v2/back_button_pressed_event.d
 import 'package:flourish_flutter_sdk/events/types/v2/gift_card_copy_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/home_banner_action_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/mission_action_event.dart';
+import 'package:flourish_flutter_sdk/events/types/v2/open_external_url_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/referral_copy_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/trivia_close_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/trivia_game_finished_event.dart';
@@ -204,6 +205,11 @@ class _HomeState extends State<Home> {
         developer.log("${response.name} - data: ${jsonEncode(response.data.toJson())}", name: 'FlourishExample');
       }),
       flourish.onMissionActionEvent((MissionActionEvent response) {
+        developer.log("${response.name} - data: ${jsonEncode(response.data.toJson())}", name: 'FlourishExample');
+      }),
+      // The SDK already opens the URL in the device browser; this is just to
+      // observe the navigation (e.g. for analytics).
+      flourish.onOpenExternalUrlEvent((OpenExternalUrlEvent response) {
         developer.log("${response.name} - data: ${jsonEncode(response.data.toJson())}", name: 'FlourishExample');
       }),
     ]);
