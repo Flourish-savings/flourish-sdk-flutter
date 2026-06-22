@@ -21,6 +21,39 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import 'flourish_token_error_page.dart';
 
+/// Builds the initial URL loaded into the WebView.
+///
+/// Always carries `token` and `lang`. The optional `redirectTo` (a web-app
+/// page key) and `resourceId` (e.g. a store id for a dynamic route) are
+/// appended only when non-empty — they let the host deep-link into a specific
+/// page (see [WebviewContainer.initialLink] / [Flourish.home]). This function
+/// is a pure forwarder: validation of these values is the web app's
+/// responsibility.
+@visibleForTesting
+Uri buildInitialLink({
+  required String platformUrl,
+  required String token,
+  required String langCode,
+  String? redirectTo,
+  String? resourceId,
+  bool useHttp = false, // local dev serves the web app over plain HTTP
+}) {
+  final queryParams = <String, String>{
+    'token': token,
+    'lang': langCode,
+  };
+
+  if (redirectTo != null && redirectTo.isNotEmpty) {
+    queryParams['redirectTo'] = redirectTo;
+  }
+  if (resourceId != null && resourceId.isNotEmpty) {
+    queryParams['resourceId'] = resourceId;
+  }
+
+  final base = useHttp ? Uri.http(platformUrl) : Uri.https(platformUrl);
+  return base.replace(queryParameters: queryParams);
+}
+
 class WebviewContainer extends StatefulWidget {
   final Environment environment;
   final String apiToken;
@@ -32,6 +65,18 @@ class WebviewContainer extends StatefulWidget {
   final String? version;
   final String? trackingId;
   final String? sdkVersion;
+
+  /// Optional deep-link target page (a web-app page key, e.g.
+  /// `PARTNER_STORE_DETAIL`). When null/empty the web app lands on its default
+  /// entry point.
+  final String? redirectTo;
+
+  /// Optional resource id for a dynamic [redirectTo] route (e.g. a store id).
+  final String? resourceId;
+
+  /// Whether to load [platformUrl] over plain HTTP. Set only for local
+  /// development (see [Flourish] debug overrides); HTTPS otherwise.
+  final bool useHttp;
 
   WebviewContainer({
     super.key,
@@ -45,18 +90,19 @@ class WebviewContainer extends StatefulWidget {
     this.version,
     this.trackingId,
     this.sdkVersion,
+    this.redirectTo,
+    this.resourceId,
+    this.useHttp = false,
   });
 
-  Uri get initialLink {
-    final uri = Uri.https(platformUrl);
-
-    final queryParams = <String, String>{
-      'token': apiToken,
-      'lang': language.code,
-    };
-
-    return uri.replace(queryParameters: queryParams);
-  }
+  Uri get initialLink => buildInitialLink(
+        platformUrl: platformUrl,
+        token: apiToken,
+        langCode: language.code,
+        redirectTo: redirectTo,
+        resourceId: resourceId,
+        useHttp: useHttp,
+      );
 
   @override
   WebviewContainerState createState() => WebviewContainerState();

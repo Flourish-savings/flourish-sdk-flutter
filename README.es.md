@@ -106,6 +106,28 @@ Finalmente debemos llamar al m&eacute;todo `home()`.
   flourish.home();
 ```
 
+#### Deep-link a una p&aacute;gina espec&iacute;fica (opcional)
+
+`home()` acepta dos par&aacute;metros opcionales que permiten abrir el m&oacute;dulo
+directamente en una p&aacute;gina espec&iacute;fica en lugar del punto de entrada por
+defecto. Un caso de uso com&uacute;n es una **notificaci&oacute;n push** que lleva al
+usuario directamente a una tienda asociada espec&iacute;fica:
+
+```dart
+  flourish.home(
+    redirectTo: 'PARTNER_STORE_DETAIL', // la clave de la p&aacute;gina destino
+    resourceId: '123',                  // el id del recurso (ej. el id de la tienda)
+  );
+```
+
+- `redirectTo` — la clave de la p&aacute;gina a abrir. Om&iacute;telo (o pasa `null`)
+  para el comportamiento por defecto.
+- `resourceId` — el id para p&aacute;ginas que apuntan a un recurso espec&iacute;fico
+  (como una tienda). Solo es necesario para p&aacute;ginas que lo requieren.
+
+Estos valores se reenv&iacute;an a la web app, que los valida y vuelve de forma
+segura a su p&aacute;gina por defecto si son desconocidos o inv&aacute;lidos.
+
 ## EVENTOS
 ___
 

@@ -38,6 +38,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final List<StreamSubscription> _subscriptions = [];
+  final TextEditingController _storeIdController = TextEditingController();
   Flourish? _flourish;
 
   @override
@@ -46,14 +47,25 @@ class _HomeState extends State<Home> {
     unawaited(initFlourishSdk());
   }
 
+  // Local-dev flags (compile-time). Defaults target staging with normal auth —
+  // what integrators get. See README for usage.
+  static const bool _useDev = bool.fromEnvironment('FLOURISH_DEV');
+  static const String _devHost =
+      String.fromEnvironment('FLOURISH_DEV_HOST', defaultValue: 'localhost:5173');
+  static const String _devToken = String.fromEnvironment('FLOURISH_DEV_TOKEN');
+
   Future<void> initFlourishSdk() async {
     final credential = await CredentialFactory().fromEnv();
     final flourish = await Flourish.create(
       uuid: credential.partnerId,
       secret: credential.secretId,
-      env: Environment.staging,
+      env: _useDev ? Environment.development : Environment.staging,
       language: Language.spanish,
       customerCode: widget.customerCode,
+      // Debug-only: point the SDK at the local web app, optionally with a
+      // static token (skips auth). Ignored unless FLOURISH_DEV is set.
+      debugBaseUrl: _useDev ? 'http://$_devHost' : null,
+      debugStaticToken: _useDev && _devToken.isNotEmpty ? _devToken : null,
       onError: (context, errorEvent) {
         // Called when the web app sends an ERROR event
         // (network, business logic, onboarding, maintenance errors)
@@ -92,7 +104,21 @@ class _HomeState extends State<Home> {
     for (final sub in _subscriptions) {
       sub.cancel();
     }
+    _storeIdController.dispose();
     super.dispose();
+  }
+
+  void _openModule({String? redirectTo, String? resourceId}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RewardsScreen(
+          flourish: _flourish!,
+          redirectTo: redirectTo,
+          resourceId: resourceId,
+        ),
+      ),
+    );
   }
 
   @override
@@ -121,7 +147,7 @@ class _HomeState extends State<Home> {
                 top: 50,
                 left: 50,
                 right: 50,
-                bottom: 200,
+                bottom: 24,
               ),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -135,18 +161,54 @@ class _HomeState extends State<Home> {
                     55,
                   ),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RewardsScreen(flourish: _flourish!),
-                    ),
-                  );
-                },
+                onPressed: () => _openModule(),
                 child: Text(
                   'Open Flourish module'.toUpperCase(),
                   style: const TextStyle(
                     fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+            // Optional deep-link demo: open the module directly on a specific
+            // partner store (e.g. mirroring a push notification that carries a
+            // store id). Empty input falls back to the default entry point.
+            Padding(
+              padding: const EdgeInsets.only(left: 50, right: 50, bottom: 12),
+              child: TextField(
+                controller: _storeIdController,
+                keyboardType: TextInputType.text,
+                decoration: const InputDecoration(
+                  labelText: 'Store ID',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 50, right: 50, bottom: 100),
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Color(0xff2f7f86),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  minimumSize: Size(
+                    MediaQuery.sizeOf(context).width / 1.12,
+                    55,
+                  ),
+                ),
+                onPressed: () {
+                  final storeId = _storeIdController.text.trim();
+                  _openModule(
+                    redirectTo: 'PARTNER_STORE_DETAIL',
+                    resourceId: storeId.isEmpty ? null : storeId,
+                  );
+                },
+                child: Text(
+                  'Open specific store'.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
