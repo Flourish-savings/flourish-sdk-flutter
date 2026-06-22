@@ -371,14 +371,29 @@ class Flourish {
 
   Stream<Event> get onEvent => eventManager.onEvent;
 
-  Widget home() {
+  /// Opens the Flourish module.
+  ///
+  /// Pass [redirectTo] to deep-link straight into a specific page instead of
+  /// the default entry point — for example, to send a user who tapped a push
+  /// notification directly to a partner store. [redirectTo] is a web-app page
+  /// key (e.g. `'PARTNER_STORE_DETAIL'`) and [resourceId] is the optional id
+  /// for pages that target a specific resource (e.g. the store id). Both are
+  /// optional; omit them for the default behavior.
+  ///
+  /// ```dart
+  /// // Default:
+  /// flourish.home();
+  /// // Deep-link to a specific store:
+  /// flourish.home(redirectTo: 'PARTNER_STORE_DETAIL', resourceId: '123');
+  /// ```
+  Widget home({String? redirectTo, String? resourceId}) {
     final errorWidget =
         onTokenErrorWidget ?? FlourishTokenErrorPage(flourish: this);
     if (!isTokenValid) return errorWidget;
-    return _openHome();
+    return _openHome(redirectTo: redirectTo, resourceId: resourceId);
   }
 
-  Widget _openHome() {
+  Widget _openHome({String? redirectTo, String? resourceId}) {
     return webviewContainer = WebviewContainer(
       flourish: this,
       environment: environment,
@@ -390,6 +405,8 @@ class Flourish {
       version: version,
       trackingId: trackingId,
       sdkVersion: SdkInfo.version,
+      redirectTo: redirectTo,
+      resourceId: resourceId,
     );
   }
 

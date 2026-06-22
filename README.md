@@ -108,6 +108,27 @@ Finally we must call the `home()` method.
   flourish.home();
 ```
 
+#### Deep-linking to a specific page (optional)
+
+`home()` accepts two optional parameters that let you open the module directly
+on a specific page instead of the default entry point. A common use case is a
+**push notification** that takes the user straight to a specific partner store:
+
+```dart
+  flourish.home(
+    redirectTo: 'PARTNER_STORE_DETAIL', // the target page key
+    resourceId: '123',                  // the resource id (e.g. the store id)
+  );
+```
+
+- `redirectTo` — the page key to open. Omit it (or pass `null`) for the default
+  behavior.
+- `resourceId` — the id for pages that target a specific resource (such as a
+  store). Only needed for pages that require one.
+
+These values are forwarded to the web app, which validates them and safely
+falls back to its default page if they are unknown or invalid.
+
 ## EVENTS
 ___
 
