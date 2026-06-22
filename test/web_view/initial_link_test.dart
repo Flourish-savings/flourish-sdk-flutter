@@ -59,5 +59,26 @@ void main() {
       expect(uri.queryParameters.containsKey('redirectTo'), isFalse);
       expect(uri.queryParameters.containsKey('resourceId'), isFalse);
     });
+
+    test('defaults to https', () {
+      final uri = buildInitialLink(
+        platformUrl: 'app.flourish.test',
+        token: 'abc123',
+        langCode: 'es',
+      );
+      expect(uri.scheme, 'https');
+    });
+
+    test('uses http when useHttp is true', () {
+      final uri = buildInitialLink(
+        platformUrl: 'localhost:5173',
+        token: 'abc123',
+        langCode: 'es',
+        useHttp: true,
+      );
+      expect(uri.scheme, 'http');
+      expect(uri.host, 'localhost');
+      expect(uri.port, 5173);
+    });
   });
 }

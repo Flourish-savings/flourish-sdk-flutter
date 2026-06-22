@@ -47,14 +47,25 @@ class _HomeState extends State<Home> {
     unawaited(initFlourishSdk());
   }
 
+  // Local-dev flags (compile-time). Defaults target staging with normal auth —
+  // what integrators get. See README for usage.
+  static const bool _useDev = bool.fromEnvironment('FLOURISH_DEV');
+  static const String _devHost =
+      String.fromEnvironment('FLOURISH_DEV_HOST', defaultValue: 'localhost:5173');
+  static const String _devToken = String.fromEnvironment('FLOURISH_DEV_TOKEN');
+
   Future<void> initFlourishSdk() async {
     final credential = await CredentialFactory().fromEnv();
     final flourish = await Flourish.create(
       uuid: credential.partnerId,
       secret: credential.secretId,
-      env: Environment.staging,
+      env: _useDev ? Environment.development : Environment.staging,
       language: Language.spanish,
       customerCode: widget.customerCode,
+      // Debug-only: point the SDK at the local web app, optionally with a
+      // static token (skips auth). Ignored unless FLOURISH_DEV is set.
+      debugBaseUrl: _useDev ? 'http://$_devHost' : null,
+      debugStaticToken: _useDev && _devToken.isNotEmpty ? _devToken : null,
       onError: (context, errorEvent) {
         // Called when the web app sends an ERROR event
         // (network, business logic, onboarding, maintenance errors)

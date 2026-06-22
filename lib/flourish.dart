@@ -12,6 +12,7 @@ import 'package:flourish_flutter_sdk/events/types/web_view_loaded_event.dart';
 import 'package:flourish_flutter_sdk/network/api_service.dart';
 import 'package:flourish_flutter_sdk/web_view/flourish_token_error_page.dart';
 import 'package:flourish_flutter_sdk/web_view/webview_container.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'events/types/auto_payment_event.dart';
@@ -57,6 +58,19 @@ class Flourish {
   String token = '';
   String url = '';
 
+  /// Debug-only override: when non-empty, the WebView loads this base URL (e.g.
+  /// a local web app) instead of the auth-resolved one, and its scheme decides
+  /// http vs https. Honored only in debug builds.
+  String _debugBaseUrl = '';
+
+  /// Debug-only override: when non-empty, the auth backend call is skipped and
+  /// this token is used directly. Honored only in debug builds.
+  String _debugStaticToken = '';
+
+  /// Whether the WebView should load over plain HTTP, derived from
+  /// [_debugBaseUrl]'s scheme. Stays false for the normal (HTTPS) flow.
+  bool useHttp = false;
+
   Flourish._({
     required String uuid,
     required String secret,
@@ -70,6 +84,8 @@ class Flourish {
     void Function(BuildContext context)? onAuthError,
     void Function(BuildContext context, ErrorEvent error)? onError,
     Widget? onTokenErrorWidget,
+    String? debugBaseUrl,
+    String? debugStaticToken,
   }) {
     this.uuid = uuid;
     this.secret = secret;
@@ -85,8 +101,17 @@ class Flourish {
     this.onAuthError = onAuthError;
     this.onError = onError;
     this.onTokenErrorWidget = onTokenErrorWidget;
+    _debugBaseUrl = debugBaseUrl ?? '';
+    _debugStaticToken = debugStaticToken ?? '';
   }
 
+  /// Creates and authenticates a [Flourish] instance.
+  ///
+  /// [debugBaseUrl] and [debugStaticToken] are **debug-only** local-testing
+  /// hooks (ignored in release builds): [debugBaseUrl] points the WebView at a
+  /// local web app (its scheme selects http/https), and [debugStaticToken]
+  /// skips the auth backend and uses the given token. Leave both null for
+  /// normal behavior.
   static Future<Flourish> create({
     required String uuid,
     required String secret,
@@ -100,6 +125,8 @@ class Flourish {
     Widget? onTokenErrorWidget,
     String? version,
     String? trackingId,
+    String? debugBaseUrl,
+    String? debugStaticToken,
   }) async {
     final flourish = Flourish._(
       uuid: uuid,
@@ -114,6 +141,8 @@ class Flourish {
       onAuthError: onAuthError,
       onError: onError,
       onTokenErrorWidget: onTokenErrorWidget,
+      debugBaseUrl: debugBaseUrl,
+      debugStaticToken: debugStaticToken,
     );
 
     await flourish.authenticate(customerCode: customerCode);
@@ -134,28 +163,44 @@ class Flourish {
     required String customerCode,
     String category = "",
   }) async {
-    try {
-      this.customerCode = customerCode;
-      this.category = category;
-      Response response = await service.authenticate(
-        this.uuid,
-        this.secret,
-        customerCode,
-        category,
-        this.language.code,
-        SdkInfo.version,
-      );
+    this.customerCode = customerCode;
+    this.category = category;
 
-      token = response.data['session_token'];
-      url = response.data['url'];
+    if (kDebugMode && _debugStaticToken.isNotEmpty) {
+      // Debug override: skip the auth backend (there may be none locally) and
+      // use the provided token directly.
+      token = _debugStaticToken;
+    } else {
+      try {
+        Response response = await service.authenticate(
+          this.uuid,
+          this.secret,
+          customerCode,
+          category,
+          this.language.code,
+          SdkInfo.version,
+        );
 
-      return token;
-    } on DioException catch (_) {
-      eventManager.notify(
-        GenericEvent(event: Event.AUTHENTICATION_FAILURE),
-      );
-      return "";
+        token = response.data['session_token'];
+        url = response.data['url'];
+      } on DioException catch (_) {
+        eventManager.notify(
+          GenericEvent(event: Event.AUTHENTICATION_FAILURE),
+        );
+        return "";
+      }
     }
+
+    // Debug override: point the WebView at a local web app, deriving the
+    // scheme (http/https) from the provided base URL. Applies whether the
+    // token came from the backend or [_debugStaticToken].
+    if (kDebugMode && _debugBaseUrl.isNotEmpty) {
+      final base = Uri.parse(_debugBaseUrl);
+      url = base.authority;
+      useHttp = base.isScheme('http');
+    }
+
+    return token;
   }
 
   /// Listens to ALL events dispatched by the SDK.
@@ -407,6 +452,7 @@ class Flourish {
       sdkVersion: SdkInfo.version,
       redirectTo: redirectTo,
       resourceId: resourceId,
+      useHttp: useHttp,
     );
   }
 

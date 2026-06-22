@@ -29,12 +29,14 @@ import 'flourish_token_error_page.dart';
 /// page (see [WebviewContainer.initialLink] / [Flourish.home]). This function
 /// is a pure forwarder: validation of these values is the web app's
 /// responsibility.
+@visibleForTesting
 Uri buildInitialLink({
   required String platformUrl,
   required String token,
   required String langCode,
   String? redirectTo,
   String? resourceId,
+  bool useHttp = false, // local dev serves the web app over plain HTTP
 }) {
   final queryParams = <String, String>{
     'token': token,
@@ -48,7 +50,8 @@ Uri buildInitialLink({
     queryParams['resourceId'] = resourceId;
   }
 
-  return Uri.https(platformUrl).replace(queryParameters: queryParams);
+  final base = useHttp ? Uri.http(platformUrl) : Uri.https(platformUrl);
+  return base.replace(queryParameters: queryParams);
 }
 
 class WebviewContainer extends StatefulWidget {
@@ -71,6 +74,10 @@ class WebviewContainer extends StatefulWidget {
   /// Optional resource id for a dynamic [redirectTo] route (e.g. a store id).
   final String? resourceId;
 
+  /// Whether to load [platformUrl] over plain HTTP. Set only for local
+  /// development (see [Flourish] debug overrides); HTTPS otherwise.
+  final bool useHttp;
+
   WebviewContainer({
     super.key,
     required this.environment,
@@ -85,6 +92,7 @@ class WebviewContainer extends StatefulWidget {
     this.sdkVersion,
     this.redirectTo,
     this.resourceId,
+    this.useHttp = false,
   });
 
   Uri get initialLink => buildInitialLink(
@@ -93,6 +101,7 @@ class WebviewContainer extends StatefulWidget {
         langCode: language.code,
         redirectTo: redirectTo,
         resourceId: resourceId,
+        useHttp: useHttp,
       );
 
   @override
