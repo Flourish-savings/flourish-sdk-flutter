@@ -1,12 +1,7 @@
 # Changelog
 All notable changes to this plugin will be documented in this file.
 
-## [4.1.0] - 22/06/2026
-### Added
-- `home()` now accepts optional `redirectTo` and `resourceId` parameters to deep-link straight into a specific web-app page (e.g. opening a specific partner store from a push notification). Backward compatible — `home()` with no arguments is unchanged.
-- Debug-only local-development hooks on `Flourish.create()`: `debugBaseUrl` (point the WebView at a local web app, scheme chosen from the URL) and `debugStaticToken` (skip the auth backend and use a static token). Honored only in debug builds — release builds always run the normal auth flow. See `example/README.md` for the `--dart-define` usage.
-
-## [4.0.0] - 30/01/2026
+## [4.0.0] - 22/06/2026
 ### Breaking Changes
 - `ErrorEvent` now uses named arguments: `ErrorEvent({required code, message})` (was positional `ErrorEvent(code, message)`)
 - `ErrorEvent.name` changed from `'ErrorEvent'` to `'ERROR'` (`Event.ERROR`)
@@ -16,6 +11,8 @@ All notable changes to this plugin will be documented in this file.
 - `ErrorEvent.fromJson()` factory for parsing ERROR postMessage events from the web app
 - Structured logging via `dart:developer` `log()` across the entire SDK, filterable by `FlourishSDK` name in DevTools
 - `ERROR` case in JavaScript message handler — web app ERROR events now properly dispatched
+- `home()` now accepts optional `redirectTo` and `resourceId` parameters to deep-link straight into a specific web-app page (e.g. opening a specific partner store from a push notification). Backward compatible — `home()` with no arguments is unchanged.
+- Debug-only local-development hooks on `Flourish.create()`: `debugBaseUrl` (point the WebView at a local web app, scheme chosen from the URL) and `debugStaticToken` (skip the auth backend and use a static token). Honored only in debug builds — release builds always run the normal auth flow. See `example/README.md` for the `--dart-define` usage.
 
 ### Fixed
 - Bug where 403 error handling did not return early, potentially executing both 403 and network error handlers
