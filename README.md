@@ -3,6 +3,8 @@
 <br>
 # Flourish SDK Flutter
 
+> **[Leer en Espa&ntilde;ol](README.es.md)**
+
 This flutter plugin will allow the communication between the visual implementation of Flourish functionality.
 <br>
 <br>
@@ -12,9 +14,10 @@ Table of contents
 
 <!--ts-->
    * [Getting Started](#getting-started)
-     * [About the SDK](#about-the-sdk) 
-     * [Using the SDK](#using-the-sdk) 
+     * [About the SDK](#about-the-sdk)
+     * [Using the SDK](#using-the-sdk)
    * [Events](#events)
+   * [Error Handling](#error-handling)
    * [Examples](#examples)
 <!--te-->
 <br>
@@ -78,11 +81,25 @@ First foremost, it is necessary to initialize the SDK providing the variables: `
       env: Environment.staging,
       language: Language.english,
       customerCode: 'HERE_YOU_WILL_USE_YOUR_CUSTOMER_CODE',
-      trackingId: 'HERE_YOU_WILL_USE_YOUR_GOOGLE_ANALYTICS_KEY_THIS_IS_NOT_REQUIRED'
+      trackingId: 'HERE_YOU_WILL_USE_YOUR_GOOGLE_ANALYTICS_KEY_THIS_IS_NOT_REQUIRED',
+      onError: (context, errorEvent) {
+        // Called when the web app sends an ERROR event (network, business logic, maintenance errors)
+        developer.log('Error: ${errorEvent.code} - ${errorEvent.message}', name: 'MyApp', level: 1000);
+      },
+      onAuthError: (context) {
+        // Called when the web app sends an INVALID_TOKEN event (401 auth failure)
+        // Use this to refresh the token or redirect to login
+      },
+      onWebViewLoadError: (context, error) {
+        // Called when the WebView fails to load (no internet, DNS failure, timeout)
+        // Use this to show a custom native error screen
+      },
     );
 ```
 
 The `trackingId` variable is used if you want to pass on your Google Analytics Key to be able to monitor the use of our platform by your users.
+
+The error callbacks (`onError`, `onAuthError`, `onWebViewLoadError`) are all optional. If not provided, the SDK shows default error pages. See [Error Handling](#error-handling) for details.
 
 ### 2 - Open Flourish module
 
@@ -104,10 +121,9 @@ We have some events already mapped that you can listen to separately
 
 For example, if you need know when ou Trivia feature finished, you can listen to the "TriviaGameFinishedEvent"
 
-```
+```dart
 flourish.onTriviaGameFinishedEvent((TriviaGameFinishedEvent response) {
- print("Event name: ${response.name}");
- print("Event data: ${jsonEncode(response.data.toJson())}");
+  developer.log("${response.name} - data: ${jsonEncode(response.data.toJson())}", name: 'MyApp');
 });
 ```
 you can find our all mapped events here:
@@ -118,19 +134,18 @@ Even if our platform starts sending new unmapped events, it will not be necessar
 
 Just start listening to the generic events
 
-```
+```dart
 flourish.onGenericEvent((GenericEvent response) {
-  print("Event name: ${response.name}");
-  print("Event data: ${jsonEncode(response.data.toJson())}");
+  developer.log("${response.name} - data: ${jsonEncode(response.data?.toJson())}", name: 'MyApp');
 });
 ```
 
 ### Listen all events
 But if you want to listen all the events, we also have that for you.
 
-```
+```dart
 flourish.onAllEvent((Event response) {
-  print("Event name: ${response.name}");
+  developer.log("Event: ${response.name}", name: 'MyApp');
 });
 ```
 
@@ -154,8 +169,104 @@ here you have all events we will return
 | HOME_BANNER_ACTION             | When you need to know when the user clicks on the home banner.                                                    |
 | MISSION_ACTION                 | When you need to know when the user clicks on a mission card.                                                     |
 | AUTHENTICATION_FAILURE         | When you need to know when the Authentication failed.                                                             |
-| ERROR                          | When you need to know when a not mapped error happened.                                                           |
+| ERROR                          | When an error occurs in the web application (network, business logic, onboarding, maintenance).                   |
+| INVALID_TOKEN                  | When the session token is invalid or expired (401). Dispatched before ERROR.                                      |
 
+## Error Handling
+___
+
+The SDK handles errors at two levels: **native WebView errors** (before the web app loads) and **web app errors** (sent via JavaScript postMessage after the page loads).
+
+### Native WebView Errors
+
+These occur when the WebView itself fails to load the page (e.g., no internet, DNS failure, timeout). The SDK detects these via `onWebResourceError` and shows a default "No internet connection" page.
+
+| Error | Cause | Default Page |
+|-------|-------|-------------|
+| `WebResourceErrorType.connect` | TCP connection failed (server unreachable, port blocked) | `WebViewLoadErrorPage` |
+| `WebResourceErrorType.timeout` | Request timed out (common in high-latency regions) | `WebViewLoadErrorPage` |
+| `WebResourceErrorType.hostLookup` | DNS resolution failed | `WebViewLoadErrorPage` |
+| Error code `-1009` | iOS: device has no internet connection | `WebViewLoadErrorPage` |
+| Error code `403` | CloudFront access denied / signed URL expired | `FlourishTokenErrorPage` |
+
+To provide a custom UI for these errors:
+
+```dart
+Flourish flourish = await Flourish.create(
+  // ...
+  onWebViewLoadError: (context, error) {
+    // error.errorCode, error.errorType, error.description are available
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => MyCustomErrorPage()),
+    );
+  },
+);
+```
+
+### Web App Errors
+
+These occur after the WebView loads the page. The web app communicates errors back to the SDK via `postMessage` through the JavaScript channel.
+
+| Event | Cause | Default Behavior |
+|-------|-------|-----------------|
+| `INVALID_TOKEN` | Token expired or invalid (HTTP 401) | Shows `AuthErrorPage` (auto-refreshes token) |
+| `ERROR` | Network error, business logic error (422), onboarding failure, maintenance data failure | Shows `FlourishTokenErrorPage` |
+| `ERROR_BACK_BUTTON_PRESSED` | User pressed back on the error page | Dispatches `GenericEvent` |
+
+**Important:** `INVALID_TOKEN` is dispatched **before** `ERROR` by the web app. If you handle `INVALID_TOKEN` (e.g., refreshing the token), the subsequent `ERROR` event can be safely ignored.
+
+To handle web app errors:
+
+```dart
+Flourish flourish = await Flourish.create(
+  // ...
+  onAuthError: (context) {
+    // Handle INVALID_TOKEN: refresh token and reload, or redirect to login
+  },
+  onError: (context, errorEvent) {
+    // Handle ERROR: errorEvent.code and errorEvent.message contain details
+    developer.log('Error: ${errorEvent.code} - ${errorEvent.message}', name: 'MyApp', level: 1000);
+  },
+);
+```
+
+You can also listen to error events via the stream:
+
+```dart
+flourish.onErrorEvent((ErrorEvent event) {
+  developer.log('Error: ${event.code} - ${event.message}', name: 'MyApp', level: 1000);
+});
+```
+
+### Debug Logging
+
+The SDK uses `dart:developer` `log()` for structured, production-safe logging. All SDK logs use the name `FlourishSDK`, which allows filtering in Flutter DevTools.
+
+To view SDK logs in DevTools, filter by `FlourishSDK` in the Logging tab.
+
+Example output for a WebView load error:
+```
+[FlourishSDK] WebView Load Error - code: -1009, type: WebResourceErrorType.hostLookup, description: net::ERR_NAME_NOT_RESOLVED, isForMainFrame: true
+```
+
+Log levels used:
+- **Default** (info): URL loading, JS messages, sign-in success
+- **900** (warning): Missing referral code, network connectivity errors
+- **1000** (error): WebView load errors, token refresh failures
+
+In your own app, use `dart:developer` `log()` instead of `print()`:
+```dart
+import 'dart:developer' as developer;
+
+flourish.onErrorEvent((ErrorEvent event) {
+  developer.log(
+    'Error: ${event.code} - ${event.message}',
+    name: 'MyApp',
+    level: 1000,
+  );
+});
+```
 
 ## Examples
 Inside this repository, you have an example app to show how to integrate with us:

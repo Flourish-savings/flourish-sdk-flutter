@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flourish_flutter_sdk/utils/logger.dart';
 
 class ApiService {
   late final Dio httpClient;
@@ -49,7 +49,7 @@ class ApiService {
         },
       ),
     );
-    if (kDebugMode) print("[flourish]: logged in");
+    FlourishLog.info('Signed in successfully');
     return true;
   }
 }
