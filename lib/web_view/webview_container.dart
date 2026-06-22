@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' as developer;
 
 import 'package:flourish_flutter_sdk/config/endpoint.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
@@ -8,7 +7,9 @@ import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk/events/event.dart';
 import 'package:flourish_flutter_sdk/events/event_manager.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
+import 'package:flourish_flutter_sdk/utils/logger.dart';
 import 'package:flourish_flutter_sdk/web_view/auth_error_page.dart';
+import 'package:flourish_flutter_sdk/web_view/error_presentation.dart';
 import 'package:flourish_flutter_sdk/web_view/webview_load_error_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -97,14 +98,7 @@ class WebviewContainerState extends State<WebviewContainer>
 
             if (statusCode == 403 &&
                 content.contains('AccessDenied')) {
-              if (mounted) {
-                await Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FlourishTokenErrorPage(flourish: flourish),
-                  ),
-                );
-              }
+              await _replaceWithErrorPage(FlourishTokenErrorPage(flourish: flourish));
             }
           },
         ),
@@ -137,18 +131,20 @@ class WebviewContainerState extends State<WebviewContainer>
   }
 
   Future<void> _loadWebView(Uri uri) async {
-    developer.log('Loading URL: ${_redactToken(uri)}', name: 'FlourishSDK');
+    FlourishLog.info('Loading URL: ${FlourishLog.redactUri(uri)}');
     return controller.loadRequest(uri);
   }
 
-  /// Masks sensitive query params (e.g. the auth token) before logging a URL.
-  String _redactToken(Uri uri) {
-    if (uri.queryParameters.isEmpty) return uri.toString();
-    final sanitized = Map<String, String>.from(uri.queryParameters);
-    for (final key in const ['token', 'apiToken']) {
-      if (sanitized.containsKey(key)) sanitized[key] = '[REDACTED]';
-    }
-    return uri.replace(queryParameters: sanitized).toString();
+  /// Replaces the current route with [page], guarding against a disposed widget.
+  ///
+  /// Centralizes the `mounted` check + `pushReplacement` boilerplate shared by
+  /// every error-page navigation in this container.
+  Future<void> _replaceWithErrorPage(Widget page) async {
+    if (!mounted) return;
+    await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => page),
+    );
   }
 
   @override
@@ -171,7 +167,7 @@ class WebviewContainerState extends State<WebviewContainer>
     try {
       final json = jsonDecode(message.message);
       final eventName = json['eventName'];
-      developer.log('JS event received: $eventName', name: 'FlourishSDK');
+      FlourishLog.info('JS event received: $eventName');
 
       switch (eventName) {
         case "REFERRAL_COPY":
@@ -187,14 +183,14 @@ class WebviewContainerState extends State<WebviewContainer>
           _handleGenericEvent(json);
       }
     } catch (e) {
-      developer.log('Error handling JS message', name: 'FlourishSDK', error: e);
+      FlourishLog.severe('Error handling JS message', error: e);
     }
   }
 
   Future<void> _handleReferralCopy(dynamic data) async {
     final referralCode = data['referralCode'];
     if (referralCode == null) {
-      developer.log('referralCode is empty', name: 'FlourishSDK', level: 900);
+      FlourishLog.warning('referralCode is empty');
       return;
     }
     await Clipboard.setData(ClipboardData(text: referralCode));
@@ -210,80 +206,73 @@ class WebviewContainerState extends State<WebviewContainer>
     widget.eventManager.notify(event);
   }
 
+  /// Handles an `INVALID_TOKEN` (401) event from the web app.
+  ///
+  /// Contract: if [Flourish.onAuthError] is provided, the integrator takes over
+  /// the UI and the default navigation is suppressed. Otherwise the SDK shows
+  /// [AuthErrorPage]. (Auth failures are not emitted on the event stream.)
   Future<void> handleAuthError() async {
-    if (!mounted) return;
-
     final onAuthError = flourish.onAuthError;
-    if (onAuthError != null) return onAuthError(context);
-
-    await Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AuthErrorPage(flourish: flourish),
-      ),
-    );
+    switch (resolveErrorPresentation(
+        isMounted: mounted, hasCallback: onAuthError != null)) {
+      case ErrorPresentation.none:
+        return;
+      case ErrorPresentation.invokeCallback:
+        return onAuthError!(context);
+      case ErrorPresentation.navigateToFallback:
+        return _replaceWithErrorPage(AuthErrorPage(flourish: flourish));
+    }
   }
 
+  /// Handles an `ERROR` event from the web app (network, business logic,
+  /// onboarding, maintenance, etc.).
+  ///
+  /// Contract: the [ErrorEvent] is ALWAYS published on the event stream
+  /// ([Flourish.onErrorEvent]) for observers. Separately, if
+  /// [Flourish.onError] is provided, the integrator takes over the UI and the
+  /// default navigation is suppressed; otherwise the SDK falls back to
+  /// [FlourishTokenErrorPage], which renders a generic "something went wrong /
+  /// contact support" screen (despite its name, it is not auth-specific).
   Future<void> handleWebAppError(Map<String, dynamic> json) async {
     final errorEvent = ErrorEvent.fromJson(json);
     _notify(errorEvent);
 
-    if (!mounted) return;
-
     final onError = flourish.onError;
-    if (onError != null) return onError(context, errorEvent);
-
-    await Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FlourishTokenErrorPage(flourish: flourish),
-      ),
-    );
+    switch (resolveErrorPresentation(
+        isMounted: mounted, hasCallback: onError != null)) {
+      case ErrorPresentation.none:
+        return;
+      case ErrorPresentation.invokeCallback:
+        return onError!(context, errorEvent);
+      case ErrorPresentation.navigateToFallback:
+        return _replaceWithErrorPage(FlourishTokenErrorPage(flourish: flourish));
+    }
   }
 
   Future<dynamic> handleLoadingPageError(WebResourceError error) async {
-    developer.log(
+    FlourishLog.severe(
       'WebView Load Error - code: ${error.errorCode}, '
       'type: ${error.errorType}, '
       'description: ${error.description}, '
       'isForMainFrame: ${error.isForMainFrame}',
-      name: 'FlourishSDK',
-      level: 1000,
     );
 
     if (error.errorCode == 403) {
-      if (mounted) {
-        return Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => FlourishTokenErrorPage(flourish: flourish),
-          ),
-        );
-      }
-      return;
+      return _replaceWithErrorPage(FlourishTokenErrorPage(flourish: flourish));
     }
 
     if (error.errorType == WebResourceErrorType.connect ||
         error.errorType == WebResourceErrorType.timeout ||
         error.errorType == WebResourceErrorType.hostLookup ||
         error.errorCode == -1009) {
-      developer.log(
+      FlourishLog.warning(
         'Network connectivity error detected - invoking error handler',
-        name: 'FlourishSDK',
-        level: 900,
       );
 
       final onWebViewLoadError = flourish.onWebViewLoadError;
       if (onWebViewLoadError != null) return onWebViewLoadError(context, error);
 
-      if (mounted) {
-        return Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WebViewLoadErrorPage(flourish: flourish),
-          ),
-        );
-      }
+      return _replaceWithErrorPage(WebViewLoadErrorPage(flourish: flourish));
     }
   }
 }

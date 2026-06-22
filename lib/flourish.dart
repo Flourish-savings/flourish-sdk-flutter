@@ -42,6 +42,14 @@ class Flourish {
   late bool reloadPageOnAppResume;
   void Function(BuildContext context, WebResourceError error)? onWebViewLoadError;
   void Function(BuildContext context)? onAuthError;
+
+  /// Called when the web app emits an [Event.ERROR].
+  ///
+  /// When provided, the integrator owns the error UI and the SDK's default
+  /// navigation to its generic error page is suppressed. Regardless of this
+  /// callback, the [ErrorEvent] is always published on the [onErrorEvent]
+  /// stream, so a stream subscription observes errors but does NOT suppress the
+  /// default navigation — use this callback for that.
   void Function(BuildContext context, ErrorEvent error)? onError;
   Widget? onTokenErrorWidget;
   WebViewController? webViewController;

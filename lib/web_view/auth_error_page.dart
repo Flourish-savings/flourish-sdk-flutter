@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 
 import 'package:flourish_flutter_sdk/flourish.dart';
+import 'package:flourish_flutter_sdk/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -39,7 +39,7 @@ class AuthErrorPageState extends State<AuthErrorPage> {
         MaterialPageRoute(builder: (context) => widget.flourish.home()),
       );
     } catch (e) {
-      developer.log('Token refresh failed', name: 'FlourishSDK', error: e);
+      FlourishLog.severe('Token refresh failed', error: e);
     }
   }
 

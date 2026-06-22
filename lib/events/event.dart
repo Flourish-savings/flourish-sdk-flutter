@@ -73,6 +73,9 @@ class Event {
         return HomeBannerActionEvent.from(json);
       case MISSION_ACTION:
         return MissionActionEvent.from(json);
+      // The JS channel routes ERROR directly to handleWebAppError, so this
+      // case is not hit by that path; it is the fallback for any other caller
+      // that parses a raw ERROR payload through Event.fromJson.
       case ERROR:
         return ErrorEvent.fromJson(json);
       default:
