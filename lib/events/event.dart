@@ -1,6 +1,7 @@
 import 'package:flourish_flutter_sdk/events/types/v2/back_button_pressed_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/home_banner_action_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/mission_action_event.dart';
+import 'package:flourish_flutter_sdk/events/types/v2/open_external_url_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/referral_copy_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/trivia_close_event.dart';
 import 'package:flourish_flutter_sdk/events/types/v2/trivia_game_finished_event.dart';
@@ -34,6 +35,9 @@ class Event {
   static const String HOME_BANNER_ACTION = 'HOME_BANNER_ACTION';
   /// When you need to know when the user clicks on a mission card.
   static const String MISSION_ACTION = 'MISSION_ACTION';
+  /// When the web app asks the host to open an absolute URL in the device's
+  /// default browser (e.g. a partner store link).
+  static const String OPEN_EXTERNAL_URL = 'OPEN_EXTERNAL_URL';
   /// When you need to know when the user clicks on the back menu button on our error page.
   static const String ERROR_BACK_BUTTON_PRESSED = 'ERROR_BACK_BUTTON_PRESSED';
   /// When you need to know when the Authentication failed.
@@ -73,6 +77,8 @@ class Event {
         return HomeBannerActionEvent.from(json);
       case MISSION_ACTION:
         return MissionActionEvent.from(json);
+      case OPEN_EXTERNAL_URL:
+        return OpenExternalUrlEvent.from(json);
       // The JS channel routes ERROR directly to handleWebAppError, so this
       // case is not hit by that path; it is the fallback for any other caller
       // that parses a raw ERROR payload through Event.fromJson.

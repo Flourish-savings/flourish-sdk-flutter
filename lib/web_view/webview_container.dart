@@ -6,10 +6,12 @@ import 'package:flourish_flutter_sdk/config/environment_enum.dart';
 import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk/events/event.dart';
 import 'package:flourish_flutter_sdk/events/event_manager.dart';
+import 'package:flourish_flutter_sdk/events/types/v2/open_external_url_event.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flourish_flutter_sdk/utils/logger.dart';
 import 'package:flourish_flutter_sdk/web_view/auth_error_page.dart';
 import 'package:flourish_flutter_sdk/web_view/error_presentation.dart';
+import 'package:flourish_flutter_sdk/web_view/external_url_resolution.dart';
 import 'package:flourish_flutter_sdk/web_view/webview_load_error_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -158,9 +160,12 @@ class WebviewContainerState extends State<WebviewContainer>
     );
   }
 
-  Future<void> _launchURL(String url) async {
+  Future<void> _launchURL(
+    String url, {
+    LaunchMode mode = LaunchMode.platformDefault,
+  }) async {
     final Uri uri = Uri.parse(url);
-    await launchUrl(uri);
+    await launchUrl(uri, mode: mode);
   }
 
   void _handleJavaScriptMessage(JavaScriptMessage message) {
@@ -172,6 +177,9 @@ class WebviewContainerState extends State<WebviewContainer>
       switch (eventName) {
         case "REFERRAL_COPY":
           unawaited(_handleReferralCopy(json['data']));
+          break;
+        case "OPEN_EXTERNAL_URL":
+          unawaited(_handleOpenExternalUrl(json));
           break;
         case "INVALID_TOKEN":
           unawaited(handleAuthError());
@@ -195,6 +203,42 @@ class WebviewContainerState extends State<WebviewContainer>
     }
     await Clipboard.setData(ClipboardData(text: referralCode));
     await Share.share(referralCode);
+  }
+
+  /// Handles an `OPEN_EXTERNAL_URL` event from the web app.
+  ///
+  /// The web app asks the host to open an absolute URL outside the WebView
+  /// sandbox (e.g. a partner store link). The SDK opens it in the device's
+  /// default browser via `url_launcher` with [LaunchMode.externalApplication],
+  /// and also publishes the typed [OpenExternalUrlEvent] on the event stream so
+  /// integrators can observe the navigation.
+  ///
+  /// Only `http(s)` URLs are honored (see [resolveExternalUrl]); a missing,
+  /// empty, or non-http(s) URL is ignored and not published. The launch is
+  /// fire-and-forget, so any launcher failure is caught and logged here rather
+  /// than escaping as an uncaught async error.
+  Future<void> _handleOpenExternalUrl(Map<String, dynamic> json) async {
+    final event = OpenExternalUrlEvent.from(json);
+    final url = event.data.url;
+
+    switch (resolveExternalUrl(url)) {
+      case ExternalUrlDecision.empty:
+        FlourishLog.warning('OPEN_EXTERNAL_URL received with empty url');
+        return;
+      case ExternalUrlDecision.disallowedScheme:
+        FlourishLog.warning(
+            'OPEN_EXTERNAL_URL rejected: URL scheme is not http(s)');
+        return;
+      case ExternalUrlDecision.launch:
+        break;
+    }
+
+    _notify(event);
+    try {
+      await _launchURL(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      FlourishLog.severe('Failed to open external URL', error: e);
+    }
   }
 
   void _handleGenericEvent(Map<String, dynamic> json) {
