@@ -28,13 +28,21 @@ class FakeWebViewController extends PlatformWebViewController
   FakeWebViewController(PlatformWebViewControllerCreationParams params)
       : super.implementation(params);
 
+  /// Captures the JS-channel `onMessageReceived` callback registered during
+  /// `initState`, so tests can simulate a message from the web app and drive
+  /// `_handleJavaScriptMessage` and its handlers. Set on the most recently
+  /// created controller (one per mounted container).
+  static void Function(JavaScriptMessage)? lastOnMessageReceived;
+
   @override
   Future<void> setBackgroundColor(Color color) async {}
   @override
   Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) async {}
   @override
   Future<void> addJavaScriptChannel(
-      JavaScriptChannelParams javaScriptChannelParams) async {}
+      JavaScriptChannelParams javaScriptChannelParams) async {
+    lastOnMessageReceived = javaScriptChannelParams.onMessageReceived;
+  }
   @override
   Future<void> setPlatformNavigationDelegate(
       PlatformNavigationDelegate handler) async {}

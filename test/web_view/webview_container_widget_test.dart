@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flourish_flutter_sdk/config/environment_enum.dart';
 import 'package:flourish_flutter_sdk/config/language.dart';
 import 'package:flourish_flutter_sdk/events/event.dart';
+import 'package:flourish_flutter_sdk/events/types/generic_event.dart';
+import 'package:flourish_flutter_sdk/events/types/v2/open_external_url_event.dart';
 import 'package:flourish_flutter_sdk/flourish.dart';
 import 'package:flourish_flutter_sdk/web_view/auth_error_page.dart';
 import 'package:flourish_flutter_sdk/web_view/flourish_token_error_page.dart';
@@ -19,6 +23,14 @@ import '../helpers/test_doubles.dart';
 void main() {
   setUp(() {
     WebViewPlatform.instance = FakeWebViewPlatform();
+    FakeWebViewController.lastOnMessageReceived = null;
+    // share_plus has no platform implementation under test; stub its channel
+    // so _handleReferralCopy's Share.share(...) doesn't throw.
+    TestWidgetsFlutterBinding.ensureInitialized();
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+            const MethodChannel('dev.fluttercommunity.plus/share'),
+            (_) async => null);
   });
 
   // Mounts the WebView container via flourish.home() (which wires every
@@ -140,6 +152,77 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(FlourishTokenErrorPage), findsOneWidget);
+    });
+  });
+
+  group('JS channel messages', () {
+    // Drives _handleJavaScriptMessage through the captured channel callback,
+    // exercising the private handlers end-to-end.
+    Future<List<Event>> fire(WidgetTester tester, Flourish flourish,
+        Map<String, dynamic> payload) async {
+      final events = <Event>[];
+      flourish.onEvent.listen(events.add);
+      await mount(tester, flourish);
+      FakeWebViewController.lastOnMessageReceived!
+          .call(JavaScriptMessage(message: jsonEncode(payload)));
+      await tester.pump();
+      return events;
+    }
+
+    testWidgets('OPEN_EXTERNAL_URL publishes the event for a valid url',
+        (tester) async {
+      final flourish = await flourishWithStaticToken();
+      final events = await fire(tester, flourish, {
+        'eventName': 'OPEN_EXTERNAL_URL',
+        'data': {'url': 'https://store.example.com'}
+      });
+      expect(events.whereType<OpenExternalUrlEvent>(), hasLength(1));
+    });
+
+    testWidgets('OPEN_EXTERNAL_URL ignores an empty url', (tester) async {
+      final flourish = await flourishWithStaticToken();
+      final events = await fire(tester, flourish, {
+        'eventName': 'OPEN_EXTERNAL_URL',
+        'data': {'url': ''}
+      });
+      expect(events.whereType<OpenExternalUrlEvent>(), isEmpty);
+    });
+
+    testWidgets('REFERRAL_COPY with a code runs without error', (tester) async {
+      final flourish = await flourishWithStaticToken();
+      await fire(tester, flourish, {
+        'eventName': 'REFERRAL_COPY',
+        'data': {'referralCode': 'CODE-1'}
+      });
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('REFERRAL_COPY with a null code is a no-op', (tester) async {
+      final flourish = await flourishWithStaticToken();
+      await fire(tester, flourish, {
+        'eventName': 'REFERRAL_COPY',
+        'data': <String, dynamic>{}
+      });
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('an unknown eventName publishes a GenericEvent',
+        (tester) async {
+      final flourish = await flourishWithStaticToken();
+      final events = await fire(
+          tester, flourish, {'eventName': 'BRAND_NEW_THING', 'data': 'x'});
+      expect(events.whereType<GenericEvent>(), hasLength(1));
+    });
+
+    testWidgets('a malformed message is caught and does not crash',
+        (tester) async {
+      final flourish = await flourishWithStaticToken();
+      flourish.onEvent.listen((_) {});
+      await mount(tester, flourish);
+      FakeWebViewController.lastOnMessageReceived!
+          .call(const JavaScriptMessage(message: 'not json{'));
+      await tester.pump();
+      expect(tester.takeException(), isNull);
     });
   });
 }

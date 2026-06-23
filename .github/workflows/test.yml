@@ -1,0 +1,37 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.8'
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests with coverage
+        run: flutter test --coverage
+
+      - name: Enforce coverage floor
+        run: |
+          # Minimum line coverage for lib/. Adjust here if the floor changes.
+          MIN=85
+          PCT=$(awk -F: '
+            /^DA:/ { split($2, a, ","); found++; if (a[2] + 0 > 0) hit++ }
+            END { if (found > 0) printf "%.1f", hit * 100 / found; else print "0" }
+          ' coverage/lcov.info)
+          echo "Line coverage: ${PCT}% (floor ${MIN}%)"
+          awk -v p="$PCT" -v m="$MIN" 'BEGIN { exit !(p + 0 >= m) }' || {
+            echo "::error::Line coverage ${PCT}% is below the ${MIN}% floor"
+            exit 1
+          }

@@ -188,6 +188,9 @@ class WebviewContainerState extends State<WebviewContainer>
             }
             return NavigationDecision.navigate;
           },
+          // coverage:ignore-start
+          // Runs JS in the live WebView engine to detect a 403/AccessDenied
+          // page; unreachable in unit tests (no real engine).
           onPageFinished: (String url) async {
             final statusCode = await controller.runJavaScriptReturningResult(
                 'window.performance.getEntries().find(e => e.entryType === "navigation").responseStatus'
@@ -202,6 +205,7 @@ class WebviewContainerState extends State<WebviewContainer>
               await _replaceWithErrorPage(FlourishTokenErrorPage(flourish: flourish));
             }
           },
+          // coverage:ignore-end
         ),
       );
     flourish.webViewController = controller;
