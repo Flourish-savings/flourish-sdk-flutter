@@ -86,6 +86,7 @@ class Flourish {
     Widget? onTokenErrorWidget,
     String? debugBaseUrl,
     String? debugStaticToken,
+    ApiService? service,
   }) {
     this.uuid = uuid;
     this.secret = secret;
@@ -94,7 +95,7 @@ class Flourish {
     this.version = version;
     this.trackingId = trackingId;
     this.endpoint = Endpoint(environment);
-    this.service = ApiService(env, this.endpoint);
+    this.service = service ?? ApiService(env, this.endpoint);
     this.customerCode = customerCode;
     this.reloadPageOnAppResume = reloadPageOnAppResume;
     this.onWebViewLoadError = onWebViewLoadError;
@@ -127,6 +128,7 @@ class Flourish {
     String? trackingId,
     String? debugBaseUrl,
     String? debugStaticToken,
+    @visibleForTesting ApiService? service,
   }) async {
     final flourish = Flourish._(
       uuid: uuid,
@@ -143,6 +145,7 @@ class Flourish {
       onTokenErrorWidget: onTokenErrorWidget,
       debugBaseUrl: debugBaseUrl,
       debugStaticToken: debugStaticToken,
+      service: service,
     );
 
     await flourish.authenticate(customerCode: customerCode);

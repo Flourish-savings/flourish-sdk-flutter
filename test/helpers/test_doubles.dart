@@ -43,3 +43,21 @@ Future<Flourish> flourishWithStaticToken({
     debugStaticToken: token,
   );
 }
+
+/// Builds a [Flourish] backed by [service] (the test-only `service` override on
+/// [Flourish.create]). Stub `service.authenticate(...)` before calling this —
+/// `create` authenticates during construction.
+Future<Flourish> flourishWithMockService(
+  MockApiService service, {
+  Language language = Language.english,
+  Environment env = Environment.development,
+}) {
+  return Flourish.create(
+    uuid: 'u',
+    secret: 's',
+    env: env,
+    language: language,
+    customerCode: 'c',
+    service: service,
+  );
+}
