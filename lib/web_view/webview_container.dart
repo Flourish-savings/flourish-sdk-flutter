@@ -54,6 +54,59 @@ Uri buildInitialLink({
   return base.replace(queryParameters: queryParams);
 }
 
+/// Which handler an incoming JS-channel message routes to, keyed by its
+/// `eventName`. Mirrors the dispatch in [WebviewContainerState].
+enum JsMessageRoute { referralCopy, openExternalUrl, invalidToken, error, generic }
+
+/// Pure routing decision for a JS-channel message's `eventName`. Unknown or
+/// null names fall through to [JsMessageRoute.generic].
+@visibleForTesting
+JsMessageRoute resolveJsMessageRoute(String? eventName) {
+  switch (eventName) {
+    case 'REFERRAL_COPY':
+      return JsMessageRoute.referralCopy;
+    case 'OPEN_EXTERNAL_URL':
+      return JsMessageRoute.openExternalUrl;
+    case 'INVALID_TOKEN':
+      return JsMessageRoute.invalidToken;
+    case 'ERROR':
+      return JsMessageRoute.error;
+    default:
+      return JsMessageRoute.generic;
+  }
+}
+
+/// What [WebviewContainerState.handleLoadingPageError] should do for a given
+/// WebView load error.
+enum WebViewLoadAction {
+  tokenErrorPage,
+  invokeLoadErrorCallback,
+  loadErrorPage,
+  ignore,
+}
+
+/// Pure decision for a WebView load error: a 403 shows the token error page;
+/// connectivity errors (connect/timeout/hostLookup or the iOS `-1009` offline
+/// code) defer to the integrator callback when present, else the load-error
+/// page; anything else is ignored.
+@visibleForTesting
+WebViewLoadAction resolveWebViewLoadError({
+  required int errorCode,
+  required WebResourceErrorType? errorType,
+  required bool hasCallback,
+}) {
+  if (errorCode == 403) return WebViewLoadAction.tokenErrorPage;
+  if (errorType == WebResourceErrorType.connect ||
+      errorType == WebResourceErrorType.timeout ||
+      errorType == WebResourceErrorType.hostLookup ||
+      errorCode == -1009) {
+    return hasCallback
+        ? WebViewLoadAction.invokeLoadErrorCallback
+        : WebViewLoadAction.loadErrorPage;
+  }
+  return WebViewLoadAction.ignore;
+}
+
 class WebviewContainer extends StatefulWidget {
   final Environment environment;
   final String apiToken;
@@ -220,20 +273,20 @@ class WebviewContainerState extends State<WebviewContainer>
       final eventName = json['eventName'];
       FlourishLog.info('JS event received: $eventName');
 
-      switch (eventName) {
-        case "REFERRAL_COPY":
+      switch (resolveJsMessageRoute(eventName)) {
+        case JsMessageRoute.referralCopy:
           unawaited(_handleReferralCopy(json['data']));
           break;
-        case "OPEN_EXTERNAL_URL":
+        case JsMessageRoute.openExternalUrl:
           unawaited(_handleOpenExternalUrl(json));
           break;
-        case "INVALID_TOKEN":
+        case JsMessageRoute.invalidToken:
           unawaited(handleAuthError());
           break;
-        case "ERROR":
+        case JsMessageRoute.error:
           unawaited(handleWebAppError(json));
           break;
-        default:
+        case JsMessageRoute.generic:
           _handleGenericEvent(json);
       }
     } catch (e) {
@@ -347,22 +400,26 @@ class WebviewContainerState extends State<WebviewContainer>
       'isForMainFrame: ${error.isForMainFrame}',
     );
 
-    if (error.errorCode == 403) {
-      return _replaceWithErrorPage(FlourishTokenErrorPage(flourish: flourish));
-    }
-
-    if (error.errorType == WebResourceErrorType.connect ||
-        error.errorType == WebResourceErrorType.timeout ||
-        error.errorType == WebResourceErrorType.hostLookup ||
-        error.errorCode == -1009) {
-      FlourishLog.warning(
-        'Network connectivity error detected - invoking error handler',
-      );
-
-      final onWebViewLoadError = flourish.onWebViewLoadError;
-      if (onWebViewLoadError != null) return onWebViewLoadError(context, error);
-
-      return _replaceWithErrorPage(WebViewLoadErrorPage(flourish: flourish));
+    final onWebViewLoadError = flourish.onWebViewLoadError;
+    switch (resolveWebViewLoadError(
+      errorCode: error.errorCode,
+      errorType: error.errorType,
+      hasCallback: onWebViewLoadError != null,
+    )) {
+      case WebViewLoadAction.tokenErrorPage:
+        return _replaceWithErrorPage(FlourishTokenErrorPage(flourish: flourish));
+      case WebViewLoadAction.invokeLoadErrorCallback:
+        FlourishLog.warning(
+          'Network connectivity error detected - invoking error handler',
+        );
+        return onWebViewLoadError!(context, error);
+      case WebViewLoadAction.loadErrorPage:
+        FlourishLog.warning(
+          'Network connectivity error detected - invoking error handler',
+        );
+        return _replaceWithErrorPage(WebViewLoadErrorPage(flourish: flourish));
+      case WebViewLoadAction.ignore:
+        return null;
     }
   }
 }
